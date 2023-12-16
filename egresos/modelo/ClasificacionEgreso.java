@@ -1,6 +1,6 @@
 package modelo;
 
-public class Pago {
+public class ClasificacionEgreso {
 
 	private int id;
 	private String descripcion;
@@ -24,5 +24,4 @@ public class Pago {
 		
 		this.descripcion = descripcion;
 	}
-	
 }
