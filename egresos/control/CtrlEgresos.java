@@ -16,6 +16,7 @@ public class CtrlEgresos implements ActionListener {
 	private DtosEgresos dtosEgreso;
 	private int elemento = -1;
 	private Cargar ventanaNuevoEgreso;
+	private Cargar ventanaEditarEgreso;
 
 	public CtrlEgresos(Listado vista) {
 		
@@ -45,9 +46,9 @@ public class CtrlEgresos implements ActionListener {
 		ventana.comboBoxAño.setSelectedIndex(0);
 		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaMeses()));
 		ventana.comboBoxMes.setSelectedIndex(dtosEgreso.getMesActual());
-		ventana.comboBoxTipo.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaDestinos()));
+		ventana.comboBoxTipo.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaDestinos("Todos")));
 		ventana.comboBoxTipo.setSelectedIndex(0);
-		ventana.comboBoxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago()));
+		ventana.comboBoxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago("Todos")));
 		ventana.comboBoxPago.setSelectedIndex(0);
 		actualizar();
 		ventana.setVisible(true);
@@ -58,6 +59,7 @@ public class CtrlEgresos implements ActionListener {
 		if(e.getSource() == ventana.btnNuevo) {
 			
 			nuevo();
+			return;
 		}
 		
 		if(e.getSource() == ventana.btnImprimir) {
@@ -88,11 +90,31 @@ public class CtrlEgresos implements ActionListener {
 														  ventana.comboBoxMes.getSelectedIndex(), 
 														  ventana.comboBoxTipo.getSelectedIndex(), 
 														  ventana.comboBoxPago.getSelectedIndex()));
+		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(70);
+		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);
+		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(80);
+		ventana.tabla.getColumnModel().getColumn(3).setMinWidth(100);
+		ventana.tabla.getColumnModel().getColumn(3).setMaxWidth(150);
+		ventana.tabla.getColumnModel().getColumn(3).setPreferredWidth(110);
+		ventana.tabla.setDefaultEditor(Object.class, null);
+		ventana.txtCant.setText(dtosEgreso.getCantidadElementos());
+		ventana.txtSuma.setText(dtosEgreso.getSuma());
+		elemento = -1;
 	}
 	
 	private void editar() {
 		
+		if(elemento == -1)
+			return;
+		dtosEgreso.seleccionarEgreso(elemento);
+		elemento = -1;
 		
+		if(ventanaEditarEgreso != null)
+			ventanaEditarEgreso.dispose();
+		ventanaEditarEgreso = new Cargar("Editar egreso", ventana.getX(), ventana.getY());
+		ventanaEditarEgreso.btnVolver.addActionListener(this);
+		CtrlEditarEgreso ctrlEditarEgreso = new CtrlEditarEgreso(ventanaEditarEgreso);
+		ctrlEditarEgreso.iniciar();
 	}
 	
 	private void nuevo() {
@@ -100,6 +122,7 @@ public class CtrlEgresos implements ActionListener {
 		if(ventanaNuevoEgreso != null)
 			ventanaNuevoEgreso.dispose();
 		ventanaNuevoEgreso = new Cargar("Carga de un nuevo egreso", ventana.getX(), ventana.getY());
+		ventanaNuevoEgreso.btnVolver.addActionListener(this);
 		CtrlCargarEgreso ctrlCargarEgreso = new CtrlCargarEgreso(ventanaNuevoEgreso);
 		ctrlCargarEgreso.iniciar();
 	}

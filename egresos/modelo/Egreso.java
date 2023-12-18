@@ -5,9 +5,9 @@ public class Egreso {
 	private int id;
 	private String fecha;
 	private float monto;
-	private int idProveedor;
-	private int idFormaPago;
-	private int idTipoConsumo;
+	private Proveedor proveedor;
+	private Pago formaPago;
+	private ClasificacionEgreso tipoConsumo;
 
 	public int getId() {
 		
@@ -39,33 +39,33 @@ public class Egreso {
 		this.monto = monto;
 	}
 
-	public int getIdProveedor() {
+	public Proveedor getProveedor() {
 		
-		return idProveedor;
+		return proveedor;
 	}
 
-	public void setIdProveedor(int idProveedor) {
+	public void setProveedor(Proveedor proveedor) {
 		
-		this.idProveedor = idProveedor;
+		this.proveedor = proveedor;
 	}
 
-	public int getIdFormaPago() {
+	public Pago getFormaPago() {
 		
-		return idFormaPago;
+		return formaPago;
 	}
 
-	public void setIdFormaPago(int idFormaPago) {
+	public void setFormaPago(Pago formaPago) {
 		
-		this.idFormaPago = idFormaPago;
+		this.formaPago = formaPago;
 	}
 
-	public int getIdTipoConsumo() {
+	public ClasificacionEgreso getTipoConsumo() {
 		
-		return idTipoConsumo;
+		return tipoConsumo;
 	}
 
-	public void setIdTipoConsumo(int idTipoConsumo) {
+	public void setTipoConsumo(ClasificacionEgreso tipoConsumo) {
 		
-		this.idTipoConsumo = idTipoConsumo;
+		this.tipoConsumo = tipoConsumo;
 	}
 }

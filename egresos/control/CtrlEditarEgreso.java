@@ -11,20 +11,19 @@ import javax.swing.DefaultComboBoxModel;
 import modelo.DtosEgresos;
 import vista.Cargar;
 
-public class CtrlCargarEgreso implements ActionListener {
-
+public class CtrlEditarEgreso implements ActionListener {
+	
 	private Cargar ventana;
 	private DtosEgresos dtosEgreso;
 	private int elemento = -1;
 
-	public CtrlCargarEgreso(Cargar vista) {
+	public CtrlEditarEgreso(Cargar vista) {
 		
 		this.ventana = vista;
 		this.dtosEgreso = new DtosEgresos();
 		this.ventana.comboBoxTipo.addActionListener(this);
 		this.ventana.comboBoxPago.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
-		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
 		this.ventana.txtProv.addKeyListener(new KeyAdapter() {
 			@Override
@@ -46,12 +45,16 @@ public class CtrlCargarEgreso implements ActionListener {
 	
 	public void iniciar() {
 
-		ventana.btnNuevo.setEnabled(false);
-		ventana.txtFecha.setText(dtosEgreso.getFechaActual());
+		ventana.btnNuevo.setVisible(false);
+		ventana.txtFecha.setText(dtosEgreso.getFecha());
+		ventana.txtProv.setText(dtosEgreso.getProveedor());
 		ventana.comboBoxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago("Seleccione un método de pago.")));
-		ventana.comboBoxPago.setSelectedIndex(0);
+		ventana.comboBoxPago.setSelectedItem(dtosEgreso.getFormaPagoSeleccionada());
 		ventana.comboBoxTipo.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaDestinos("Seleccione una opción.")));
-		ventana.comboBoxTipo.setSelectedIndex(0);
+		ventana.comboBoxTipo.setSelectedItem(dtosEgreso.getDestinoConsumo());
+		ventana.txtMonto.setText(dtosEgreso.getMonto());
+		
+		
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
 		ventana.setVisible(true);
@@ -62,11 +65,6 @@ public class CtrlCargarEgreso implements ActionListener {
 		if(e.getSource() == ventana.btnGuardar) {
 			
 			guardar();
-		}
-		
-		if(e.getSource() == ventana.btnNuevo) {
-			
-			limpiar();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
@@ -97,28 +95,14 @@ public class CtrlCargarEgreso implements ActionListener {
 				dtosEgreso.setDestino(ventana.comboBoxTipo.getSelectedIndex()) && 
 				dtosEgreso.setFormaPago(ventana.comboBoxPago.getSelectedIndex()) && 
 				dtosEgreso.setMonto(ventana.txtMonto.getText()) && 
-				dtosEgreso.guardarEgreso()) {
+				dtosEgreso.actualizarEgreso()) {
 			
 			ventana.msgError.setForeground(Color.BLUE);
 			ventana.msgError.setText(dtosEgreso.getMsgError());
-			ventana.btnNuevo.setEnabled(true);
 			ventana.btnGuardar.setEnabled(false);
 			return;	
 		}
 		ventana.msgError.setForeground(Color.RED);
 		ventana.msgError.setText(dtosEgreso.getMsgError());
-	}
-	
-	private void limpiar() {
-		
-		ventana.btnNuevo.setEnabled(false);
-		ventana.btnGuardar.setEnabled(true);
-		ventana.txtFecha.setText(dtosEgreso.getFechaActual());
-		ventana.txtMonto.setText("");
-		ventana.txtProv.setText("");		
-		ventana.msgError.setText("");
-		ventana.comboBoxTipo.setSelectedIndex(0);
-		dtosEgreso.setEgreso(null);
-		actualizar();
 	}
 }

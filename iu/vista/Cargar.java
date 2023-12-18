@@ -39,14 +39,14 @@ public class Cargar extends VentanaModelo{
 		JLabel lblFecha = new JLabel("Fecha:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblFecha, 20, SpringLayout.NORTH, panel);
 		contenedor.putConstraint(SpringLayout.WEST, lblFecha, 20, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblFecha, 100, SpringLayout.WEST, panel);
+		contenedor.putConstraint(SpringLayout.EAST, lblFecha, 110, SpringLayout.WEST, panel);
 		panel.add(lblFecha);
 		
 		txtFecha = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtFecha, 0, SpringLayout.NORTH, lblFecha);
 		contenedor.putConstraint(SpringLayout.WEST, txtFecha, 10, SpringLayout.EAST, lblFecha);
 		panel.add(txtFecha);
-		txtFecha.setColumns(20);
+		txtFecha.setColumns(6);
 		
 		JLabel lblProv = new JLabel("Proveedor:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblProv, 20, SpringLayout.SOUTH, lblFecha);
@@ -69,7 +69,7 @@ public class Cargar extends VentanaModelo{
 		comboBoxPago = new JComboBox<String>();
 		contenedor.putConstraint(SpringLayout.NORTH, comboBoxPago, 0, SpringLayout.NORTH, lblFormPago);
 		contenedor.putConstraint(SpringLayout.WEST, comboBoxPago, 10, SpringLayout.EAST, lblFormPago);
-		contenedor.putConstraint(SpringLayout.EAST, comboBoxPago, 135, SpringLayout.EAST, lblFormPago);
+		contenedor.putConstraint(SpringLayout.EAST, comboBoxPago, 230, SpringLayout.EAST, lblFormPago);
 		panel.add(comboBoxPago);
 		
 		JLabel lblTipo = new JLabel("Destino:");
@@ -81,7 +81,7 @@ public class Cargar extends VentanaModelo{
 		comboBoxTipo = new JComboBox<String>();
 		contenedor.putConstraint(SpringLayout.NORTH, comboBoxTipo, 0, SpringLayout.NORTH, lblTipo);
 		contenedor.putConstraint(SpringLayout.WEST, comboBoxTipo, 10, SpringLayout.EAST, lblTipo);
-		contenedor.putConstraint(SpringLayout.EAST, comboBoxTipo, 135, SpringLayout.EAST, lblTipo);
+		contenedor.putConstraint(SpringLayout.EAST, comboBoxTipo, 230, SpringLayout.EAST, lblTipo);
 		panel.add(comboBoxTipo);
 		
 		JLabel lblMonto = new JLabel("Monto:");
@@ -97,7 +97,7 @@ public class Cargar extends VentanaModelo{
 		txtMonto.setColumns(7);
 
 		JScrollPane scrollTabla = new JScrollPane();
-		contenedor.putConstraint(SpringLayout.NORTH, scrollTabla, 0, SpringLayout.NORTH, txtProv);
+		contenedor.putConstraint(SpringLayout.NORTH, scrollTabla, 0, SpringLayout.NORTH, lblFecha);
 		contenedor.putConstraint(SpringLayout.WEST, scrollTabla, 10, SpringLayout.EAST, txtProv);
 		contenedor.putConstraint(SpringLayout.SOUTH, scrollTabla, 340, SpringLayout.NORTH, panel);
 		contenedor.putConstraint(SpringLayout.EAST, scrollTabla, -25, SpringLayout.EAST, panel);

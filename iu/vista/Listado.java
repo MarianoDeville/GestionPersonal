@@ -29,6 +29,7 @@ public class Listado extends VentanaModelo {
 		panel = new JPanel();
 		setContentPane(panel);
 		setLocation(x + 5, y + 5);
+		setSize(1000, 600);
 		SpringLayout contenedor = new SpringLayout();
 		panel.setLayout(contenedor);
 		
