@@ -11,16 +11,18 @@
 /*		Estado:					BETA.											*/
 /*		Autor:					Mariano Ariel Deville							*/
 /*		Fecha creación:			15/12/2023										*/
-/*		Última modificación:	16/12/2023										*/
+/*		Última modificación:	20/12/2023										*/
 /********************************************************************************/
 
 import control.CtrlPrincipal;
+import dao.DiscoFS;
 import vista.Principal;
 
 public class GPIyG {
 
 	public static void main(String[] args) {
 
+		DiscoFS.recuperarConfiguracion();		
 		Principal ventana = new Principal("Sistema Registral Personal de Ingresos Egresos e Inversiones");
 		CtrlPrincipal ctrlPrincipal = new CtrlPrincipal(ventana);
 		ctrlPrincipal.iniciar();

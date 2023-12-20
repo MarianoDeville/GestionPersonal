@@ -2,30 +2,28 @@ package control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
-import modelo.DtosEgresos;
+import modelo.DtosIngresos;
 import vista.Cargar;
 import vista.Listado;
 
-public class CtrlEgresos implements ActionListener {
+public class CtrlIngresos implements ActionListener {
 	
 	private Listado ventana;
-	private DtosEgresos dtosEgreso;
+	private DtosIngresos dtosIngreso;
 	private int elemento = -1;
-	private Cargar ventanaNuevoEgreso;
-	private Cargar ventanaEditarEgreso;
+	private Cargar ventanaNuevoIngreso;
+	private Cargar ventanaEditarIngreso;
 
-	public CtrlEgresos(Listado vista) {
+	public CtrlIngresos(Listado vista) {
 		
 		this.ventana = vista;
-		this.dtosEgreso = new DtosEgresos();
+		this.dtosIngreso = new DtosIngresos();
 		this.ventana.comboBoxAño.addActionListener(this);
 		this.ventana.comboBoxMes.addActionListener(this);
 		this.ventana.comboBoxTipo.addActionListener(this);
@@ -36,12 +34,6 @@ public class CtrlEgresos implements ActionListener {
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnImprimir.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
-		this.ventana.txtBusqueda.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-	
-				actualizar();
-			}
-		});
 		this.ventana.tabla.addMouseListener(new MouseAdapter() {
 		    public void mouseClicked(MouseEvent e) {
 		        if(e.getClickCount() == 2) {
@@ -55,13 +47,13 @@ public class CtrlEgresos implements ActionListener {
 	
 	public void iniciar() {
 
-		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaAños()));
+		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosIngreso.getListaAños()));
 		ventana.comboBoxAño.setSelectedIndex(0);
-		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaMeses()));
-		ventana.comboBoxMes.setSelectedIndex(dtosEgreso.getMesActual());
-		ventana.comboBoxTipo.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaDestinos("Todos")));
+		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<String>(dtosIngreso.getListaMeses()));
+		ventana.comboBoxMes.setSelectedIndex(dtosIngreso.getMesActual());
+		ventana.comboBoxTipo.setModel(new DefaultComboBoxModel<String>(dtosIngreso.getListaConceptos("Todos")));
 		ventana.comboBoxTipo.setSelectedIndex(0);
-		ventana.comboBoxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago("Todos")));
+		ventana.comboBoxPago.setModel(new DefaultComboBoxModel<String>(dtosIngreso.getFormasCobro("Todos")));
 		ventana.comboBoxPago.setSelectedIndex(0);
 		ventana.chkBxDolares.setSelected(true);
 		ventana.chkBxEuros.setSelected(true);
@@ -91,11 +83,11 @@ public class CtrlEgresos implements ActionListener {
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
-			if(ventanaEditarEgreso != null)
-				ventanaEditarEgreso.dispose();
+			if(ventanaEditarIngreso != null)
+				ventanaEditarIngreso.dispose();
 			
-			if(ventanaNuevoEgreso != null)
-				ventanaNuevoEgreso.dispose();
+			if(ventanaNuevoIngreso != null)
+				ventanaNuevoIngreso.dispose();
 			ventana.dispose();
 			return;
 		}
@@ -121,30 +113,30 @@ public class CtrlEgresos implements ActionListener {
 		
 		DefaultTableCellRenderer derecha = new DefaultTableCellRenderer();
 		derecha.setHorizontalAlignment(JLabel.RIGHT);
-		ventana.tabla.setModel(dtosEgreso.getTablaEgresos((String)ventana.comboBoxAño.getSelectedItem(), 
+		ventana.tabla.setModel(dtosIngreso.getTablaIngresos((String)ventana.comboBoxAño.getSelectedItem(), 
 														  ventana.comboBoxMes.getSelectedIndex(), 
 														  ventana.comboBoxTipo.getSelectedIndex(), 
 														  ventana.comboBoxPago.getSelectedIndex(), 
 														  monedas ,
 														  ventana.txtBusqueda.getText()));
 		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(70);
-		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);
-		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(80);
-		ventana.tabla.getColumnModel().getColumn(3).setMinWidth(80);
-		ventana.tabla.getColumnModel().getColumn(3).setMaxWidth(150);
-		ventana.tabla.getColumnModel().getColumn(3).setPreferredWidth(90);
-		ventana.tabla.getColumnModel().getColumn(3).setCellRenderer(derecha);
+		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(90);
+		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(70);
 		ventana.tabla.getColumnModel().getColumn(4).setMinWidth(80);
 		ventana.tabla.getColumnModel().getColumn(4).setMaxWidth(150);
 		ventana.tabla.getColumnModel().getColumn(4).setPreferredWidth(90);
 		ventana.tabla.getColumnModel().getColumn(4).setCellRenderer(derecha);
-		ventana.tabla.getColumnModel().getColumn(5).setMinWidth(100);
+		ventana.tabla.getColumnModel().getColumn(5).setMinWidth(80);
 		ventana.tabla.getColumnModel().getColumn(5).setMaxWidth(150);
-		ventana.tabla.getColumnModel().getColumn(5).setPreferredWidth(110);
+		ventana.tabla.getColumnModel().getColumn(5).setPreferredWidth(90);
 		ventana.tabla.getColumnModel().getColumn(5).setCellRenderer(derecha);
+		ventana.tabla.getColumnModel().getColumn(6).setMinWidth(80);
+		ventana.tabla.getColumnModel().getColumn(6).setMaxWidth(110);
+		ventana.tabla.getColumnModel().getColumn(6).setPreferredWidth(90);
+		ventana.tabla.getColumnModel().getColumn(6).setCellRenderer(derecha);
 		ventana.tabla.setDefaultEditor(Object.class, null);
-		ventana.txtCant.setText(dtosEgreso.getCantidadElementos());
-		ventana.txtSuma.setText(dtosEgreso.getSuma());
+		ventana.txtCant.setText(dtosIngreso.getCantidadElementos());
+		ventana.txtSuma.setText(dtosIngreso.getSuma());
 		elemento = -1;
 	}
 	
@@ -152,24 +144,24 @@ public class CtrlEgresos implements ActionListener {
 		
 		if(elemento == -1)
 			return;
-		dtosEgreso.seleccionarEgreso(elemento);
+		dtosIngreso.seleccionarIngreso(elemento);
 		elemento = -1;
 		
-		if(ventanaEditarEgreso != null)
-			ventanaEditarEgreso.dispose();
-		ventanaEditarEgreso = new Cargar("Editar egreso de dinero", ventana.getX(), ventana.getY());
-		ventanaEditarEgreso.btnVolver.addActionListener(this);
-		CtrlEditarEgreso ctrlEditarEgreso = new CtrlEditarEgreso(ventanaEditarEgreso);
-		ctrlEditarEgreso.iniciar();
+		if(ventanaEditarIngreso != null)
+			ventanaEditarIngreso.dispose();
+		ventanaEditarIngreso = new Cargar("Editar ingreso de dinero", ventana.getX(), ventana.getY());
+		ventanaEditarIngreso.btnVolver.addActionListener(this);
+		CtrlEditarIngreso ctrlEditarIngreso = new CtrlEditarIngreso(ventanaEditarIngreso);
+		ctrlEditarIngreso.iniciar();
 	}
 	
 	private void nuevo() {
 		
-		if(ventanaNuevoEgreso != null)
-			ventanaNuevoEgreso.dispose();
-		ventanaNuevoEgreso = new Cargar("Carga de un nuevo egreso de dinero", ventana.getX(), ventana.getY());
-		ventanaNuevoEgreso.btnVolver.addActionListener(this);
-		CtrlCargarEgreso ctrlCargarEgreso = new CtrlCargarEgreso(ventanaNuevoEgreso);
-		ctrlCargarEgreso.iniciar();
+		if(ventanaNuevoIngreso != null)
+			ventanaNuevoIngreso.dispose();
+		ventanaNuevoIngreso = new Cargar("Carga de un nuevo ingreso de dinero", ventana.getX(), ventana.getY());
+		ventanaNuevoIngreso.btnVolver.addActionListener(this);
+		CtrlCargarIngreso ctrlCargarIngreso = new CtrlCargarIngreso(ventanaNuevoIngreso);
+		ctrlCargarIngreso.iniciar();
 	}
 }

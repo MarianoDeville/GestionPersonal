@@ -21,8 +21,9 @@ public class CtrlEditarEgreso implements ActionListener {
 		
 		this.ventana = vista;
 		this.dtosEgreso = new DtosEgresos();
-		this.ventana.comboBoxTipo.addActionListener(this);
-		this.ventana.comboBoxPago.addActionListener(this);
+		this.ventana.cmbBxTipo.addActionListener(this);
+		this.ventana.cmbBxPago.addActionListener(this);
+		this.ventana.cmbBxMoneda.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
 		this.ventana.txtProv.addKeyListener(new KeyAdapter() {
@@ -48,19 +49,32 @@ public class CtrlEditarEgreso implements ActionListener {
 		ventana.btnNuevo.setVisible(false);
 		ventana.txtFecha.setText(dtosEgreso.getFecha());
 		ventana.txtProv.setText(dtosEgreso.getProveedor());
-		ventana.comboBoxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago("Seleccione un método de pago.")));
-		ventana.comboBoxPago.setSelectedItem(dtosEgreso.getFormaPagoSeleccionada());
-		ventana.comboBoxTipo.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaDestinos("Seleccione una opción.")));
-		ventana.comboBoxTipo.setSelectedItem(dtosEgreso.getDestinoConsumo());
+		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago("Seleccione un método de pago.")));
+		ventana.cmbBxPago.setSelectedItem(dtosEgreso.getFormaPagoSeleccionada());
+		ventana.cmbBxTipo.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaDestinos("Seleccione una opción.")));
+		ventana.cmbBxTipo.setSelectedItem(dtosEgreso.getDestinoConsumo());
 		ventana.txtMonto.setText(dtosEgreso.getMonto());
+		ventana.cmbBxMoneda.setSelectedItem(dtosEgreso.getMoneda());
 		
-		
+		if(!dtosEgreso.getMoneda().equals("Pesos"))
+			ventana.txtCotizacion.setText(dtosEgreso.getCotizacion());
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
 		ventana.setVisible(true);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		
+		
+		if(e.getSource() == ventana.txtProv) {
+			
+			actualizar();
+		}
+		
+		if(e.getSource() == ventana.cmbBxMoneda) {
+
+			moneda();
+		}
 		
 		if(e.getSource() == ventana.btnGuardar) {
 			
@@ -70,11 +84,6 @@ public class CtrlEditarEgreso implements ActionListener {
 		if(e.getSource() == ventana.btnVolver) {
 			
 			ventana.dispose();
-		}
-		
-		if(e.getSource() == ventana.txtProv) {
-			
-			actualizar();
 		}
 	}
 	
@@ -89,12 +98,23 @@ public class CtrlEditarEgreso implements ActionListener {
 		ventana.tabla.setModel(dtosEgreso.getListaProveedores(ventana.txtProv.getText()));
 	}
 	
+	private void moneda() {
+
+		if(ventana.cmbBxMoneda.getSelectedItem().equals("Pesos"))
+			ventana.txtCotizacion.setEditable(false);
+		else
+			ventana.txtCotizacion.setEditable(true);
+	}
+	
 	private void guardar() {
 		
+		dtosEgreso.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
+		
 		if(dtosEgreso.setFecha(ventana.txtFecha.getText()) && 
-				dtosEgreso.setDestino(ventana.comboBoxTipo.getSelectedIndex()) && 
-				dtosEgreso.setFormaPago(ventana.comboBoxPago.getSelectedIndex()) && 
+				dtosEgreso.setDestino(ventana.cmbBxTipo.getSelectedIndex()) && 
+				dtosEgreso.setFormaPago(ventana.cmbBxPago.getSelectedIndex()) && 
 				dtosEgreso.setMonto(ventana.txtMonto.getText()) && 
+				dtosEgreso.setCotizacion(ventana.txtCotizacion.getText()) && 
 				dtosEgreso.actualizarEgreso()) {
 			
 			ventana.msgError.setForeground(Color.BLUE);

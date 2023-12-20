@@ -9,6 +9,7 @@ public class CtrlPrincipal implements ActionListener {
 	
 	private Principal ventana;
 	private Listado ventanaEgresos;
+	private Listado ventanaIngresos;
 
 	public CtrlPrincipal(Principal vista) {
 		
@@ -67,6 +68,14 @@ public class CtrlPrincipal implements ActionListener {
 	
 	private void ingresos() {
 		
+		if(ventanaIngresos != null) {
+			
+			ventanaIngresos.setVisible(true);
+			return;
+		}
+		ventanaIngresos = new Listado("Gestión de ingresos", ventana.getX(), ventana.getY());
+		CtrlIngresos ctrlIngresos = new CtrlIngresos(ventanaIngresos);
+		ctrlIngresos.iniciar();		
 	}
 	
 	private void inversiones() {

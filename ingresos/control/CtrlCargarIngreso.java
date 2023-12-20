@@ -8,19 +8,19 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
-import modelo.DtosEgresos;
+import modelo.DtosIngresos;
 import vista.Cargar;
 
-public class CtrlCargarEgreso implements ActionListener {
+public class CtrlCargarIngreso implements ActionListener {
 
 	private Cargar ventana;
-	private DtosEgresos dtosEgreso;
+	private DtosIngresos dtosIngreso;
 	private int elemento = -1;
 
-	public CtrlCargarEgreso(Cargar vista) {
+	public CtrlCargarIngreso(Cargar vista) {
 		
 		this.ventana = vista;
-		this.dtosEgreso = new DtosEgresos();
+		this.dtosIngreso = new DtosIngresos();
 		this.ventana.cmbBxTipo.addActionListener(this);
 		this.ventana.cmbBxPago.addActionListener(this);
 		this.ventana.cmbBxMoneda.addActionListener(this);
@@ -48,10 +48,12 @@ public class CtrlCargarEgreso implements ActionListener {
 	public void iniciar() {
 
 		ventana.btnNuevo.setEnabled(false);
-		ventana.txtFecha.setText(dtosEgreso.getFechaActual());
-		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago("Seleccione un método de pago.")));
+		ventana.lblProv.setText("Fuente:");
+		ventana.lblTipo.setText("Concepto:");
+		ventana.txtFecha.setText(dtosIngreso.getFechaActual());
+		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<String>(dtosIngreso.getFormasCobro("Seleccione un método de pago.")));
 		ventana.cmbBxPago.setSelectedIndex(0);
-		ventana.cmbBxTipo.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaDestinos("Seleccione una opción.")));
+		ventana.cmbBxTipo.setModel(new DefaultComboBoxModel<String>(dtosIngreso.getListaConceptos("Seleccione una opción.")));
 		ventana.cmbBxTipo.setSelectedIndex(0);
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
@@ -91,10 +93,10 @@ public class CtrlCargarEgreso implements ActionListener {
 		if(elemento != -1 ) {
 			
 			ventana.txtProv.setText((String)ventana.tabla.getValueAt(elemento, 0));
-			dtosEgreso.setProveedor(elemento);
+			dtosIngreso.setFuente(elemento);
 			elemento = -1;
 		}
-		ventana.tabla.setModel(dtosEgreso.getListaProveedores(ventana.txtProv.getText()));
+		ventana.tabla.setModel(dtosIngreso.getListaFuentes(ventana.txtProv.getText()));
 	}
 	
 	private void moneda() {
@@ -107,35 +109,35 @@ public class CtrlCargarEgreso implements ActionListener {
 	
 	private void guardar() {
 		
-		dtosEgreso.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
+		dtosIngreso.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
 			
-		if(dtosEgreso.setFecha(ventana.txtFecha.getText()) && 
-				dtosEgreso.setDestino(ventana.cmbBxTipo.getSelectedIndex()) && 
-				dtosEgreso.setFormaPago(ventana.cmbBxPago.getSelectedIndex()) && 
-				dtosEgreso.setMonto(ventana.txtMonto.getText()) &&
-				dtosEgreso.setCotizacion(ventana.txtCotizacion.getText()) && 
-				dtosEgreso.guardarEgreso()) {
+		if(dtosIngreso.setFecha(ventana.txtFecha.getText()) && 
+				dtosIngreso.setDestino(ventana.cmbBxTipo.getSelectedIndex()) && 
+				dtosIngreso.setFormaPago(ventana.cmbBxPago.getSelectedIndex()) && 
+				dtosIngreso.setMonto(ventana.txtMonto.getText()) &&
+				dtosIngreso.setCotizacion(ventana.txtCotizacion.getText()) && 
+				dtosIngreso.guardarIngreso()) {
 			
 			ventana.msgError.setForeground(Color.BLUE);
-			ventana.msgError.setText(dtosEgreso.getMsgError());
+			ventana.msgError.setText(dtosIngreso.getMsgError());
 			ventana.btnNuevo.setEnabled(true);
 			ventana.btnGuardar.setEnabled(false);
 			return;	
 		}
 		ventana.msgError.setForeground(Color.RED);
-		ventana.msgError.setText(dtosEgreso.getMsgError());
+		ventana.msgError.setText(dtosIngreso.getMsgError());
 	}
 	
 	private void limpiar() {
 		
 		ventana.btnNuevo.setEnabled(false);
 		ventana.btnGuardar.setEnabled(true);
-		ventana.txtFecha.setText(dtosEgreso.getFechaActual());
+		ventana.txtFecha.setText(dtosIngreso.getFechaActual());
 		ventana.txtMonto.setText("");
 		ventana.txtProv.setText("");		
 		ventana.msgError.setText("");
 		ventana.cmbBxTipo.setSelectedIndex(0);
-		dtosEgreso.setEgreso(null);
+		dtosIngreso.setIngreso(null);
 		actualizar();
 	}
 }

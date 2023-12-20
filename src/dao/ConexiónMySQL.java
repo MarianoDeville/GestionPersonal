@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import modelo.DtosConfiguracion;
 
-public class ConexiónMySQL {
+public class ConexiónMySQL{
 	
 	protected Connection conexion;
 
@@ -14,7 +14,7 @@ public class ConexiónMySQL {
 	
 		try {
 			
-			conexion = DriverManager.getConnection(url, DtosConfiguracion.getUsuarioBD(), DtosConfiguracion.getPassDB());
+			conexion = DriverManager.getConnection(url, DtosConfiguracion.getUsuarioBD(), DtosConfiguracion.getPassBD());
 			Class.forName("com.mysql.cj.jdbc.Driver");
 		} catch (Exception e) {
 			

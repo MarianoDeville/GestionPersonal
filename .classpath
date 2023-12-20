@@ -6,9 +6,11 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="iu"/>
+	<classpathentry kind="src" path="ui"/>
 	<classpathentry kind="src" path="egresos"/>
 	<classpathentry kind="src" path="ingresos"/>
+	<classpathentry kind="src" path="analisis"/>
+	<classpathentry kind="src" path="inversiones"/>
 	<classpathentry kind="lib" path="Librerias/mysql-connector-java-8.0.21.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

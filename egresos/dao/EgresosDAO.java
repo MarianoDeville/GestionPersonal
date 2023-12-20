@@ -11,7 +11,7 @@ public interface EgresosDAO {
 	public ClasificacionEgreso [] getDestino();
 	public Pago [] getMetodosPagos();
 	public Proveedor [] getListaProveedores(String filtro);
-	public Egreso [] getListadoEgresos(String año, int mes, int idTipoConsumo, int idFormaPago);
+	public Egreso [] getListadoEgresos(String año, int mes, int idTipoConsumo, int idFormaPago, String moneda, String filtro);
 	public boolean nuevoEgreso(Egreso egreso);
 	public boolean updateEgreso(Egreso egreso);
 }

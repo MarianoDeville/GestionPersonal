@@ -4,7 +4,9 @@ public class Egreso {
 
 	private int id;
 	private String fecha;
-	private float monto;
+	private double monto;
+	private String moneda;
+	private float cotizacion;
 	private Proveedor proveedor;
 	private Pago formaPago;
 	private ClasificacionEgreso tipoConsumo;
@@ -29,14 +31,34 @@ public class Egreso {
 		this.fecha = fecha;
 	}
 
-	public float getMonto() {
+	public double getMonto() {
 		
 		return monto;
 	}
 
-	public void setMonto(float monto) {
+	public void setMonto(double monto) {
 		
 		this.monto = monto;
+	}
+	
+	public String getMoneda() {
+		
+		return moneda;
+	}
+
+	public void setMoneda(String moneda) {
+		
+		this.moneda = moneda;
+	}
+
+	public float getCotizacion() {
+		
+		return cotizacion;
+	}
+
+	public void setCotizacion(float cotizacion) {
+		
+		this.cotizacion = cotizacion;
 	}
 
 	public Proveedor getProveedor() {

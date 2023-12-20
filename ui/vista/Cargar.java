@@ -16,11 +16,15 @@ public class Cargar extends VentanaModelo{
 	private JPanel panel;
 	public JTable tabla;
 	public JLabel msgError;
+	public JLabel lblProv;
+	public JLabel lblTipo;
 	public JTextField txtFecha;
 	public JTextField txtProv;
 	public JTextField txtMonto;
-	public JComboBox<String> comboBoxPago;
-	public JComboBox<String> comboBoxTipo;
+	public JTextField txtCotizacion;
+	public JComboBox<String> cmbBxPago;
+	public JComboBox<String> cmbBxTipo;
+	public JComboBox<String> cmbBxMoneda;
 	public JButton btnGuardar;
 	public JButton btnNuevo;
 	public JButton btnVolver;
@@ -48,8 +52,8 @@ public class Cargar extends VentanaModelo{
 		panel.add(txtFecha);
 		txtFecha.setColumns(6);
 		
-		JLabel lblProv = new JLabel("Proveedor:");
-		contenedor.putConstraint(SpringLayout.NORTH, lblProv, 20, SpringLayout.SOUTH, lblFecha);
+		lblProv = new JLabel("Proveedor:");
+		contenedor.putConstraint(SpringLayout.NORTH, lblProv, 30, SpringLayout.SOUTH, lblFecha);
 		contenedor.putConstraint(SpringLayout.WEST, lblProv, 0, SpringLayout.WEST, lblFecha);
 		contenedor.putConstraint(SpringLayout.EAST, lblProv, 0, SpringLayout.EAST, lblFecha);
 		panel.add(lblProv);
@@ -61,31 +65,33 @@ public class Cargar extends VentanaModelo{
 		txtProv.setColumns(20);
 		
 		JLabel lblFormPago = new JLabel("Forma de pago:");
-		contenedor.putConstraint(SpringLayout.NORTH, lblFormPago, 20, SpringLayout.SOUTH, lblProv);
+		contenedor.putConstraint(SpringLayout.NORTH, lblFormPago, 30, SpringLayout.SOUTH, lblProv);
 		contenedor.putConstraint(SpringLayout.WEST, lblFormPago, 0, SpringLayout.WEST, lblProv);
 		contenedor.putConstraint(SpringLayout.EAST, lblFormPago, 0, SpringLayout.EAST, lblProv);
 		panel.add(lblFormPago);		
 		
-		comboBoxPago = new JComboBox<String>();
-		contenedor.putConstraint(SpringLayout.NORTH, comboBoxPago, 0, SpringLayout.NORTH, lblFormPago);
-		contenedor.putConstraint(SpringLayout.WEST, comboBoxPago, 10, SpringLayout.EAST, lblFormPago);
-		contenedor.putConstraint(SpringLayout.EAST, comboBoxPago, 230, SpringLayout.EAST, lblFormPago);
-		panel.add(comboBoxPago);
+		cmbBxPago = new JComboBox<String>();
+		contenedor.putConstraint(SpringLayout.NORTH, cmbBxPago, 0, SpringLayout.NORTH, lblFormPago);
+		contenedor.putConstraint(SpringLayout.WEST, cmbBxPago, 10, SpringLayout.EAST, lblFormPago);
+		contenedor.putConstraint(SpringLayout.EAST, cmbBxPago, 230, SpringLayout.EAST, lblFormPago);
+		contenedor.putConstraint(SpringLayout.SOUTH, cmbBxPago, 20, SpringLayout.NORTH, lblFormPago);
+		panel.add(cmbBxPago);
 		
-		JLabel lblTipo = new JLabel("Destino:");
-		contenedor.putConstraint(SpringLayout.NORTH, lblTipo, 20, SpringLayout.SOUTH, lblFormPago);
+		lblTipo = new JLabel("Destino:");
+		contenedor.putConstraint(SpringLayout.NORTH, lblTipo, 30, SpringLayout.SOUTH, lblFormPago);
 		contenedor.putConstraint(SpringLayout.WEST, lblTipo, 0, SpringLayout.WEST, lblFormPago);
 		contenedor.putConstraint(SpringLayout.EAST, lblTipo, 0, SpringLayout.EAST, lblFormPago);
 		panel.add(lblTipo);		
 		
-		comboBoxTipo = new JComboBox<String>();
-		contenedor.putConstraint(SpringLayout.NORTH, comboBoxTipo, 0, SpringLayout.NORTH, lblTipo);
-		contenedor.putConstraint(SpringLayout.WEST, comboBoxTipo, 10, SpringLayout.EAST, lblTipo);
-		contenedor.putConstraint(SpringLayout.EAST, comboBoxTipo, 230, SpringLayout.EAST, lblTipo);
-		panel.add(comboBoxTipo);
+		cmbBxTipo = new JComboBox<String>();
+		contenedor.putConstraint(SpringLayout.NORTH, cmbBxTipo, 0, SpringLayout.NORTH, lblTipo);
+		contenedor.putConstraint(SpringLayout.WEST, cmbBxTipo, 10, SpringLayout.EAST, lblTipo);
+		contenedor.putConstraint(SpringLayout.EAST, cmbBxTipo, 230, SpringLayout.EAST, lblTipo);
+		contenedor.putConstraint(SpringLayout.SOUTH, cmbBxTipo, 20, SpringLayout.NORTH, lblTipo);
+		panel.add(cmbBxTipo);
 		
 		JLabel lblMonto = new JLabel("Monto:");
-		contenedor.putConstraint(SpringLayout.NORTH, lblMonto, 20, SpringLayout.SOUTH, lblTipo);
+		contenedor.putConstraint(SpringLayout.NORTH, lblMonto, 30, SpringLayout.SOUTH, lblTipo);
 		contenedor.putConstraint(SpringLayout.WEST, lblMonto, 0, SpringLayout.WEST, lblTipo);
 		contenedor.putConstraint(SpringLayout.EAST, lblMonto, 0, SpringLayout.EAST, lblTipo);
 		panel.add(lblMonto);
@@ -95,6 +101,26 @@ public class Cargar extends VentanaModelo{
 		contenedor.putConstraint(SpringLayout.WEST, txtMonto, 10, SpringLayout.EAST, lblMonto);
 		panel.add(txtMonto);
 		txtMonto.setColumns(7);
+		
+		cmbBxMoneda = new JComboBox<String>(new String[] {"Pesos", "Dólares", "Euros"});
+		contenedor.putConstraint(SpringLayout.NORTH, cmbBxMoneda, 0, SpringLayout.NORTH, txtMonto);
+		contenedor.putConstraint(SpringLayout.WEST, cmbBxMoneda, 10, SpringLayout.EAST, txtMonto);
+		contenedor.putConstraint(SpringLayout.EAST, cmbBxMoneda, 100, SpringLayout.EAST, txtMonto);
+		contenedor.putConstraint(SpringLayout.SOUTH, cmbBxMoneda, 20, SpringLayout.NORTH, txtMonto);
+		panel.add(cmbBxMoneda);
+		
+		JLabel lblCotizacion = new JLabel("Cotización:");
+		contenedor.putConstraint(SpringLayout.NORTH, lblCotizacion, 30, SpringLayout.SOUTH, lblMonto);
+		contenedor.putConstraint(SpringLayout.WEST, lblCotizacion, 0, SpringLayout.WEST, lblMonto);
+		contenedor.putConstraint(SpringLayout.EAST, lblCotizacion, 0, SpringLayout.EAST, lblMonto);
+		panel.add(lblCotizacion);
+		
+		txtCotizacion = new JTextField();
+		contenedor.putConstraint(SpringLayout.NORTH, txtCotizacion, 0, SpringLayout.NORTH, lblCotizacion);
+		contenedor.putConstraint(SpringLayout.WEST, txtCotizacion, 10, SpringLayout.EAST, lblCotizacion);
+		panel.add(txtCotizacion);
+		txtCotizacion.setColumns(7);
+		txtCotizacion.setEditable(false);
 
 		JScrollPane scrollTabla = new JScrollPane();
 		contenedor.putConstraint(SpringLayout.NORTH, scrollTabla, 0, SpringLayout.NORTH, lblFecha);
