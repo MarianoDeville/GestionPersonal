@@ -14,6 +14,7 @@ public class Cargar extends VentanaModelo{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panel;
+	public JScrollPane scrollTabla;
 	public JTable tabla;
 	public JLabel msgError;
 	public JLabel lblProv;
@@ -122,7 +123,7 @@ public class Cargar extends VentanaModelo{
 		txtCotizacion.setColumns(7);
 		txtCotizacion.setEditable(false);
 
-		JScrollPane scrollTabla = new JScrollPane();
+		scrollTabla = new JScrollPane();
 		contenedor.putConstraint(SpringLayout.NORTH, scrollTabla, 0, SpringLayout.NORTH, lblFecha);
 		contenedor.putConstraint(SpringLayout.WEST, scrollTabla, 10, SpringLayout.EAST, txtProv);
 		contenedor.putConstraint(SpringLayout.SOUTH, scrollTabla, 340, SpringLayout.NORTH, panel);

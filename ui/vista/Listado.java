@@ -28,8 +28,10 @@ public class Listado extends VentanaModelo {
 	public JCheckBox chkBxDolares;
 	public JCheckBox chkBxEuros;
 	public JButton btnNuevo;
+	public JButton btnCargar;
 	public JButton btnImprimir;
 	public JButton btnVolver;
+	public JButton btnGuardar;
 	
 	public Listado(String nombreVentana, int x, int y) {
 		
@@ -45,13 +47,13 @@ public class Listado extends VentanaModelo {
 		comboBoxAño = new JComboBox<String>();
 		contenedor.putConstraint(SpringLayout.NORTH, comboBoxAño, 10, SpringLayout.NORTH, panel);
 		contenedor.putConstraint(SpringLayout.WEST, comboBoxAño, 10, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, comboBoxAño, 80, SpringLayout.WEST, panel);
+		contenedor.putConstraint(SpringLayout.EAST, comboBoxAño, 75, SpringLayout.WEST, panel);
 		panel.add(comboBoxAño);
 		
 		comboBoxMes = new JComboBox<String>();
 		contenedor.putConstraint(SpringLayout.NORTH, comboBoxMes, 0, SpringLayout.NORTH, comboBoxAño);
 		contenedor.putConstraint(SpringLayout.WEST, comboBoxMes, 20, SpringLayout.EAST, comboBoxAño);
-		contenedor.putConstraint(SpringLayout.EAST, comboBoxMes, 110, SpringLayout.EAST, comboBoxAño);
+		contenedor.putConstraint(SpringLayout.EAST, comboBoxMes, 115, SpringLayout.EAST, comboBoxAño);
 		panel.add(comboBoxMes);
 		
 		comboBoxTipo = new JComboBox<String>();
@@ -109,33 +111,40 @@ public class Listado extends VentanaModelo {
 		contenedor.putConstraint(SpringLayout.WEST, btnNuevo, -100, SpringLayout.EAST, panel);
 		panel.add(btnNuevo);
 		
+		btnCargar = new JButton("Cargar");
+		contenedor.putConstraint(SpringLayout.NORTH, btnCargar, 15, SpringLayout.SOUTH, btnNuevo);
+		contenedor.putConstraint(SpringLayout.EAST, btnCargar, 0, SpringLayout.EAST, btnNuevo);
+		contenedor.putConstraint(SpringLayout.WEST, btnCargar, 0, SpringLayout.WEST, btnNuevo);
+		panel.add(btnCargar);
+		btnCargar.setVisible(false);
+		
 		chkBxPesos = new JCheckBox("Pesos");
-		contenedor.putConstraint(SpringLayout.NORTH, chkBxPesos, 10, SpringLayout.SOUTH, btnNuevo);
+		contenedor.putConstraint(SpringLayout.NORTH, chkBxPesos, 15, SpringLayout.SOUTH, btnCargar);
 		contenedor.putConstraint(SpringLayout.EAST, chkBxPesos, 0, SpringLayout.EAST, btnNuevo);
 		contenedor.putConstraint(SpringLayout.WEST, chkBxPesos, 0, SpringLayout.WEST, btnNuevo);
 		panel.add(chkBxPesos);
 		chkBxPesos.setSelected(true);
 
 		chkBxDolares = new JCheckBox("Dólares");
-		contenedor.putConstraint(SpringLayout.NORTH, chkBxDolares, 10, SpringLayout.SOUTH, chkBxPesos);
+		contenedor.putConstraint(SpringLayout.NORTH, chkBxDolares, 15, SpringLayout.SOUTH, chkBxPesos);
 		contenedor.putConstraint(SpringLayout.EAST, chkBxDolares, 0, SpringLayout.EAST, btnNuevo);
 		contenedor.putConstraint(SpringLayout.WEST, chkBxDolares, 0, SpringLayout.WEST, btnNuevo);
 		panel.add(chkBxDolares);
 		
 		chkBxEuros = new JCheckBox("Euros");
-		contenedor.putConstraint(SpringLayout.NORTH, chkBxEuros, 10, SpringLayout.SOUTH, chkBxDolares);
+		contenedor.putConstraint(SpringLayout.NORTH, chkBxEuros, 15, SpringLayout.SOUTH, chkBxDolares);
 		contenedor.putConstraint(SpringLayout.EAST, chkBxEuros, 0, SpringLayout.EAST, btnNuevo);
 		contenedor.putConstraint(SpringLayout.WEST, chkBxEuros, 0, SpringLayout.WEST, btnNuevo);
 		panel.add(chkBxEuros);
 		
 		txtBusqueda = new JTextField();
-		contenedor.putConstraint(SpringLayout.NORTH, txtBusqueda, 10, SpringLayout.SOUTH, chkBxEuros);
+		contenedor.putConstraint(SpringLayout.NORTH, txtBusqueda, 15, SpringLayout.SOUTH, chkBxEuros);
 		contenedor.putConstraint(SpringLayout.WEST, txtBusqueda, 0, SpringLayout.WEST, chkBxEuros);
 		txtBusqueda.setColumns(7);
 		panel.add(txtBusqueda);
 		
 		btnImprimir = new JButton("Imprimir");
-		contenedor.putConstraint(SpringLayout.NORTH, btnImprimir, 30, SpringLayout.SOUTH, txtBusqueda);
+		contenedor.putConstraint(SpringLayout.NORTH, btnImprimir, 15, SpringLayout.SOUTH, txtBusqueda);
 		contenedor.putConstraint(SpringLayout.EAST, btnImprimir, 0, SpringLayout.EAST, btnNuevo);
 		contenedor.putConstraint(SpringLayout.WEST, btnImprimir, 0, SpringLayout.WEST, btnNuevo);
 		panel.add(btnImprimir);	
@@ -145,5 +154,12 @@ public class Listado extends VentanaModelo {
 		contenedor.putConstraint(SpringLayout.EAST, btnVolver, 0, SpringLayout.EAST, btnNuevo);
 		contenedor.putConstraint(SpringLayout.WEST, btnVolver, 0, SpringLayout.WEST, btnNuevo);
 		panel.add(btnVolver);
+		
+		btnGuardar = new JButton("Guardar");
+		contenedor.putConstraint(SpringLayout.SOUTH, btnGuardar, -15, SpringLayout.NORTH, btnVolver);
+		contenedor.putConstraint(SpringLayout.EAST, btnGuardar, 0, SpringLayout.EAST, btnNuevo);
+		contenedor.putConstraint(SpringLayout.WEST, btnGuardar, 0, SpringLayout.WEST, btnNuevo);
+		panel.add(btnGuardar);
+		btnGuardar.setVisible(false);
 	}
 }

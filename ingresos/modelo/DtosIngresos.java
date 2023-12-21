@@ -17,7 +17,6 @@ public class DtosIngresos {
 	private double suma;
 	private int cantidadElementos;
 	private String msgError;
-	
 	private Calendar calendario;
 	
 	public String [] getListaAños() {
