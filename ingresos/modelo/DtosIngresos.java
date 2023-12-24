@@ -177,6 +177,16 @@ public class DtosIngresos {
 		ingreso.setMoneda(moneda);
 	}
 	
+	public String getComentario() {
+		
+		return ingreso.getComentario();
+	}
+	
+	public void setComentario(String comentario) {
+		
+		ingreso.setComentario(comentario);
+	}
+	
 	public boolean setFecha(String fecha) {
 		
 		if(ingreso == null)

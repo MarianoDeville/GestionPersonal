@@ -110,6 +110,7 @@ public class CtrlCargarIngreso implements ActionListener {
 	private void guardar() {
 		
 		dtosIngreso.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
+		dtosIngreso.setComentario(ventana.txtComentario.getText());
 			
 		if(dtosIngreso.setFecha(ventana.txtFecha.getText()) && 
 				dtosIngreso.setDestino(ventana.cmbBxTipo.getSelectedIndex()) && 

@@ -96,28 +96,33 @@ public class DtosEgresos {
 		cantidadElementos = 0;
 		egresos = egresosDAO.getListadoEgresos(año, mes, idDestino, idFormaPago, monedas, filtro);
 		String titulo[] = {"Fecha", "Nombre", "Forma de pago", "Dólares", "Euros", "Monto en pesos"};
-		String tabla[][] = new String [egresos.length][6];
+		String tabla[][] = null;
 		
-		for(int i = 0; i < tabla.length; i++) {
+		if(egresos != null) {
 		
-			tabla[i][0] = egresos[i].getFecha();
-			tabla[i][1] = egresos[i].getProveedor().getNombre();
-			tabla[i][2] = egresos[i].getFormaPago().getDescripcion();
+			tabla = new String [egresos.length][6];
 			
-			if(egresos[i].getMoneda().equals("Pesos")) {
+			for(int i = 0; i < tabla.length; i++) {
+			
+				tabla[i][0] = egresos[i].getFecha();
+				tabla[i][1] = egresos[i].getProveedor().getNombre();
+				tabla[i][2] = egresos[i].getFormaPago().getDescripcion();
 				
-				tabla[i][5] = String.format("%.2f", egresos[i].getMonto());
-				suma += egresos[i].getMonto();
-			} else if(egresos[i].getMoneda().equals("Dólares")) {
-				
-				tabla[i][3] = String.format("%.2f", egresos[i].getMonto());
-				tabla[i][5] = String.format("%.2f", egresos[i].getMonto() * egresos[i].getCotizacion());
-				suma += egresos[i].getMonto() * egresos[i].getCotizacion();
-			}else if(egresos[i].getMoneda().equals("Euros")) {
-				
-				tabla[i][4] = String.format("%.2f", egresos[i].getMonto());
-				tabla[i][5] = String.format("%.2f", egresos[i].getMonto() * egresos[i].getCotizacion());
-				suma += egresos[i].getMonto() * egresos[i].getCotizacion();
+				if(egresos[i].getMoneda().equals("Pesos")) {
+					
+					tabla[i][5] = String.format("%.2f", egresos[i].getMonto());
+					suma += egresos[i].getMonto();
+				} else if(egresos[i].getMoneda().equals("Dólares")) {
+					
+					tabla[i][3] = String.format("%.2f", egresos[i].getMonto());
+					tabla[i][5] = String.format("%.2f", egresos[i].getMonto() * egresos[i].getCotizacion());
+					suma += egresos[i].getMonto() * egresos[i].getCotizacion();
+				}else if(egresos[i].getMoneda().equals("Euros")) {
+					
+					tabla[i][4] = String.format("%.2f", egresos[i].getMonto());
+					tabla[i][5] = String.format("%.2f", egresos[i].getMonto() * egresos[i].getCotizacion());
+					suma += egresos[i].getMonto() * egresos[i].getCotizacion();
+				}
 			}
 		}
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
@@ -332,6 +337,16 @@ public class DtosEgresos {
 		if(egreso == null)
 			egreso = new Egreso();
 		egreso.setMoneda(moneda);
+	}
+	
+	public String getComentario() {
+		
+		return egreso.getComentario();
+	}
+	
+	public void setComentario(String comentario) {
+		
+		egreso.setComentario(comentario);
 	}
 	
 	public boolean setCotizacion(String cotizacion) {

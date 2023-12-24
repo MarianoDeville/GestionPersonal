@@ -4,9 +4,10 @@ public class Ingreso {
 
 	private int id;
 	private String fecha;
-	private Double monto;
+	private double monto;
 	private String moneda;
 	private float cotizacion;
+	private String comentario;
 	private Concepto concepto;
 	private Fuente fuente;
 	private Cobro formaCobro;
@@ -59,6 +60,16 @@ public class Ingreso {
 	public void setCotizacion(float cotizacion) {
 		
 		this.cotizacion = cotizacion;
+	}
+
+	public String getComentario() {
+		
+		return comentario;
+	}
+
+	public void setComentario(String comentario) {
+		
+		this.comentario = comentario;
 	}
 
 	public Concepto getConcepto() {

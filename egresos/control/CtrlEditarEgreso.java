@@ -55,6 +55,7 @@ public class CtrlEditarEgreso implements ActionListener {
 		ventana.cmbBxTipo.setSelectedItem(dtosEgreso.getDestinoConsumo());
 		ventana.txtMonto.setText(dtosEgreso.getMonto());
 		ventana.cmbBxMoneda.setSelectedItem(dtosEgreso.getMoneda());
+		ventana.txtComentario.setText(dtosEgreso.getComentario());
 		
 		if(!dtosEgreso.getMoneda().equals("Pesos"))
 			ventana.txtCotizacion.setText(dtosEgreso.getCotizacion());
@@ -109,6 +110,7 @@ public class CtrlEditarEgreso implements ActionListener {
 	private void guardar() {
 		
 		dtosEgreso.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
+		dtosEgreso.setComentario(ventana.txtComentario.getText());
 		
 		if(dtosEgreso.setFecha(ventana.txtFecha.getText()) && 
 				dtosEgreso.setDestino(ventana.cmbBxTipo.getSelectedIndex()) && 

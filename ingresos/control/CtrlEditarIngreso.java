@@ -57,6 +57,7 @@ public class CtrlEditarIngreso implements ActionListener {
 		ventana.cmbBxTipo.setSelectedItem(dtosIngreso.getConcepto());
 		ventana.txtMonto.setText(dtosIngreso.getMonto());
 		ventana.cmbBxMoneda.setSelectedItem(dtosIngreso.getMoneda());
+		ventana.txtComentario.setText(dtosIngreso.getComentario());
 		
 		if(!dtosIngreso.getMoneda().equals("Pesos"))
 			ventana.txtCotizacion.setText(dtosIngreso.getCtizacion());
@@ -111,6 +112,7 @@ public class CtrlEditarIngreso implements ActionListener {
 	private void guardar() {
 		
 		dtosIngreso.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
+		dtosIngreso.setComentario(ventana.txtComentario.getText());
 		
 		if(dtosIngreso.setFecha(ventana.txtFecha.getText()) && 
 				dtosIngreso.setDestino(ventana.cmbBxTipo.getSelectedIndex()) && 

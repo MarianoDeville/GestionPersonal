@@ -69,11 +69,8 @@ public class CtrlPrincipal implements ActionListener {
 
 	private void egresos() {
 		
-		if(ventanaEgresos != null) {
-			
-			ventanaEgresos.setVisible(true);
-			return;
-		}
+		if(ventanaEgresos != null)
+			ventanaEgresos.dispose();
 		ventanaEgresos = new Listado("Gestión de egresos", ventana.getX(), ventana.getY());
 		CtrlEgresos ctrlEgresos = new CtrlEgresos(ventanaEgresos);
 		ctrlEgresos.iniciar();
@@ -81,11 +78,8 @@ public class CtrlPrincipal implements ActionListener {
 	
 	private void ingresos() {
 		
-		if(ventanaIngresos != null) {
-			
-			ventanaIngresos.setVisible(true);
-			return;
-		}
+		if(ventanaIngresos != null)			
+			ventanaIngresos.dispose();
 		ventanaIngresos = new Listado("Gestión de ingresos", ventana.getX(), ventana.getY());
 		CtrlIngresos ctrlIngresos = new CtrlIngresos(ventanaIngresos);
 		ctrlIngresos.iniciar();		
@@ -93,11 +87,8 @@ public class CtrlPrincipal implements ActionListener {
 	
 	private void inversiones() {
 		
-		if(ventanaInversiones != null) {
-			
-			ventanaInversiones.setVisible(true);
-			return;
-		}
+		if(ventanaInversiones != null)
+			ventanaInversiones.dispose();
 		ventanaInversiones = new Listado("Gestión de inversiones", ventana.getX(), ventana.getY());
 		CtrlInversiones ctrlInversiones = new CtrlInversiones(ventanaInversiones);
 		ctrlInversiones.iniciar();	

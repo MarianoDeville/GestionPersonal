@@ -78,12 +78,13 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 	public Pago [] getMetodosPagos() {
 		
 		Pago respuesta[] = null;
+		String cmdStm = "SELECT id, descripcion FROM gpiygdb.transaccion WHERE (egresoIngreso = 'E' OR egresoIngreso = 'A')";
 		
 		try {
 			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery("SELECT id, descripcion FROM gpiygdb.formaPago");
+			ResultSet rs = stm.executeQuery(cmdStm);
 			rs.last();	
 			respuesta = new Pago[rs.getRow()];
 			rs.beforeFirst();
@@ -99,6 +100,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 		} catch (Exception e) {
 			
 			System.err.println(e.getMessage());
+			System.err.println(cmdStm);
 			System.err.println("EgresosMySQL, getMetodosPagos");
 		} finally {
 			
@@ -111,7 +113,9 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 	public Proveedor [] getListaProveedores(String filtro) {
 		
 		Proveedor respuesta[] = null;
-		String cmdStm = "SELECT id, nombre, direccion, cuit, rubro FROM gpiygdb.proveedores WHERE nombre LIKE ?";
+		String cmdStm = "SELECT id, nombre, direccion, cuit, comentario FROM gpiygdb.proveedores "
+						+ "WHERE (nombre LIKE ? AND (egresoIngreso = 'E' OR egresoIngreso = 'A')) ORDER BY nombre";
+		
 		try {
 			
 			this.conectar();
@@ -149,12 +153,12 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 
 		Egreso respuesta[] = new Egreso[0];
 		String cmdStm = "SELECT egresos.id, DATE_FORMAT(fecha, '%d/%m/%Y') AS fecha, ROUND(monto, 2) AS monto, moneda, cotizacion, "
-							+ "proveedores.nombre, proveedores.id, formaPago.descripcion, destino.descripcion "
+							+ "proveedores.nombre, proveedores.id, transaccion.descripcion, destino.descripcion, egresos.comentario "
 						+ "FROM gpiygdb.egresos "
 						+ "JOIN gpiygdb.proveedores ON proveedores.id = idProveedor "
-						+ "JOIN gpiygdb.formaPago ON formaPago.id = idFormPago "
+						+ "JOIN gpiygdb.transaccion ON transaccion.id = idFormaPago "
 						+ "JOIN gpiygdb.destino ON destino.id = idTipoGasto "
-						+ "WHERE (YEAR(fecha) = ?";
+						+ "WHERE (YEAR(fecha) = ? ";
 		
 		if(mes != 0)
 			cmdStm += " AND MONTH(fecha) = " + mes;
@@ -163,7 +167,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			cmdStm += " AND idTipoGasto = " + idTipoConsumo;
 		
 		if(idFormaPago != 0)
-			cmdStm += " AND idFormPago = " + idFormaPago;
+			cmdStm += " AND idFormaPago = " + idFormaPago;
 		
 		switch (moneda) {
 		case "P":
@@ -195,7 +199,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			cmdStm += " AND moneda = 'Dólares'";
 			break;
 		}
-		cmdStm += " AND proveedores.nombre LIKE ?) ORDER BY egresos.id DESC"; 
+		cmdStm += " AND proveedores.nombre LIKE ?) ORDER BY fecha DESC, egresos.id DESC"; 
 
 		try {
 			
@@ -217,11 +221,12 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 				respuesta[i].setMonto(rs.getDouble("monto"));
 				respuesta[i].setMoneda(rs.getNString("moneda"));
 				respuesta[i].setCotizacion(rs.getFloat("cotizacion"));
+				respuesta[i].setComentario(rs.getString("egresos.comentario"));
 				respuesta[i].setProveedor(new Proveedor());
 				respuesta[i].getProveedor().setNombre(rs.getString("proveedores.nombre"));
 				respuesta[i].getProveedor().setId(rs.getInt("proveedores.id"));
 				respuesta[i].setFormaPago(new Pago());
-				respuesta[i].getFormaPago().setDescripcion(rs.getString("formaPago.descripcion"));
+				respuesta[i].getFormaPago().setDescripcion(rs.getString("transaccion.descripcion"));
 				respuesta[i].setTipoConsumo(new ClasificacionEgreso());
 				respuesta[i].getTipoConsumo().setDescripcion(rs.getString("destino.descripcion"));
 				i++;
@@ -242,8 +247,8 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 		
 		boolean bandera = true;
 		String cmdStm = "INSERT INTO gpiygdb.egresos "
-						+ "(fecha, monto, moneda, cotizacion, idProveedor, idFormPago, idTipoGasto) "
-						+ "VALUES (?, ROUND(?, 2), ?, ?, ?, ?, ?)";
+						+ "(fecha, monto, moneda, cotizacion, comentario, idProveedor, idFormaPago, idTipoGasto) "
+						+ "VALUES (?, ROUND(?, 2), ?, ?, ?, ?, ?, ?)";
 		
 		try {
 			
@@ -253,9 +258,10 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			stm.setDouble(2, egreso.getMonto());
 			stm.setString(3, egreso.getMoneda());
 			stm.setDouble(4, egreso.getCotizacion());
-			stm.setInt(5, egreso.getProveedor().getId());
-			stm.setInt(6, egreso.getFormaPago().getId());
-			stm.setInt(7, egreso.getTipoConsumo().getId());
+			stm.setString(5, egreso.getComentario());
+			stm.setInt(6, egreso.getProveedor().getId());
+			stm.setInt(7, egreso.getFormaPago().getId());
+			stm.setInt(8, egreso.getTipoConsumo().getId());
 			stm.executeUpdate();
 		} catch (Exception e) {
 
@@ -273,7 +279,8 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 	public boolean updateEgreso(Egreso egreso) {
 		
 		boolean bandera = true;
-		String cmdStm = "UPDATE gpiygdb.egresos SET fecha = ?, monto = ROUND(?, 2), moneda = ?, cotizacion = ?, idProveedor = ?, idFormPago = ?, idTipoGasto = ? WHERE id = ?";
+		String cmdStm = "UPDATE gpiygdb.egresos SET fecha = ?, monto = ROUND(?, 2), moneda = ?, cotizacion = ?, "
+						+ "comentario = ?, idProveedor = ?, idFormaPago = ?, idTipoGasto = ? WHERE id = ?";
 
 		try {
 			
@@ -283,10 +290,11 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			stm.setDouble(2, egreso.getMonto());
 			stm.setString(3, egreso.getMoneda());
 			stm.setDouble(4, egreso.getCotizacion());
-			stm.setInt(5, egreso.getProveedor().getId());
-			stm.setInt(6, egreso.getFormaPago().getId());
-			stm.setInt(7, egreso.getTipoConsumo().getId());
-			stm.setInt(8, egreso.getId());
+			stm.setString(5, egreso.getComentario());
+			stm.setInt(6, egreso.getProveedor().getId());
+			stm.setInt(7, egreso.getFormaPago().getId());
+			stm.setInt(8, egreso.getTipoConsumo().getId());
+			stm.setInt(9, egreso.getId());
 			stm.executeUpdate();
 		} catch (Exception e) {
 

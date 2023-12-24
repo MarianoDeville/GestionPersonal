@@ -7,6 +7,7 @@ public class Egreso {
 	private double monto;
 	private String moneda;
 	private float cotizacion;
+	private String comentario;
 	private Proveedor proveedor;
 	private Pago formaPago;
 	private ClasificacionEgreso tipoConsumo;
@@ -59,6 +60,16 @@ public class Egreso {
 	public void setCotizacion(float cotizacion) {
 		
 		this.cotizacion = cotizacion;
+	}
+
+	public String getComentario() {
+		
+		return comentario;
+	}
+
+	public void setComentario(String comentario) {
+		
+		this.comentario = comentario;
 	}
 
 	public Proveedor getProveedor() {

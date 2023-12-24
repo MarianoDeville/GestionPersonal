@@ -19,10 +19,12 @@ public class Cargar extends VentanaModelo{
 	public JLabel msgError;
 	public JLabel lblProv;
 	public JLabel lblTipo;
+	public JLabel lblComentario;
 	public JTextField txtFecha;
 	public JTextField txtProv;
 	public JTextField txtMonto;
 	public JTextField txtCotizacion;
+	public JTextField txtComentario;
 	public JComboBox<String> cmbBxPago;
 	public JComboBox<String> cmbBxTipo;
 	public JComboBox<String> cmbBxMoneda;
@@ -122,6 +124,18 @@ public class Cargar extends VentanaModelo{
 		panel.add(txtCotizacion);
 		txtCotizacion.setColumns(7);
 		txtCotizacion.setEditable(false);
+		
+		lblComentario = new JLabel("Comentario:");
+		contenedor.putConstraint(SpringLayout.NORTH, lblComentario, 30, SpringLayout.SOUTH, lblCotizacion);
+		contenedor.putConstraint(SpringLayout.WEST, lblComentario, 0, SpringLayout.WEST, lblCotizacion);
+		contenedor.putConstraint(SpringLayout.EAST, lblComentario, 0, SpringLayout.EAST, lblCotizacion);
+		panel.add(lblComentario);
+		
+		txtComentario = new JTextField();
+		contenedor.putConstraint(SpringLayout.NORTH, txtComentario, 0, SpringLayout.NORTH, lblComentario);
+		contenedor.putConstraint(SpringLayout.WEST, txtComentario, 10, SpringLayout.EAST, lblComentario);
+		panel.add(txtComentario);
+		txtComentario.setColumns(20);
 
 		scrollTabla = new JScrollPane();
 		contenedor.putConstraint(SpringLayout.NORTH, scrollTabla, 0, SpringLayout.NORTH, lblFecha);

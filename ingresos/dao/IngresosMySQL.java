@@ -78,12 +78,13 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 	public Cobro [] getMetodosCobros() {
 		
 		Cobro respuesta[] = null;
+		String cmdStm = "SELECT id, descripcion FROM gpiygdb.transaccion WHERE (egresoIngreso = 'I' OR egresoIngreso = 'A')";
 		
 		try {
 			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery("SELECT id, descripcion FROM gpiygdb.formaCobro");
+			ResultSet rs = stm.executeQuery(cmdStm);
 			rs.last();	
 			respuesta = new Cobro[rs.getRow()];
 			rs.beforeFirst();
@@ -112,12 +113,12 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 
 		Ingreso respuesta[] = new Ingreso[0];
 		String cmdStm = "SELECT ingresos.id, DATE_FORMAT(fecha, '%d/%m/%Y') AS fecha, ROUND(monto, 2) AS monto, moneda, cotizacion, "
-							+ "fuente.nombre, fuente.id, formaCobro.descripcion, concepto.descripcion "
+							+ "proveedores.nombre, proveedores.id, transaccion.descripcion, concepto.descripcion, ingresos.comentario "
 						+ "FROM gpiygdb.ingresos "
-						+ "JOIN gpiygdb.fuente ON fuente.id = idFuente "
-						+ "JOIN gpiygdb.formaCobro ON formaCobro.id = idFormaCobro "
+						+ "JOIN gpiygdb.proveedores ON proveedores.id = idFuente "
+						+ "JOIN gpiygdb.transaccion ON transaccion.id = idFormaCobro "
 						+ "JOIN gpiygdb.concepto ON concepto.id = idConcepto "
-						+ "WHERE (YEAR(fecha) = ?";
+						+ "WHERE (YEAR(fecha) = ? ";
 		
 		if(mes != 0)
 			cmdStm += " AND MONTH(fecha) = " + mes;
@@ -158,7 +159,7 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 			cmdStm += " AND moneda = 'Dólares'";
 			break;
 		}
-		cmdStm += " AND fuente.nombre LIKE ?) ORDER BY ingresos.id DESC"; 
+		cmdStm += " AND proveedores.nombre LIKE ?) ORDER BY fecha DESC, ingresos.id DESC"; 
 
 		try {
 			
@@ -180,11 +181,12 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 				respuesta[i].setMonto(rs.getDouble("monto"));
 				respuesta[i].setMoneda(rs.getNString("moneda"));
 				respuesta[i].setCotizacion(rs.getFloat("cotizacion"));
+				respuesta[i].setComentario(rs.getString("ingresos.comentario"));
 				respuesta[i].setFuente(new Fuente());
-				respuesta[i].getFuente().setNombre(rs.getString("fuente.nombre"));
-				respuesta[i].getFuente().setId(rs.getInt("fuente.id"));
+				respuesta[i].getFuente().setNombre(rs.getString("proveedores.nombre"));
+				respuesta[i].getFuente().setId(rs.getInt("proveedores.id"));
 				respuesta[i].setFormaCobro(new Cobro());
-				respuesta[i].getFormaCobro().setDescripcion(rs.getString("formaCobro.descripcion"));
+				respuesta[i].getFormaCobro().setDescripcion(rs.getString("transaccion.descripcion"));
 				respuesta[i].setConcepto(new Concepto());
 				respuesta[i].getConcepto().setDescripcion(rs.getString("concepto.descripcion"));
 				i++;
@@ -204,7 +206,8 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 	public Fuente [] getListaFuentes(String filtro) {
 		
 		Fuente respuesta[] = null;
-		String cmdStm = "SELECT id, nombre, direccion, cuit, comentario FROM gpiygdb.fuente WHERE nombre LIKE ?";
+		String cmdStm = "SELECT id, nombre, direccion, cuit, comentario FROM gpiygdb.proveedores WHERE (nombre LIKE ? AND (egresoIngreso = 'I' OR egresoIngreso = 'A'))";
+		
 		try {
 			
 			this.conectar();
@@ -242,8 +245,8 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 		
 		boolean bandera = true;
 		String cmdStm = "INSERT INTO gpiygdb.ingresos "
-						+ "(fecha, monto, moneda, cotizacion, idFuente, idFormaCobro, idConcepto) "
-						+ "VALUES (?, ROUND(?, 2), ?, ?, ?, ?, ?)";
+						+ "(fecha, monto, moneda, cotizacion, comentario, idFuente, idFormaCobro, idConcepto) "
+						+ "VALUES (?, ROUND(?, 2), ?, ?, ?, ?, ?, ?)";
 		
 		try {
 			
@@ -253,9 +256,10 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 			stm.setDouble(2, ingreso.getMonto());
 			stm.setString(3, ingreso.getMoneda());
 			stm.setDouble(4, ingreso.getCotizacion());
-			stm.setInt(5, ingreso.getFuente().getId());
-			stm.setInt(6, ingreso.getFormaCobro().getId());
-			stm.setInt(7, ingreso.getConcepto().getId());
+			stm.setString(5, ingreso.getComentario());
+			stm.setInt(6, ingreso.getFuente().getId());
+			stm.setInt(7, ingreso.getFormaCobro().getId());
+			stm.setInt(8, ingreso.getConcepto().getId());
 			stm.executeUpdate();
 		} catch (Exception e) {
 
@@ -274,7 +278,7 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 		
 		boolean bandera = true;
 		String cmdStm = "UPDATE gpiygdb.ingresos "
-						+ "SET fecha = ?, monto = ROUND(?, 2), moneda = ?, cotizacion = ?, "
+						+ "SET fecha = ?, monto = ROUND(?, 2), moneda = ?, cotizacion = ?, comentario = ?, "
 						+ "idFuente = ?, idFormaCobro = ?, idConcepto = ? WHERE id = ?";
 
 		try {
@@ -285,10 +289,11 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 			stm.setDouble(2, ingreso.getMonto());
 			stm.setString(3, ingreso.getMoneda());
 			stm.setDouble(4, ingreso.getCotizacion());
-			stm.setInt(5, ingreso.getFuente().getId());
-			stm.setInt(6, ingreso.getFormaCobro().getId());
-			stm.setInt(7, ingreso.getConcepto().getId());
-			stm.setInt(8, ingreso.getId());
+			stm.setString(5, ingreso.getComentario());
+			stm.setInt(6, ingreso.getFuente().getId());
+			stm.setInt(7, ingreso.getFormaCobro().getId());
+			stm.setInt(8, ingreso.getConcepto().getId());
+			stm.setInt(9, ingreso.getId());
 			stm.executeUpdate();
 		} catch (Exception e) {
 

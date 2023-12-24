@@ -108,6 +108,7 @@ public class CtrlCargarEgreso implements ActionListener {
 	private void guardar() {
 		
 		dtosEgreso.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
+		dtosEgreso.setComentario(ventana.txtComentario.getText());
 			
 		if(dtosEgreso.setFecha(ventana.txtFecha.getText()) && 
 				dtosEgreso.setDestino(ventana.cmbBxTipo.getSelectedIndex()) && 
@@ -132,7 +133,8 @@ public class CtrlCargarEgreso implements ActionListener {
 		ventana.btnGuardar.setEnabled(true);
 		ventana.txtFecha.setText(dtosEgreso.getFechaActual());
 		ventana.txtMonto.setText("");
-		ventana.txtProv.setText("");		
+		ventana.txtProv.setText("");
+		ventana.txtComentario.setText("");
 		ventana.msgError.setText("");
 		ventana.cmbBxTipo.setSelectedIndex(0);
 		dtosEgreso.setEgreso(null);
