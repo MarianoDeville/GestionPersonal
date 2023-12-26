@@ -1,6 +1,6 @@
 package dao;
 
-public interface InversionesDAO {
+public interface MercadoValoresDAO {
 	
 	public String [] getAñosCargados();
 	

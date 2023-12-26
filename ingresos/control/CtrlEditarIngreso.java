@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import modelo.DtosIngresos;
 import vista.Cargar;
 
@@ -25,6 +26,7 @@ public class CtrlEditarIngreso implements ActionListener {
 		this.ventana.cmbBxPago.addActionListener(this);
 		this.ventana.cmbBxMoneda.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
+		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
 		this.ventana.txtProv.addKeyListener(new KeyAdapter() {
 			@Override
@@ -46,7 +48,7 @@ public class CtrlEditarIngreso implements ActionListener {
 	
 	public void iniciar() {
 
-		ventana.btnNuevo.setVisible(false);
+		ventana.btnNuevo.setText("Borrar");
 		ventana.lblProv.setText("Fuente:");
 		ventana.lblTipo.setText("Concepto:");
 		ventana.txtFecha.setText(dtosIngreso.getFecha());
@@ -82,6 +84,11 @@ public class CtrlEditarIngreso implements ActionListener {
 		if(e.getSource() == ventana.btnGuardar) {
 			
 			guardar();
+		}
+		
+		if(e.getSource() == ventana.btnNuevo) {
+			
+			borrar();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
@@ -128,5 +135,22 @@ public class CtrlEditarIngreso implements ActionListener {
 		}
 		ventana.msgError.setForeground(Color.RED);
 		ventana.msgError.setText(dtosIngreso.getMsgError());
+	}
+	
+	private void borrar() {
+		
+		if(JOptionPane.showConfirmDialog(ventana, "esta seguro?", "Se borrará definitivamente de la base de datos", JOptionPane.YES_NO_OPTION) != 1) {
+			
+			if(dtosIngreso.borrarEgreso()) {
+				
+				ventana.msgError.setForeground(Color.BLUE);
+				ventana.msgError.setText(dtosIngreso.getMsgError());
+				ventana.btnGuardar.setEnabled(false);
+				ventana.btnNuevo.setEnabled(false);
+				return;	
+			}
+			ventana.msgError.setForeground(Color.RED);
+			ventana.msgError.setText(dtosIngreso.getMsgError());
+		}
 	}
 }

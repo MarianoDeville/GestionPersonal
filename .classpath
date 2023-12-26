@@ -11,6 +11,8 @@
 	<classpathentry kind="src" path="ingresos"/>
 	<classpathentry kind="src" path="analisis"/>
 	<classpathentry kind="src" path="inversiones"/>
+	<classpathentry kind="src" path="proveedor"/>
+	<classpathentry kind="src" path="transacciones"/>
 	<classpathentry kind="lib" path="Librerias/mysql-connector-java-8.0.21.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -2,136 +2,124 @@ package control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.print.PrinterException;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
-import modelo.DtosInversiones;
-import vista.Cargar;
+import javax.swing.ImageIcon;
+import modelo.DtosConfiguracion;
+import vista.Botones;
 import vista.Listado;
 
 public class CtrlInversiones implements ActionListener {
 	
-	private Listado ventana;
-	private DtosInversiones dtosInversiones;
-	private Cargar ventanaNuevaInversion;
-	private int elemento = -1;
+	private Botones ventana;
+	private Listado ventanaMercadoValores;
+	private Listado ventanaPropiedades;
+	private Listado ventanaCripto;
+	private Listado ventanaFiat;
+	private Listado ventanaResumen;
 
-
-	public CtrlInversiones(Listado vista) {
+	public CtrlInversiones(Botones vista) {
 		
 		this.ventana = vista;
-		this.dtosInversiones = new DtosInversiones();
-		this.ventana.comboBoxAño.addActionListener(this);
-		this.ventana.comboBoxMes.addActionListener(this);
-		this.ventana.chkBxPesos.addActionListener(this);
-		this.ventana.chkBxDolares.addActionListener(this);
-		this.ventana.chkBxEuros.addActionListener(this);
-		this.ventana.btnNuevo.addActionListener(this);
-		this.ventana.btnCargar.addActionListener(this);
-		this.ventana.btnGuardar.addActionListener(this);
-		this.ventana.btnImprimir.addActionListener(this);
-		this.ventana.btnVolver.addActionListener(this);
-		this.ventana.tabla.addMouseListener(new MouseAdapter() {
-		    public void mouseClicked(MouseEvent e) {
-		        if(e.getClickCount() == 2) {
-		        	
-		        	elemento = ventana.tabla.getSelectedRow();
-		        	
-		        }
-		    }
-		});
+		this.ventana.btn1A.addActionListener(this);
+		this.ventana.btn1B.addActionListener(this);
+		this.ventana.btn1C.addActionListener(this);
+		this.ventana.btn2A.addActionListener(this);
+		this.ventana.btn2B.addActionListener(this);
+		this.ventana.btnSalir.addActionListener(this);
 	}
 	
 	public void iniciar() {
 
-		ventana.btnCargar.setVisible(true);
-		ventana.btnGuardar.setVisible(true);
-		ventana.btnGuardar.setEnabled(false);
-		ventana.comboBoxPago.setVisible(false);
-		ventana.comboBoxTipo.setVisible(false);
-		ventana.txtBusqueda.setVisible(false);
-		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosInversiones.getListaAños()));
-		ventana.comboBoxAño.setSelectedIndex(0);
-		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<String>(dtosInversiones.getListaMeses()));
-		ventana.comboBoxMes.setSelectedIndex(dtosInversiones.getMesActual());
-		ventana.chkBxDolares.setSelected(true);
-		ventana.chkBxEuros.setSelected(true);
-		actualizar();
-		ventana.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		ventana.lbl1A.setText("Mercado de valores");
+		ventana.btn1A.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Bolsa.png"));
+		ventana.btn1A.setVisible(true);
+		ventana.lbl1B.setText("Cripto monedas");
+		ventana.btn1B.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Cripto.png"));
+		ventana.btn1B.setVisible(true);
+		ventana.lbl1C.setText("Fiat");
+		ventana.btn1C.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Fiat.png"));
+		ventana.btn1C.setVisible(true);
+		ventana.lbl2A.setText("Inmobiliario");
+		ventana.btn2A.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Inmobiliario.png"));
+		ventana.btn2A.setVisible(true);
+		ventana.lbl2B.setText("Resumen");
+		ventana.btn2B.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Resumen.png"));
+		ventana.btn2B.setVisible(true);
+		ventana.btnSalir.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Volver.png"));
 		ventana.setVisible(true);
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
-		
-		if(e.getSource() == ventana.btnNuevo) {
+
+		if(e.getSource() == ventana.btn1A) {
 			
-			agregarNuevaAccion();
-			return;
+			mercadoValores();
 		}
 		
-		if(e.getSource() == ventana.btnCargar) {
+		if(e.getSource() == ventana.btn1B) {
 			
-			cargarCotizacionDiaria();
-			return;
+			cripto();
+		}	
+
+		if(e.getSource() == ventana.btn1C) {
+			
+			fiat();
 		}
 		
-		if(e.getSource() == ventana.btnGuardar) {
+		if(e.getSource() == ventana.btn2A) {
 			
-			guardarCotizaciones();
-			return;
+			inmobiliario();
 		}
 		
-		if(e.getSource() == ventana.btnImprimir) {
+		if(e.getSource() == ventana.btn2B) {
 			
-			try {
-				
-				ventana.tabla.print();
-			} catch (PrinterException f) {
-				
-				f.printStackTrace();
-			}
-			return;
+			resumen();
 		}
 		
-		if(e.getSource() == ventana.btnVolver) {
+		if(e.getSource() == ventana.btnSalir) {
 			
-			if(ventanaNuevaInversion != null)
-				ventanaNuevaInversion.dispose();
+			if(ventanaMercadoValores != null)
+				ventanaMercadoValores.dispose();
+			
+			if(ventanaPropiedades != null)
+				ventanaPropiedades.dispose();
+			
+			if(ventanaCripto != null)
+				ventanaCripto.dispose();
+			
+			if(ventanaFiat != null)
+				ventanaFiat.dispose();
+			
+			if(ventanaResumen != null)
+				ventanaResumen.dispose();
 			ventana.dispose();
-			return;
 		}
-		
-		if(ventana.isVisible())
-			actualizar();
 	}
-	
-	private void actualizar() {
+
+	private void mercadoValores() {
 		
-	
-		elemento = -1;
+		if(ventanaMercadoValores != null)
+			ventanaMercadoValores.dispose();
+		ventanaMercadoValores = new Listado("Gestión de inversiones", ventana.getX(), ventana.getY());
+		CtrlMercadoValores ctrlMercadoValores = new CtrlMercadoValores(ventanaMercadoValores);
+		ctrlMercadoValores.iniciar();
 	}
-	
-	private void agregarNuevaAccion() {
-		
-		if(ventanaNuevaInversion !=null)
-			ventanaNuevaInversion.dispose();
-		ventanaNuevaInversion = new Cargar("Carga de nueva inversión", ventana.getX(), ventana.getY());
-		ventana.btnVolver.addActionListener(this);
-		CtrlCargarInversion ctrlCargarInversion = new CtrlCargarInversion(ventanaNuevaInversion);
-		ctrlCargarInversion.iniciar();
-	}
-	
-	private void cargarCotizacionDiaria() {
+
+	private void cripto() {
 		
 		
 	}
 	
-	private void guardarCotizaciones() {
+	private void fiat() {
 		
+		
+	}
+	
+	private void inmobiliario() {
+		
+	
+	}
+
+	private void resumen() {
 		
 		
 	}

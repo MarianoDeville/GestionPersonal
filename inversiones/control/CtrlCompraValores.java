@@ -2,19 +2,19 @@ package control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import modelo.DtosInversiones;
+import modelo.DtosMercadoValores;
 import vista.Cargar;
 
-public class CtrlCargarInversion implements ActionListener {
+public class CtrlCompraValores implements ActionListener {
 	
 	private Cargar ventana;
-	private DtosInversiones dtosInversiones;
+	private DtosMercadoValores dtosInversiones;
 
 
-	public CtrlCargarInversion(Cargar vista) {
+	public CtrlCompraValores(Cargar vista) {
 		
 		this.ventana = vista;
-		this.dtosInversiones = new DtosInversiones();
+		this.dtosInversiones = new DtosMercadoValores();
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);

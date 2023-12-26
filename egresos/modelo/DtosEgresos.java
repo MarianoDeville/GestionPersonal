@@ -5,13 +5,17 @@ import java.util.GregorianCalendar;
 import javax.swing.table.DefaultTableModel;
 import dao.EgresosDAO;
 import dao.EgresosMySQL;
+import dao.ProveedorDAO;
+import dao.ProveedorMySQL;
+import dao.TransaccionDAO;
+import dao.TransaccionMySQL;
 
 public class DtosEgresos {
 	
 	private EgresosDAO egresosDAO = new EgresosMySQL();
 	private Egreso egresos[];
 	private static Egreso egreso;
-	private static Pago formasPago[];
+	private static Transaccion formasPago[];
 	private static Proveedor proveedores[];
 	private static ClasificacionEgreso destinos[];
 	private Calendar calendario;
@@ -71,16 +75,17 @@ public class DtosEgresos {
 		
 		if(formasPago == null || formasPago.length < 1) {
 
-			formasPago = egresosDAO.getMetodosPagos();
+			TransaccionDAO transaccionDAO = new TransaccionMySQL();
+			formasPago = transaccionDAO.getMetodos();
 			
 			if(formasPago == null)
-				formasPago = new Pago[0];
+				formasPago = new Transaccion[0];
 		}
 		String respuesta[] = new String[formasPago.length + 1];
 		respuesta[0] = cabecera;
 		int i = 1;
 		
-		for(Pago pago: formasPago) {
+		for(Transaccion pago: formasPago) {
 			
 			respuesta[i] = pago.getDescripcion();
 			i++;
@@ -94,7 +99,7 @@ public class DtosEgresos {
 		int idFormaPago = pago == 0 ? 0: formasPago[pago - 1].getId();
 		suma = 0;
 		cantidadElementos = 0;
-		egresos = egresosDAO.getListadoEgresos(año, mes, idDestino, idFormaPago, monedas, filtro);
+		egresos = egresosDAO.getListado(año, mes, idDestino, idFormaPago, monedas, filtro);
 		String titulo[] = {"Fecha", "Nombre", "Forma de pago", "Dólares", "Euros", "Monto en pesos"};
 		String tabla[][] = null;
 		
@@ -138,7 +143,8 @@ public class DtosEgresos {
 	
 	public DefaultTableModel getListaProveedores(String filtro) {
 		
-		proveedores = egresosDAO.getListaProveedores(filtro);
+		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
+		proveedores = proveedoresDAO.getListado(filtro, "Egreso");
 		String tabla[][] = new String [proveedores.length][1];
 		int i = 0;
 		
@@ -219,7 +225,7 @@ public class DtosEgresos {
 			msgError = "Debe elegir una forma de pago.";
 			return false;
 		}
-		egreso.setFormaPago(new Pago());
+		egreso.setFormaPago(new Transaccion());
 		egreso.getFormaPago().setId(formasPago[pos - 1].getId());
 		return true;
 	}
@@ -250,7 +256,7 @@ public class DtosEgresos {
 			return false;
 		} 
 		
-		if(!egresosDAO.nuevoEgreso(egreso)) {
+		if(!egresosDAO.nuevo(egreso)) {
 		
 			msgError = "Error al intentar guardar la información en la base de datos.";
 			return false;
@@ -323,7 +329,7 @@ public class DtosEgresos {
 			return false;
 		} 
 		
-		if(!egresosDAO.updateEgreso(egreso)) {
+		if(!egresosDAO.update(egreso)) {
 		
 			msgError = "Error al intentar guardar la información en la base de datos.";
 			return false;
@@ -365,6 +371,17 @@ public class DtosEgresos {
 			msgError = "La cotización debe ser numérica.";
 			return false;
 		}
+		return true;
+	}
+	
+	public boolean borrarEgreso() {
+		
+		if(!egresosDAO.delete(egreso)) {
+		
+			msgError = "Error al intentar eliminar la información de la base de datos.";
+			return false;
+		}
+		msgError = "La información se ha eliminado.";
 		return true;
 	}
 }

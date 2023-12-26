@@ -3,7 +3,7 @@ package dao;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class InversionesMySQL extends ConexiónMySQL implements InversionesDAO {
+public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValoresDAO {
 	
 	@Override
 	public String [] getAñosCargados() {

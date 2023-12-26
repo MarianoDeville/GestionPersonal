@@ -2,13 +2,13 @@ package modelo;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import dao.InversionesDAO;
-import dao.InversionesMySQL;
+import dao.MercadoValoresDAO;
+import dao.MercadoValoresMySQL;
 
-public class DtosInversiones {
+public class DtosMercadoValores {
 	
-	InversionesDAO inversionesDAO = new InversionesMySQL();
-	private Inversion inversiones[];
+	MercadoValoresDAO inversionesDAO = new MercadoValoresMySQL();
+	private Valores inversiones[];
 	
 	
 	private Calendar calendario;

@@ -8,6 +8,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+
 import modelo.DtosEgresos;
 import vista.Cargar;
 
@@ -25,6 +27,7 @@ public class CtrlEditarEgreso implements ActionListener {
 		this.ventana.cmbBxPago.addActionListener(this);
 		this.ventana.cmbBxMoneda.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
+		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
 		this.ventana.txtProv.addKeyListener(new KeyAdapter() {
 			@Override
@@ -46,7 +49,7 @@ public class CtrlEditarEgreso implements ActionListener {
 	
 	public void iniciar() {
 
-		ventana.btnNuevo.setVisible(false);
+		ventana.btnNuevo.setText("Borrar");
 		ventana.txtFecha.setText(dtosEgreso.getFecha());
 		ventana.txtProv.setText(dtosEgreso.getProveedor());
 		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago("Seleccione un método de pago.")));
@@ -80,6 +83,11 @@ public class CtrlEditarEgreso implements ActionListener {
 		if(e.getSource() == ventana.btnGuardar) {
 			
 			guardar();
+		}
+		
+		if(e.getSource() == ventana.btnNuevo) {
+			
+			borrar();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
@@ -122,9 +130,27 @@ public class CtrlEditarEgreso implements ActionListener {
 			ventana.msgError.setForeground(Color.BLUE);
 			ventana.msgError.setText(dtosEgreso.getMsgError());
 			ventana.btnGuardar.setEnabled(false);
+			ventana.btnNuevo.setEnabled(false);
 			return;	
 		}
 		ventana.msgError.setForeground(Color.RED);
 		ventana.msgError.setText(dtosEgreso.getMsgError());
+	}
+	
+	private void borrar() {
+		
+		if(JOptionPane.showConfirmDialog(ventana, "esta seguro?", "Se borrará definitivamente de la base de datos", JOptionPane.YES_NO_OPTION) != 1) {
+			
+			if(dtosEgreso.borrarEgreso()) {
+				
+				ventana.msgError.setForeground(Color.BLUE);
+				ventana.msgError.setText(dtosEgreso.getMsgError());
+				ventana.btnGuardar.setEnabled(false);
+				ventana.btnNuevo.setEnabled(false);
+				return;	
+			}
+			ventana.msgError.setForeground(Color.RED);
+			ventana.msgError.setText(dtosEgreso.getMsgError());
+		}
 	}
 }

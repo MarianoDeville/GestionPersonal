@@ -5,8 +5,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import modelo.ClasificacionEgreso;
 import modelo.Egreso;
-import modelo.Pago;
 import modelo.Proveedor;
+import modelo.Transaccion;
 
 public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 	
@@ -73,83 +73,9 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 		}
 		return respuesta;
 	}
-	
-	@Override
-	public Pago [] getMetodosPagos() {
-		
-		Pago respuesta[] = null;
-		String cmdStm = "SELECT id, descripcion FROM gpiygdb.transaccion WHERE (egresoIngreso = 'E' OR egresoIngreso = 'A')";
-		
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
-			rs.last();	
-			respuesta = new Pago[rs.getRow()];
-			rs.beforeFirst();
-			int i = 0;
 
-			while (rs.next()) {
-					
-				respuesta[i] = new Pago();
-				respuesta[i].setId(rs.getInt(1));
-				respuesta[i].setDescripcion(rs.getString(2));
-				i++;
-			}
-		} catch (Exception e) {
-			
-			System.err.println(e.getMessage());
-			System.err.println(cmdStm);
-			System.err.println("EgresosMySQL, getMetodosPagos");
-		} finally {
-			
-			this.cerrar();
-		}
-		return respuesta;
-	}
-	
 	@Override
-	public Proveedor [] getListaProveedores(String filtro) {
-		
-		Proveedor respuesta[] = null;
-		String cmdStm = "SELECT id, nombre, direccion, cuit, comentario FROM gpiygdb.proveedores "
-						+ "WHERE (nombre LIKE ? AND (egresoIngreso = 'E' OR egresoIngreso = 'A')) ORDER BY nombre";
-		
-		try {
-			
-			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			stm.setString(1, "%" + filtro + "%");
-			ResultSet rs = stm.executeQuery();
-			rs.last();	
-			respuesta = new Proveedor[rs.getRow()];
-			rs.beforeFirst();
-			int i = 0;
-
-			while (rs.next()) {
-					
-				respuesta[i] = new Proveedor();
-				respuesta[i].setId(rs.getInt(1));
-				respuesta[i].setNombre(rs.getString(2));
-				respuesta[i].setDireccion(rs.getString(3));
-				respuesta[i].setCuit(rs.getString(4));
-				respuesta[i].setRubro(rs.getString(5));
-				i++;
-			}
-		} catch (Exception e) {
-			
-			System.err.println(e.getMessage());
-			System.err.println("EgresosMySQL, getListaProveedores");
-		} finally {
-			
-			this.cerrar();
-		}
-		return respuesta;
-	}
-	
-	@Override
-	public Egreso [] getListadoEgresos(String año, int mes, int idTipoConsumo, int idFormaPago, String moneda, String filtro) {
+	public Egreso [] getListado(String año, int mes, int idTipoConsumo, int idFormaPago, String moneda, String filtro) {
 
 		Egreso respuesta[] = new Egreso[0];
 		String cmdStm = "SELECT egresos.id, DATE_FORMAT(fecha, '%d/%m/%Y') AS fecha, ROUND(monto, 2) AS monto, moneda, cotizacion, "
@@ -225,7 +151,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 				respuesta[i].setProveedor(new Proveedor());
 				respuesta[i].getProveedor().setNombre(rs.getString("proveedores.nombre"));
 				respuesta[i].getProveedor().setId(rs.getInt("proveedores.id"));
-				respuesta[i].setFormaPago(new Pago());
+				respuesta[i].setFormaPago(new Transaccion());
 				respuesta[i].getFormaPago().setDescripcion(rs.getString("transaccion.descripcion"));
 				respuesta[i].setTipoConsumo(new ClasificacionEgreso());
 				respuesta[i].getTipoConsumo().setDescripcion(rs.getString("destino.descripcion"));
@@ -233,8 +159,9 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			}
 		} catch (Exception e) {
 
+			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("EgresosMySQL, getListadoEgresos");
+			System.err.println("EgresosMySQL, getListado");
 		} finally {
 
 			this.cerrar();
@@ -243,7 +170,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 	}
 	
 	@Override
-	public boolean nuevoEgreso(Egreso egreso) {
+	public boolean nuevo(Egreso egreso) {
 		
 		boolean bandera = true;
 		String cmdStm = "INSERT INTO gpiygdb.egresos "
@@ -266,8 +193,9 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 		} catch (Exception e) {
 
 			bandera = false;
+			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("EgresosMySQL, newEgreso");
+			System.err.println("EgresosMySQL, nuevo");
 		} finally {
 
 			this.cerrar();
@@ -276,7 +204,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 	}
 	
 	@Override
-	public boolean updateEgreso(Egreso egreso) {
+	public boolean update(Egreso egreso) {
 		
 		boolean bandera = true;
 		String cmdStm = "UPDATE gpiygdb.egresos SET fecha = ?, monto = ROUND(?, 2), moneda = ?, cotizacion = ?, "
@@ -299,8 +227,32 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 		} catch (Exception e) {
 
 			bandera = false;
+			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("EgresosMySQL, updateEgreso");
+			System.err.println("EgresosMySQL, update");
+		} finally {
+
+			this.cerrar();
+		}
+		return bandera;
+	}
+	
+	@Override
+	public boolean delete(Egreso egreso) {
+		
+		boolean bandera = true;
+
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = conexion.prepareStatement("DELETE FROM gpiygdb.egresos WHERE id = ?");
+			stm.setInt(1, egreso.getId());
+			stm.executeUpdate();
+		} catch (Exception e) {
+
+			bandera = false;
+			System.err.println(e.getMessage());
+			System.err.println("EgresosMySQL, delete");
 		} finally {
 
 			this.cerrar();

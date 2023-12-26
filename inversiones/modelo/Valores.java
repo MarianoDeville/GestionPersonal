@@ -1,12 +1,11 @@
 package modelo;
 
-public class Inversion {
+public class Valores {
 
 	private int id;
 	private String nombre;
 	private int cant;
-	private String custodia;
-	private String mercado;
+	private Proveedor custodia;
 	private Operacion operaciones[];
 	private Cotizacion cotizaciones[];
 
@@ -40,24 +39,14 @@ public class Inversion {
 		this.cant = cant;
 	}
 
-	public String getCustodia() {
+	public Proveedor getCustodia() {
 		
 		return custodia;
 	}
 
-	public void setCustodia(String custodia) {
+	public void setCustodia(Proveedor custodia) {
 		
 		this.custodia = custodia;
-	}
-
-	public String getMercado() {
-		
-		return mercado;
-	}
-
-	public void setMercado(String mercado) {
-		
-		this.mercado = mercado;
 	}
 
 	public Operacion[] getOperaciones() {

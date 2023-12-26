@@ -1,6 +1,6 @@
 package modelo;
 
-public class Cobro {
+public class Transaccion {
 
 	private int id;
 	private String descripcion;

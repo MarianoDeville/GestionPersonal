@@ -9,7 +9,7 @@ public class Egreso {
 	private float cotizacion;
 	private String comentario;
 	private Proveedor proveedor;
-	private Pago formaPago;
+	private Transaccion formaPago;
 	private ClasificacionEgreso tipoConsumo;
 
 	public int getId() {
@@ -82,12 +82,12 @@ public class Egreso {
 		this.proveedor = proveedor;
 	}
 
-	public Pago getFormaPago() {
+	public Transaccion getFormaPago() {
 		
 		return formaPago;
 	}
 
-	public void setFormaPago(Pago formaPago) {
+	public void setFormaPago(Transaccion formaPago) {
 		
 		this.formaPago = formaPago;
 	}

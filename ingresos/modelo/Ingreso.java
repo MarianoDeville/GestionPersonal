@@ -9,8 +9,8 @@ public class Ingreso {
 	private float cotizacion;
 	private String comentario;
 	private Concepto concepto;
-	private Fuente fuente;
-	private Cobro formaCobro;
+	private Proveedor fuente;
+	private Transaccion formaCobro;
 
 	public int getId() {
 		
@@ -82,22 +82,22 @@ public class Ingreso {
 		this.concepto = concepto;
 	}
 
-	public Fuente getFuente() {
+	public Proveedor getFuente() {
 		
 		return fuente;
 	}
 
-	public void setFuente(Fuente fuente) {
+	public void setFuente(Proveedor fuente) {
 		
 		this.fuente = fuente;
 	}
 
-	public Cobro getFormaCobro() {
+	public Transaccion getFormaCobro() {
 		
 		return formaCobro;
 	}
 
-	public void setFormaCobro(Cobro formaCobro) {
+	public void setFormaCobro(Transaccion formaCobro) {
 		
 		this.formaCobro = formaCobro;
 	}

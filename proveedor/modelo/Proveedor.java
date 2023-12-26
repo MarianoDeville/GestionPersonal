@@ -6,7 +6,8 @@ public class Proveedor {
 	private String nombre;
 	private String direccion;
 	private String cuit;
-	private String rubro;
+	private String comentario;
+	private String mercado;
 
 	public int getId() {
 		
@@ -47,13 +48,23 @@ public class Proveedor {
 		this.cuit = cuit;
 	}
 
-	public String getRubro() {
+	public String getComentario() {
 		
-		return rubro;
+		return comentario;
 	}
 
-	public void setRubro(String rubro) {
+	public void setComentario(String comentario) {
 		
-		this.rubro = rubro;
+		this.comentario = comentario;
+	}
+
+	public String getMercado() {
+		
+		return mercado;
+	}
+
+	public void setMercado(String mercado) {
+		
+		this.mercado = mercado;
 	}
 }

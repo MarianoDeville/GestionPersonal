@@ -5,14 +5,18 @@ import java.util.GregorianCalendar;
 import javax.swing.table.DefaultTableModel;
 import dao.IngresosDAO;
 import dao.IngresosMySQL;
+import dao.ProveedorDAO;
+import dao.ProveedorMySQL;
+import dao.TransaccionDAO;
+import dao.TransaccionMySQL;
 
 public class DtosIngresos {
 
 	private IngresosDAO ingresosDAO = new IngresosMySQL();
 	private Ingreso ingresos[];
 	private static Ingreso ingreso;
-	private static Fuente fuentes[];
-	private static Cobro formasCobro[];
+	private static Proveedor fuentes[];
+	private static Transaccion formasCobro[];
 	private static Concepto conceptos[];
 	private double suma;
 	private int cantidadElementos;
@@ -71,16 +75,17 @@ public class DtosIngresos {
 		
 		if(formasCobro == null || formasCobro.length < 1) {
 
-			formasCobro = ingresosDAO.getMetodosCobros();
+			TransaccionDAO transaccionDAO = new TransaccionMySQL();
+			formasCobro = transaccionDAO.getMetodos();
 			
 			if(formasCobro == null)
-				formasCobro = new Cobro[0];
+				formasCobro = new Transaccion[0];
 		}
 		String respuesta[] = new String[formasCobro.length + 1];
 		respuesta[0] = cabecera;
 		int i = 1;
 		
-		for(Cobro cobro: formasCobro) {
+		for(Transaccion cobro: formasCobro) {
 			
 			respuesta[i] = cobro.getDescripcion();
 			i++;
@@ -94,7 +99,7 @@ public class DtosIngresos {
 		int idFormaCobro = pago == 0 ? 0: formasCobro[pago - 1].getId();
 		suma = 0;
 		cantidadElementos = 0;
-		ingresos = ingresosDAO.getListadoIngresos(año, mes, idConcepto, idFormaCobro, monedas, filtro);
+		ingresos = ingresosDAO.getListado(año, mes, idConcepto, idFormaCobro, monedas, filtro);
 		String titulo[] = {"Fecha", "Nombre", "Forma de cobro", "Concepto", "Dólares", "Euros", "Monto en pesos"};
 		String tabla[][] = new String [ingresos.length][7];
 
@@ -151,17 +156,18 @@ public class DtosIngresos {
 		
 		if(ingreso == null)
 			ingreso = new Ingreso();
-		ingreso.setFuente(new Fuente());
+		ingreso.setFuente(new Proveedor());
 		ingreso.getFuente().setId(fuentes[pos].getId() );
 	}
 	
 	public DefaultTableModel getListaFuentes(String filtro) {
 		
-		fuentes = ingresosDAO.getListaFuentes(filtro);
+		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
+		fuentes = proveedoresDAO.getListado(filtro, "Ingreso");
 		String tabla[][] = new String [fuentes.length][1];
 		int i = 0;
 		
-		for(Fuente temp: fuentes) {
+		for(Proveedor temp: fuentes) {
 			
 			tabla[i][0] = temp.getNombre();
 			i++;
@@ -236,7 +242,7 @@ public class DtosIngresos {
 			msgError = "Debe elegir una forma de pago.";
 			return false;
 		}
-		ingreso.setFormaCobro(new Cobro());
+		ingreso.setFormaCobro(new Transaccion());
 		ingreso.getFormaCobro().setId(formasCobro[pos - 1].getId());
 		return true;
 	}
@@ -287,7 +293,7 @@ public class DtosIngresos {
 			return false;
 		} 
 		
-		if(!ingresosDAO.nuevoIngreso(ingreso)) {
+		if(!ingresosDAO.nuevo(ingreso)) {
 		
 			msgError = "Error al intentar guardar la información en la base de datos.";
 			return false;
@@ -345,7 +351,7 @@ public class DtosIngresos {
 			return false;
 		} 
 		
-		if(!ingresosDAO.updateIngreso(ingreso)) {
+		if(!ingresosDAO.update(ingreso)) {
 		
 			msgError = "Error al intentar guardar la información en la base de datos.";
 			return false;
@@ -362,5 +368,16 @@ public class DtosIngresos {
 	public String getConcepto() {
 		
 		return ingreso.getConcepto().getDescripcion();
+	}
+	
+	public boolean borrarEgreso() {
+		
+		if(!ingresosDAO.delete(ingreso)) {
+		
+			msgError = "Error al intentar eliminar la información de la base de datos.";
+			return false;
+		}
+		msgError = "La información se ha eliminado.";
+		return true;
 	}
 }

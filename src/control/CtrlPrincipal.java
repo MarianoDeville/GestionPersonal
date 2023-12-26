@@ -13,7 +13,7 @@ public class CtrlPrincipal implements ActionListener {
 	private Botones ventana;
 	private Listado ventanaEgresos;
 	private Listado ventanaIngresos;
-	private Listado ventanaInversiones;
+	private Botones ventanaInversiones;
 
 	public CtrlPrincipal(Botones vista) {
 		
@@ -30,12 +30,16 @@ public class CtrlPrincipal implements ActionListener {
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ventana.lbl1A.setText("Egresos");
 		ventana.btn1A.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Compras.png"));
+		ventana.btn1A.setVisible(true);
 		ventana.lbl1B.setText("Ingresos");
 		ventana.btn1B.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Pagos.png"));
+		ventana.btn1B.setVisible(true);
 		ventana.lbl1C.setText("Inversiones");
 		ventana.btn1C.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Estadisticas.png"));
+		ventana.btn1C.setVisible(true);
 		ventana.lbl2A.setText("Análisis");
 		ventana.btn2A.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Admin.png"));
+		ventana.btn2A.setVisible(true);
 		ventana.setVisible(true);
 	}
 
@@ -89,7 +93,7 @@ public class CtrlPrincipal implements ActionListener {
 		
 		if(ventanaInversiones != null)
 			ventanaInversiones.dispose();
-		ventanaInversiones = new Listado("Gestión de inversiones", ventana.getX(), ventana.getY());
+		ventanaInversiones = new Botones("Inversiones");
 		CtrlInversiones ctrlInversiones = new CtrlInversiones(ventanaInversiones);
 		ctrlInversiones.iniciar();	
 	}

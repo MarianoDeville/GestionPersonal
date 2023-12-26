@@ -3,10 +3,10 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import modelo.Cobro;
 import modelo.Concepto;
-import modelo.Fuente;
 import modelo.Ingreso;
+import modelo.Proveedor;
+import modelo.Transaccion;
 
 public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 
@@ -73,43 +73,9 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 		}
 		return respuesta;
 	}
-	
-	@Override
-	public Cobro [] getMetodosCobros() {
-		
-		Cobro respuesta[] = null;
-		String cmdStm = "SELECT id, descripcion FROM gpiygdb.transaccion WHERE (egresoIngreso = 'I' OR egresoIngreso = 'A')";
-		
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
-			rs.last();	
-			respuesta = new Cobro[rs.getRow()];
-			rs.beforeFirst();
-			int i = 0;
 
-			while (rs.next()) {
-					
-				respuesta[i] = new Cobro();
-				respuesta[i].setId(rs.getInt(1));
-				respuesta[i].setDescripcion(rs.getString(2));
-				i++;
-			}
-		} catch (Exception e) {
-			
-			System.err.println(e.getMessage());
-			System.err.println("IngresosMySQL, getMetodosCobros");
-		} finally {
-			
-			this.cerrar();
-		}
-		return respuesta;
-	}
-	
 	@Override
-	public Ingreso [] getListadoIngresos(String año, int mes, int idConcepto, int idFormaCobro, String moneda, String filtro) {
+	public Ingreso [] getListado(String año, int mes, int idConcepto, int idFormaCobro, String moneda, String filtro) {
 
 		Ingreso respuesta[] = new Ingreso[0];
 		String cmdStm = "SELECT ingresos.id, DATE_FORMAT(fecha, '%d/%m/%Y') AS fecha, ROUND(monto, 2) AS monto, moneda, cotizacion, "
@@ -182,10 +148,10 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 				respuesta[i].setMoneda(rs.getNString("moneda"));
 				respuesta[i].setCotizacion(rs.getFloat("cotizacion"));
 				respuesta[i].setComentario(rs.getString("ingresos.comentario"));
-				respuesta[i].setFuente(new Fuente());
+				respuesta[i].setFuente(new Proveedor());
 				respuesta[i].getFuente().setNombre(rs.getString("proveedores.nombre"));
 				respuesta[i].getFuente().setId(rs.getInt("proveedores.id"));
-				respuesta[i].setFormaCobro(new Cobro());
+				respuesta[i].setFormaCobro(new Transaccion());
 				respuesta[i].getFormaCobro().setDescripcion(rs.getString("transaccion.descripcion"));
 				respuesta[i].setConcepto(new Concepto());
 				respuesta[i].getConcepto().setDescripcion(rs.getString("concepto.descripcion"));
@@ -194,7 +160,7 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 		} catch (Exception e) {
 
 			System.err.println(e.getMessage());
-			System.err.println("IngresosMySQL, getListadoIngresos");
+			System.err.println("IngresosMySQL, getListado");
 		} finally {
 
 			this.cerrar();
@@ -202,46 +168,8 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 		return respuesta;
 	}
 	
-	@Override
-	public Fuente [] getListaFuentes(String filtro) {
-		
-		Fuente respuesta[] = null;
-		String cmdStm = "SELECT id, nombre, direccion, cuit, comentario FROM gpiygdb.proveedores WHERE (nombre LIKE ? AND (egresoIngreso = 'I' OR egresoIngreso = 'A'))";
-		
-		try {
-			
-			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			stm.setString(1, "%" + filtro + "%");
-			ResultSet rs = stm.executeQuery();
-			rs.last();	
-			respuesta = new Fuente[rs.getRow()];
-			rs.beforeFirst();
-			int i = 0;
-
-			while (rs.next()) {
-					
-				respuesta[i] = new Fuente();
-				respuesta[i].setId(rs.getInt(1));
-				respuesta[i].setNombre(rs.getString(2));
-				respuesta[i].setDireccion(rs.getString(3));
-				respuesta[i].setCuit(rs.getString(4));
-				respuesta[i].setComentario(rs.getString(5));
-				i++;
-			}
-		} catch (Exception e) {
-			
-			System.err.println(e.getMessage());
-			System.err.println("IngresosMySQL, getListaFuentes");
-		} finally {
-			
-			this.cerrar();
-		}
-		return respuesta;
-	}	
-	
  	@Override
-	public boolean nuevoIngreso(Ingreso ingreso) {
+	public boolean nuevo(Ingreso ingreso) {
 		
 		boolean bandera = true;
 		String cmdStm = "INSERT INTO gpiygdb.ingresos "
@@ -265,7 +193,7 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 
 			bandera = false;
 			System.err.println(e.getMessage());
-			System.err.println("IngresosMySQL, nuevoIngreso");
+			System.err.println("IngresosMySQL, nuevo");
 		} finally {
 
 			this.cerrar();
@@ -274,7 +202,7 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 	}
 
 	@Override
-	public boolean updateIngreso(Ingreso ingreso) {
+	public boolean update(Ingreso ingreso) {
 		
 		boolean bandera = true;
 		String cmdStm = "UPDATE gpiygdb.ingresos "
@@ -299,7 +227,30 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 
 			bandera = false;
 			System.err.println(e.getMessage());
-			System.err.println("IngresosMySQL, updateIngreso");
+			System.err.println("IngresosMySQL, update");
+		} finally {
+
+			this.cerrar();
+		}
+		return bandera;
+	}
+	
+	@Override
+	public boolean delete(Ingreso ingreso) {
+		
+		boolean bandera = true;
+
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = conexion.prepareStatement("DELETE FROM gpiygdb.ingresos WHERE id = ?");
+			stm.setInt(1, ingreso.getId());
+			stm.executeUpdate();
+		} catch (Exception e) {
+
+			bandera = false;
+			System.err.println(e.getMessage());
+			System.err.println("IngresosMySQL, delete");
 		} finally {
 
 			this.cerrar();
