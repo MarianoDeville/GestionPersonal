@@ -10,14 +10,16 @@ public class ProveedorMySQL extends ConexiónMySQL implements ProveedorDAO {
 	public Proveedor [] getListado(String filtro, String egresoIngreso) {
 		
 		Proveedor respuesta[] = null;
-		String cmdStm = "SELECT id, nombre, direccion, cuit, comentario FROM gpiygdb.proveedores WHERE (nombre LIKE ? AND (egresoIngreso = ? OR egresoIngreso = 'A'))";
-		
+		String cmdStm = "SELECT id, nombre, direccion, cuit, comentario, mercado FROM gpiygdb.proveedores WHERE (nombre LIKE ? AND (egresoIngreso = ? OR egresoIngreso = ?))";
+		boolean mercado = (egresoIngreso.equals("E") || egresoIngreso.equals("I"))? false: true; 
+
 		try {
 			
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			stm.setString(1, "%" + filtro + "%");
-			stm.setString(2, egresoIngreso.equals("Egreso")? "E": "I");
+			stm.setString(2, egresoIngreso);
+			stm.setString(3, mercado? "M": "A");
 			ResultSet rs = stm.executeQuery();
 			rs.last();	
 			respuesta = new Proveedor[rs.getRow()];
@@ -32,6 +34,7 @@ public class ProveedorMySQL extends ConexiónMySQL implements ProveedorDAO {
 				respuesta[i].setDireccion(rs.getString(3));
 				respuesta[i].setCuit(rs.getString(4));
 				respuesta[i].setComentario(rs.getString(5));
+				respuesta[i].setMercado(rs.getString(6));
 				i++;
 			}
 		} catch (Exception e) {

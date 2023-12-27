@@ -11,4 +11,5 @@ public interface EgresosDAO {
 	public boolean nuevo(Egreso egreso);
 	public boolean update(Egreso egreso);
 	public boolean delete(Egreso egreso);
+	public String [][] getResumen(String año, int mes, ClasificacionEgreso destinos[]);
 }

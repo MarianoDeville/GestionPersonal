@@ -1,5 +1,6 @@
 package modelo;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.swing.table.DefaultTableModel;
@@ -22,6 +23,9 @@ public class DtosEgresos {
 	private String msgError;
 	private double suma;
 	private int cantidadElementos;
+	private static String año;
+	private static int mes;
+	private DecimalFormat formatoResultado = new DecimalFormat("###,###,##0.00");
 	
 	public String [] getListaAños() {
 		
@@ -76,7 +80,7 @@ public class DtosEgresos {
 		if(formasPago == null || formasPago.length < 1) {
 
 			TransaccionDAO transaccionDAO = new TransaccionMySQL();
-			formasPago = transaccionDAO.getMetodos();
+			formasPago = transaccionDAO.getMetodos("E");
 			
 			if(formasPago == null)
 				formasPago = new Transaccion[0];
@@ -93,7 +97,7 @@ public class DtosEgresos {
 		return respuesta;
 	}
 	
-	public DefaultTableModel getTablaEgresos(String año, int mes, int tipo, int pago, String monedas, String filtro) {
+	public DefaultTableModel getTablaEgresos(String año, int mes, int tipo, int pago, String monedas, String filtro, boolean financiado) {
 		
 		int idDestino = (tipo == 0 ? 0: destinos[tipo - 1].getId());
 		int idFormaPago = pago == 0 ? 0: formasPago[pago - 1].getId();
@@ -115,18 +119,24 @@ public class DtosEgresos {
 				
 				if(egresos[i].getMoneda().equals("Pesos")) {
 					
-					tabla[i][5] = String.format("%.2f", egresos[i].getMonto());
-					suma += egresos[i].getMonto();
+					tabla[i][5] = formatoResultado.format(egresos[i].getMonto());
+					
+					if(financiado || egresos[i].getFormaPago().getFinanciado() == 0)
+						suma += egresos[i].getMonto();
 				} else if(egresos[i].getMoneda().equals("Dólares")) {
 					
-					tabla[i][3] = String.format("%.2f", egresos[i].getMonto());
-					tabla[i][5] = String.format("%.2f", egresos[i].getMonto() * egresos[i].getCotizacion());
-					suma += egresos[i].getMonto() * egresos[i].getCotizacion();
+					tabla[i][3] = formatoResultado.format(egresos[i].getMonto());
+					tabla[i][5] = formatoResultado.format(egresos[i].getMonto() * egresos[i].getCotizacion());
+					
+					if(financiado || egresos[i].getFormaPago().getFinanciado() == 0)
+						suma += egresos[i].getMonto() * egresos[i].getCotizacion();
 				}else if(egresos[i].getMoneda().equals("Euros")) {
 					
-					tabla[i][4] = String.format("%.2f", egresos[i].getMonto());
-					tabla[i][5] = String.format("%.2f", egresos[i].getMonto() * egresos[i].getCotizacion());
-					suma += egresos[i].getMonto() * egresos[i].getCotizacion();
+					tabla[i][4] = formatoResultado.format(egresos[i].getMonto());
+					tabla[i][5] = formatoResultado.format(egresos[i].getMonto() * egresos[i].getCotizacion());
+					
+					if(financiado || egresos[i].getFormaPago().getFinanciado() == 0)
+						suma += egresos[i].getMonto() * egresos[i].getCotizacion();
 				}
 			}
 		}
@@ -144,7 +154,7 @@ public class DtosEgresos {
 	public DefaultTableModel getListaProveedores(String filtro) {
 		
 		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
-		proveedores = proveedoresDAO.getListado(filtro, "Egreso");
+		proveedores = proveedoresDAO.getListado(filtro, "E");
 		String tabla[][] = new String [proveedores.length][1];
 		int i = 0;
 		
@@ -267,7 +277,7 @@ public class DtosEgresos {
 
 	public String getSuma() {
 		
-		return String.format("%.2f", suma);
+		return formatoResultado.format(suma);
 	}
 
 	public String getCantidadElementos() {
@@ -383,5 +393,23 @@ public class DtosEgresos {
 		}
 		msgError = "La información se ha eliminado.";
 		return true;
+	}
+	
+	public void setAño(String año) {
+		
+		DtosEgresos.año = año;
+	}
+	
+	public void setMes(int mes) {
+		
+		DtosEgresos.mes = mes;
+	}
+	
+	public DefaultTableModel getResumen() {
+		
+		String titulo[] = {"Concepto", "Monto"};
+		String tabla[][] = egresosDAO.getResumen(año, mes, destinos);
+		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
+		return tablaModelo;
 	}
 }

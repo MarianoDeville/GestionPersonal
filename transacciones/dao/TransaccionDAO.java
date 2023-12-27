@@ -4,5 +4,5 @@ import modelo.Transaccion;
 
 public interface TransaccionDAO {
 
-	public Transaccion [] getMetodos();
+	public Transaccion [] getMetodos(String egresoIngreso);
 }

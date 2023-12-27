@@ -18,13 +18,17 @@ public class Cargar extends VentanaModelo{
 	public JTable tabla;
 	public JLabel msgError;
 	public JLabel lblProv;
+	public JLabel lblFormPago;
 	public JLabel lblTipo;
+	public JLabel lblCotizacion;
 	public JLabel lblComentario;
+	public JLabel lblAux1;
 	public JTextField txtFecha;
 	public JTextField txtProv;
 	public JTextField txtMonto;
 	public JTextField txtCotizacion;
 	public JTextField txtComentario;
+	public JTextField txtAux1;
 	public JComboBox<String> cmbBxPago;
 	public JComboBox<String> cmbBxTipo;
 	public JComboBox<String> cmbBxMoneda;
@@ -67,7 +71,7 @@ public class Cargar extends VentanaModelo{
 		panel.add(txtProv);
 		txtProv.setColumns(20);
 		
-		JLabel lblFormPago = new JLabel("Forma de pago:");
+		lblFormPago = new JLabel("Forma de pago:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblFormPago, 30, SpringLayout.SOUTH, lblProv);
 		contenedor.putConstraint(SpringLayout.WEST, lblFormPago, 0, SpringLayout.WEST, lblProv);
 		contenedor.putConstraint(SpringLayout.EAST, lblFormPago, 0, SpringLayout.EAST, lblProv);
@@ -112,7 +116,7 @@ public class Cargar extends VentanaModelo{
 		contenedor.putConstraint(SpringLayout.SOUTH, cmbBxMoneda, 20, SpringLayout.NORTH, txtMonto);
 		panel.add(cmbBxMoneda);
 		
-		JLabel lblCotizacion = new JLabel("Cotización:");
+		lblCotizacion = new JLabel("Cotización:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblCotizacion, 30, SpringLayout.SOUTH, lblMonto);
 		contenedor.putConstraint(SpringLayout.WEST, lblCotizacion, 0, SpringLayout.WEST, lblMonto);
 		contenedor.putConstraint(SpringLayout.EAST, lblCotizacion, 0, SpringLayout.EAST, lblMonto);
@@ -137,10 +141,23 @@ public class Cargar extends VentanaModelo{
 		panel.add(txtComentario);
 		txtComentario.setColumns(20);
 
+		lblAux1 = new JLabel();
+		contenedor.putConstraint(SpringLayout.NORTH, lblAux1, 30, SpringLayout.SOUTH, lblComentario);
+		contenedor.putConstraint(SpringLayout.WEST, lblAux1, 0, SpringLayout.WEST, lblComentario);
+		contenedor.putConstraint(SpringLayout.EAST, lblAux1, 0, SpringLayout.EAST, lblComentario);
+		panel.add(lblAux1);
+		
+		txtAux1 = new JTextField();
+		contenedor.putConstraint(SpringLayout.NORTH, txtAux1, 0, SpringLayout.NORTH, lblAux1);
+		contenedor.putConstraint(SpringLayout.WEST, txtAux1, 10, SpringLayout.EAST, lblAux1);
+		panel.add(txtAux1);
+		txtAux1.setColumns(20);
+		txtAux1.setVisible(false);
+
 		scrollTabla = new JScrollPane();
 		contenedor.putConstraint(SpringLayout.NORTH, scrollTabla, 0, SpringLayout.NORTH, lblFecha);
 		contenedor.putConstraint(SpringLayout.WEST, scrollTabla, 10, SpringLayout.EAST, txtProv);
-		contenedor.putConstraint(SpringLayout.SOUTH, scrollTabla, 340, SpringLayout.NORTH, panel);
+		contenedor.putConstraint(SpringLayout.SOUTH, scrollTabla, 0, SpringLayout.SOUTH, lblAux1);
 		contenedor.putConstraint(SpringLayout.EAST, scrollTabla, -25, SpringLayout.EAST, panel);
 		panel.add(scrollTabla);
 		tabla = new JTable();

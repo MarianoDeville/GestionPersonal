@@ -27,6 +27,7 @@ public class Listado extends VentanaModelo {
 	public JCheckBox chkBxPesos;
 	public JCheckBox chkBxDolares;
 	public JCheckBox chkBxEuros;
+	public JCheckBox chkBxFinanciado;
 	public JButton btnNuevo;
 	public JButton btnCargar;
 	public JButton btnImprimir;
@@ -137,9 +138,16 @@ public class Listado extends VentanaModelo {
 		contenedor.putConstraint(SpringLayout.WEST, chkBxEuros, 0, SpringLayout.WEST, btnNuevo);
 		panel.add(chkBxEuros);
 		
+		chkBxFinanciado = new JCheckBox("Financiado");
+		contenedor.putConstraint(SpringLayout.NORTH, chkBxFinanciado, 15, SpringLayout.SOUTH, chkBxEuros);
+		contenedor.putConstraint(SpringLayout.EAST, chkBxFinanciado, 0, SpringLayout.EAST, btnNuevo);
+		contenedor.putConstraint(SpringLayout.WEST, chkBxFinanciado, 0, SpringLayout.WEST, btnNuevo);
+		panel.add(chkBxFinanciado);
+		chkBxFinanciado.setVisible(false);
+		
 		txtBusqueda = new JTextField();
-		contenedor.putConstraint(SpringLayout.NORTH, txtBusqueda, 15, SpringLayout.SOUTH, chkBxEuros);
-		contenedor.putConstraint(SpringLayout.WEST, txtBusqueda, 0, SpringLayout.WEST, chkBxEuros);
+		contenedor.putConstraint(SpringLayout.NORTH, txtBusqueda, 15, SpringLayout.SOUTH, chkBxFinanciado);
+		contenedor.putConstraint(SpringLayout.WEST, txtBusqueda, 0, SpringLayout.WEST, chkBxFinanciado);
 		txtBusqueda.setColumns(7);
 		panel.add(txtBusqueda);
 		

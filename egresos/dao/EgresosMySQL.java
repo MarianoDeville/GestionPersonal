@@ -3,6 +3,8 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DecimalFormat;
+
 import modelo.ClasificacionEgreso;
 import modelo.Egreso;
 import modelo.Proveedor;
@@ -79,7 +81,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 
 		Egreso respuesta[] = new Egreso[0];
 		String cmdStm = "SELECT egresos.id, DATE_FORMAT(fecha, '%d/%m/%Y') AS fecha, ROUND(monto, 2) AS monto, moneda, cotizacion, "
-							+ "proveedores.nombre, proveedores.id, transaccion.descripcion, destino.descripcion, egresos.comentario "
+							+ "proveedores.nombre, proveedores.id, transaccion.descripcion, destino.descripcion, egresos.comentario, financiado "
 						+ "FROM gpiygdb.egresos "
 						+ "JOIN gpiygdb.proveedores ON proveedores.id = idProveedor "
 						+ "JOIN gpiygdb.transaccion ON transaccion.id = idFormaPago "
@@ -153,6 +155,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 				respuesta[i].getProveedor().setId(rs.getInt("proveedores.id"));
 				respuesta[i].setFormaPago(new Transaccion());
 				respuesta[i].getFormaPago().setDescripcion(rs.getString("transaccion.descripcion"));
+				respuesta[i].getFormaPago().setFinanciado(rs.getInt("financiado"));
 				respuesta[i].setTipoConsumo(new ClasificacionEgreso());
 				respuesta[i].getTipoConsumo().setDescripcion(rs.getString("destino.descripcion"));
 				i++;
@@ -258,5 +261,48 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			this.cerrar();
 		}
 		return bandera;
+	}
+	
+	@Override
+	public String [][] getResumen(String año, int mes, ClasificacionEgreso destinos[]){
+		
+		String respuesta[][] = new String[destinos.length + 1][2];
+		String cmdStm = "SELECT SUM(monto) FROM gpiygdb.egresos WHERE (YEAR(fecha) = ? AND MONTH(fecha) = ? AND idTipoGasto = ?)";
+		DecimalFormat formatoResultado = new DecimalFormat("###,###,##0.00");
+		double suma = 0;
+		
+		try {
+			
+			this.conectar();
+			ResultSet rs = null;
+			PreparedStatement stm = conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setString(1, año);
+			stm.setInt(2, mes);
+			int i = 0;
+
+			for(ClasificacionEgreso destino: destinos) {
+				
+				stm.setInt(3, destino.getId());
+				respuesta[i][0] = destino.getDescripcion();
+				rs = stm.executeQuery();
+				
+				if(rs.next()) {
+					
+					respuesta[i][1] = formatoResultado.format(rs.getDouble(1));
+					suma += rs.getDouble(1);
+				}
+				i++;	
+			}
+			respuesta[i][1] = formatoResultado.format(suma);
+		} catch (Exception e) {
+
+			System.err.println(cmdStm);
+			System.err.println(e.getMessage());
+			System.err.println("EgresosMySQL, getResumen");
+		} finally {
+
+			this.cerrar();
+		}
+		return respuesta;
 	}
 }

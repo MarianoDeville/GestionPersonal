@@ -1,5 +1,6 @@
 package modelo;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.swing.table.DefaultTableModel;
@@ -22,6 +23,7 @@ public class DtosIngresos {
 	private int cantidadElementos;
 	private String msgError;
 	private Calendar calendario;
+	private DecimalFormat formatoResultado = new DecimalFormat("###,###,##0.00");
 	
 	public String [] getListaAños() {
 		
@@ -76,7 +78,7 @@ public class DtosIngresos {
 		if(formasCobro == null || formasCobro.length < 1) {
 
 			TransaccionDAO transaccionDAO = new TransaccionMySQL();
-			formasCobro = transaccionDAO.getMetodos();
+			formasCobro = transaccionDAO.getMetodos("I");
 			
 			if(formasCobro == null)
 				formasCobro = new Transaccion[0];
@@ -112,17 +114,17 @@ public class DtosIngresos {
 			
 			if(ingresos[i].getMoneda().equals("Pesos")) {
 				
-				tabla[i][6] = String.format("%.2f", ingresos[i].getMonto());
+				tabla[i][6] = formatoResultado.format(ingresos[i].getMonto());
 				suma += ingresos[i].getMonto();
 			} else if(ingresos[i].getMoneda().equals("Dólares")) {
 				
-				tabla[i][4] = String.format("%.2f", ingresos[i].getMonto());
-				tabla[i][6] = String.format("%.2f", ingresos[i].getMonto() * ingresos[i].getCotizacion());
+				tabla[i][4] = formatoResultado.format(ingresos[i].getMonto());
+				tabla[i][6] = formatoResultado.format(ingresos[i].getMonto() * ingresos[i].getCotizacion());
 				suma += ingresos[i].getMonto() * ingresos[i].getCotizacion();
 			}else if(ingresos[i].getMoneda().equals("Euros")) {
 				
-				tabla[i][5] = String.format("%.2f", ingresos[i].getMonto());
-				tabla[i][6] = String.format("%.2f", ingresos[i].getMonto() * ingresos[i].getCotizacion());
+				tabla[i][5] = formatoResultado.format(ingresos[i].getMonto());
+				tabla[i][6] = formatoResultado.format(ingresos[i].getMonto() * ingresos[i].getCotizacion());
 				suma += ingresos[i].getMonto() * ingresos[i].getCotizacion();
 			}
 		}
@@ -133,7 +135,7 @@ public class DtosIngresos {
 	
 	public String getSuma() {
 		
-		return String.format("%.2f", suma);
+		return formatoResultado.format(suma);
 	}
 
 	public String getCantidadElementos() {
@@ -163,7 +165,7 @@ public class DtosIngresos {
 	public DefaultTableModel getListaFuentes(String filtro) {
 		
 		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
-		fuentes = proveedoresDAO.getListado(filtro, "Ingreso");
+		fuentes = proveedoresDAO.getListado(filtro, "I");
 		String tabla[][] = new String [fuentes.length][1];
 		int i = 0;
 		

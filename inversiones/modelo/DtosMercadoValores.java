@@ -2,13 +2,21 @@ package modelo;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
 import dao.MercadoValoresDAO;
 import dao.MercadoValoresMySQL;
+import dao.ProveedorDAO;
+import dao.ProveedorMySQL;
 
 public class DtosMercadoValores {
 	
-	MercadoValoresDAO inversionesDAO = new MercadoValoresMySQL();
-	private Valores inversiones[];
+	MercadoValoresDAO mercadoValoresDAO = new MercadoValoresMySQL();
+	private Proveedor custodios[];
+	private Instrumento instrumentos[];
+	private static Valores valores[];
 	
 	
 	private Calendar calendario;
@@ -17,7 +25,7 @@ public class DtosMercadoValores {
 		
 		String respuesta[] = null;
 		calendario = new GregorianCalendar();
-		respuesta = inversionesDAO.getAñosCargados();
+		respuesta = mercadoValoresDAO.getAñosCargados();
 		
 		if(respuesta.length == 0)
 			return new String[] {calendario.get(Calendar.YEAR) + ""};
@@ -41,11 +49,61 @@ public class DtosMercadoValores {
 		return calendario.get(Calendar.MONTH) + 1;
 	}
 	
+	public String getFechaActual() {
+		
+		calendario = new GregorianCalendar();
+		return calendario.get(Calendar.DAY_OF_MONTH) + "/" + (calendario.get(Calendar.MONTH) + 1) + "/" + calendario.get(Calendar.YEAR);
+	}
 	
+	public String [] getListaCustodias() {
+		
+		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
+		custodios = proveedoresDAO.getListado("", "Mercado");
+		String respuesta[] = new String [custodios.length + 1];
+		respuesta[0] = "Selecciones una opción";
+		int i = 1;
+		
+		for(Proveedor prov: custodios) {
+			
+			respuesta[i] = prov.getNombre() + " - " + prov.getMercado();
+			i++;
+		}
+		return respuesta;
+	}
 	
+	public String [] getListaInstrumentos() {
+		
+		instrumentos = mercadoValoresDAO.getIntrumentos();
+		String respuesta[] = new String [instrumentos.length + 1];
+		respuesta[0] = "Selecciones una opción";
+		int i = 1;
+		
+		for(Instrumento prov: instrumentos) {
+			
+			respuesta[i] = prov.getNombre();
+			i++;
+		}
+		return respuesta;
+	}
 	
-	
-	
+	public DefaultTableModel getListadoValores(String filtro) {
+		
+		if(valores != null || valores.length == 0)
+			valores = mercadoValoresDAO.getListadoValores(filtro);
+		
+		String tabla[][] = new String [valores.length][1];
+		int i = 0;
+		
+		for(Valores valor: valores) {
+			
+			tabla[i][0] = valor.getNombre() + " - " + valor.getCustodia().getNombre() + " " + valor.getCustodia().getMercado();
+			i++;
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, new String [] {"Nombre empresa"});
+		return tablaModelo;
+		
+		
+	}
 	
 	
 	

@@ -4,6 +4,7 @@ public class Transaccion {
 
 	private int id;
 	private String descripcion;
+	private int financiado;
 
 	public int getId() {
 		
@@ -23,5 +24,15 @@ public class Transaccion {
 	public void setDescripcion(String descripcion) {
 		
 		this.descripcion = descripcion;
+	}
+
+	public int getFinanciado() {
+		
+		return financiado;
+	}
+
+	public void setFinanciado(int financiado) {
+		
+		this.financiado = financiado;
 	}
 }

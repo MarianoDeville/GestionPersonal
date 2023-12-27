@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import modelo.DtosEgresos;
 import vista.Cargar;
 import vista.Listado;
+import vista.Resumen;
 
 public class CtrlEgresos implements ActionListener {
 	
@@ -21,6 +22,7 @@ public class CtrlEgresos implements ActionListener {
 	private int elemento = -1;
 	private Cargar ventanaNuevoEgreso;
 	private Cargar ventanaEditarEgreso;
+	private Resumen ventanaResumen;
 
 	public CtrlEgresos(Listado vista) {
 		
@@ -33,7 +35,9 @@ public class CtrlEgresos implements ActionListener {
 		this.ventana.chkBxPesos.addActionListener(this);
 		this.ventana.chkBxDolares.addActionListener(this);
 		this.ventana.chkBxEuros.addActionListener(this);
+		this.ventana.chkBxFinanciado.addActionListener(this);
 		this.ventana.btnNuevo.addActionListener(this);
+		this.ventana.btnCargar.addActionListener(this);
 		this.ventana.btnImprimir.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
 		this.ventana.txtBusqueda.addKeyListener(new KeyAdapter() {
@@ -55,6 +59,8 @@ public class CtrlEgresos implements ActionListener {
 	
 	public void iniciar() {
 
+		ventana.btnCargar.setText("Resumen");
+		ventana.btnCargar.setVisible(true);
 		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaAños()));
 		ventana.comboBoxAño.setSelectedIndex(0);
 		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaMeses()));
@@ -65,6 +71,8 @@ public class CtrlEgresos implements ActionListener {
 		ventana.comboBoxPago.setSelectedIndex(0);
 		ventana.chkBxDolares.setSelected(true);
 		ventana.chkBxEuros.setSelected(true);
+		ventana.chkBxFinanciado.setVisible(true);
+		ventana.chkBxFinanciado.setSelected(true);
 		actualizar();
 		ventana.setVisible(true);
 	}
@@ -74,6 +82,12 @@ public class CtrlEgresos implements ActionListener {
 		if(e.getSource() == ventana.btnNuevo) {
 			
 			nuevo();
+			return;
+		}
+		
+		if(e.getSource() == ventana.btnCargar) {
+			
+			resumen();
 			return;
 		}
 		
@@ -96,6 +110,9 @@ public class CtrlEgresos implements ActionListener {
 			
 			if(ventanaNuevoEgreso != null)
 				ventanaNuevoEgreso.dispose();
+			
+			if(ventanaResumen != null)
+				ventanaResumen.dispose();
 			ventana.dispose();
 			return;
 		}
@@ -105,6 +122,8 @@ public class CtrlEgresos implements ActionListener {
 	}
 	
 	private void actualizar() {
+		
+		ventana.btnCargar.setEnabled(ventana.comboBoxMes.getSelectedIndex() == 0? false:true);
 		
 		if(!ventana.chkBxPesos.isSelected() && !ventana.chkBxDolares.isSelected() && !ventana.chkBxEuros.isSelected())
 			ventana.chkBxPesos.setSelected(true);
@@ -126,7 +145,8 @@ public class CtrlEgresos implements ActionListener {
 														  ventana.comboBoxTipo.getSelectedIndex(), 
 														  ventana.comboBoxPago.getSelectedIndex(), 
 														  monedas ,
-														  ventana.txtBusqueda.getText()));
+														  ventana.txtBusqueda.getText(), 
+														  ventana.chkBxFinanciado.isSelected()));
 		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(70);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(80);
@@ -171,5 +191,16 @@ public class CtrlEgresos implements ActionListener {
 		ventanaNuevoEgreso.btnVolver.addActionListener(this);
 		CtrlCargarEgreso ctrlCargarEgreso = new CtrlCargarEgreso(ventanaNuevoEgreso);
 		ctrlCargarEgreso.iniciar();
+	}
+	
+	private void resumen() {
+		
+		if(ventanaResumen != null)
+			ventanaResumen.dispose();
+		dtosEgreso.setAño((String)ventana.comboBoxAño.getSelectedItem());
+		dtosEgreso.setMes(ventana.comboBoxMes.getSelectedIndex());
+		ventanaResumen = new Resumen("Resumen de egresos", ventana.getX(), ventana.getY());
+		CtrlResumen ctrlResumen = new CtrlResumen(ventanaResumen);
+		ctrlResumen.iniciar();
 	}
 }
