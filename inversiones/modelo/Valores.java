@@ -4,11 +4,19 @@ public class Valores {
 
 	private int id;
 	private String nombre;
-	private int cant;
+	private double cant;
 	private Proveedor custodia;
 	private Operacion operaciones[];
 	private Cotizacion cotizaciones[];
+	private Instrumento instrumento;
 
+	public Valores() {
+		
+		id = 0;
+		nombre = "";
+		cant = 0;
+	}
+	
 	public int getId() {
 		
 		return id;
@@ -29,12 +37,12 @@ public class Valores {
 		this.nombre = nombre;
 	}
 
-	public int getCant() {
+	public double getCant() {
 		
 		return cant;
 	}
 
-	public void setCant(int cant) {
+	public void setCant(double cant) {
 		
 		this.cant = cant;
 	}
@@ -67,5 +75,15 @@ public class Valores {
 	public void setCotizaciones(Cotizacion[] cotizaciones) {
 		
 		this.cotizaciones = cotizaciones;
+	}
+
+	public Instrumento getInstrumento() {
+		
+		return instrumento;
+	}
+
+	public void setInstrumento(Instrumento instrumento) {
+		
+		this.instrumento = instrumento;
 	}
 }

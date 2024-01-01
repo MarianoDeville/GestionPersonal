@@ -30,6 +30,7 @@ public class Listado extends VentanaModelo {
 	public JCheckBox chkBxFinanciado;
 	public JButton btnNuevo;
 	public JButton btnCargar;
+	public JButton btnCotizar;
 	public JButton btnImprimir;
 	public JButton btnVolver;
 	public JButton btnGuardar;
@@ -150,6 +151,13 @@ public class Listado extends VentanaModelo {
 		contenedor.putConstraint(SpringLayout.WEST, txtBusqueda, 0, SpringLayout.WEST, chkBxFinanciado);
 		txtBusqueda.setColumns(7);
 		panel.add(txtBusqueda);
+	
+		btnCotizar = new JButton("Cargar");
+		contenedor.putConstraint(SpringLayout.NORTH, btnCotizar, 15, SpringLayout.SOUTH, chkBxFinanciado);
+		contenedor.putConstraint(SpringLayout.EAST, btnCotizar, 0, SpringLayout.EAST, btnNuevo);
+		contenedor.putConstraint(SpringLayout.WEST, btnCotizar, 0, SpringLayout.WEST, btnNuevo);
+		panel.add(btnCotizar);	
+		btnCotizar.setVisible(false);
 		
 		btnImprimir = new JButton("Imprimir");
 		contenedor.putConstraint(SpringLayout.NORTH, btnImprimir, 15, SpringLayout.SOUTH, txtBusqueda);
