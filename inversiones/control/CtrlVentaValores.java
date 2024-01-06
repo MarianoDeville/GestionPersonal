@@ -11,13 +11,13 @@ import javax.swing.DefaultComboBoxModel;
 import modelo.DtosMercadoValores;
 import vista.Cargar;
 
-public class CtrlCompraValores implements ActionListener {
+public class CtrlVentaValores implements ActionListener {
 	
 	private Cargar ventana;
 	private DtosMercadoValores dtosMercadoValores;
 	private int elemento = -1;
 
-	public CtrlCompraValores(Cargar vista) {
+	public CtrlVentaValores(Cargar vista) {
 		
 		this.ventana = vista;
 		this.dtosMercadoValores = new DtosMercadoValores();
@@ -71,7 +71,7 @@ public class CtrlCompraValores implements ActionListener {
 		
 		if(e.getSource() == ventana.btnGuardar) {
 			
-			guardarCompra();
+			guardarVenta();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
@@ -91,17 +91,18 @@ public class CtrlCompraValores implements ActionListener {
 			ventana.cmbBxPago.setEnabled(false);
 			ventana.cmbBxTipo.setSelectedItem(dtosMercadoValores.getTipoInstrumento());
 			ventana.cmbBxTipo.setEnabled(false);
+			ventana.lblInfoCot.setText("<= " + dtosMercadoValores.getCantValor());
 			elemento = -1;
 		}
 		ventana.tabla.setModel(dtosMercadoValores.getListadoValores(ventana.txtProv.getText()));
 		ventana.tabla.setDefaultEditor(Object.class, null);
 	}
 	
-	private void guardarCompra() {
+	private void guardarVenta() {
 		
 		dtosMercadoValores.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
 		dtosMercadoValores.setComentario(ventana.txtAux1.getText());
-		dtosMercadoValores.setTipoOperacion("Compra");
+		dtosMercadoValores.setTipoOperacion("Venta");
 
 		if(dtosMercadoValores.setNombre(ventana.txtProv.getText()) && 
 				dtosMercadoValores.setFecha(ventana.txtFecha.getText()) && 
@@ -110,7 +111,7 @@ public class CtrlCompraValores implements ActionListener {
 				dtosMercadoValores.setPrecio(ventana.txtMonto.getText()) && 
 				dtosMercadoValores.setCantidad(ventana.txtCotizacion.getText()) &&
 				dtosMercadoValores.setComision(ventana.txtComentario.getText()) &&
-				dtosMercadoValores.guardarCompra()) {
+				dtosMercadoValores.guardarVenta()) {
 			
 			ventana.msgError.setForeground(Color.BLUE);
 			ventana.msgError.setText(dtosMercadoValores.getMsgError());

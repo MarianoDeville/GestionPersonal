@@ -3,6 +3,7 @@ package modelo;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import dao.MercadoValoresDAO;
 import dao.MercadoValoresMySQL;
@@ -20,13 +21,12 @@ public class DtosMercadoValores {
 	private Proveedor custodia;
 	private Instrumento instrumentos[];
 	private static Valores valores[];
-	private Valores valor;
+	private static Valores valor;
 	private Operacion operacion;
 	private String msgError;
-	
+	private double suma;
 	private Calendar calendario;
 		
-	
 	public String [] getListaAños() {
 		
 		String respuesta[] = null;
@@ -44,9 +44,9 @@ public class DtosMercadoValores {
 		return temp;
 	}
 
-	public String [] getListaMeses() {
+	public String [] getListaMeses(String primero) {
 		
-		return new String [] {"Todos", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		return new String [] {primero, "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
 	}
 	
 	public int getMesActual() {
@@ -54,40 +54,66 @@ public class DtosMercadoValores {
 		calendario = new GregorianCalendar();
 		return calendario.get(Calendar.MONTH) + 1;
 	}
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////// solo debe poderse editar la última columna cuando agrego una para la carga de cotizaciones del día//////////////////////////////////////////////////////
-	public DefaultTableModel getTablaValores(String año, int mes) {////////////////////////////////////////// debo armar la tabla con las cotizaciones cargadas ////////////////////
+
+	public DefaultTableModel getTablaValores(String año, int mes, boolean agregar) {
 		
 		valores = mercadoValoresDAO.getListado("");
-		String titulo[] = {"Cant.", "Nombre", "Mercado"};
-		String tabla[][] = new String[valores.length][5];
+		int tamaño = mercadoValoresDAO.getCotizaciones(año, mes, valores);
+		String tabla[][] = new String[valores.length + 1][5];
+		String titulo[] = new String[tamaño + (agregar? 4: 3)];
+		System.arraycopy(new String[]{"Nombre", "Cant.", "Custodio"}, 0, titulo, 0, 3);
+		double totales[] = new double[tamaño];
 		
-	
 		for(int i = 0; i < valores.length; i++) {
 			
-			tabla[i][0] = formatoResultado.format(valores[i].getCant());
-			tabla[i][1] = valores[i].getNombre();
-			tabla[i][2] = valores[i].getCustodia().getMercado();
+			tabla[i][0] = valores[i].getNombre();
+			tabla[i][1] = formatoResultado.format(valores[i].getCant());
+			tabla[i][2] = valores[i].getCustodia().getNombre();
 			
+			for(int e = 0; e < tamaño; e++) {
 			
+				if(valores[i].getCotizaciones()[e].getValor() > 0)
+					tabla[i][e + 3] = formatoResultado.format(valores[i].getCotizaciones()[e].getValor());
+				else
+					tabla[i][e + 3] = "-";
+				titulo[e + 3] = valores[i].getCotizaciones()[e].getFecha();
+				totales[e] += valores[i].getCotizaciones()[e].getValor() * valores[i].getCant();
+				tabla[i + 1][e + 3] = formatoResultado.format(totales[e]);
+				
+				if(e == tamaño - 1)
+					suma = totales[e];
+			}
 		}
 		
-		
-		
-		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
+		if(agregar)
+			titulo[titulo.length - 1] = getFechaActual();
+		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo){
+
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				
+				if(agregar)
+					return column == titulo.length - 1? true: false;
+				else
+					return false;
+			}
+		};
 		return tablaModelo;
-	}/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	}
+	
 	public String getFechaActual() {
 		
 		calendario = new GregorianCalendar();
-		return calendario.get(Calendar.DAY_OF_MONTH) + "/" + (calendario.get(Calendar.MONTH) + 1) + "/" + calendario.get(Calendar.YEAR);
+		DecimalFormat formato = new DecimalFormat("00");
+		String dia = formato.format(calendario.get(Calendar.DAY_OF_MONTH));
+		String mes = formato.format((calendario.get(Calendar.MONTH) + 1));
+		return dia + "/" + mes + "/" + calendario.get(Calendar.YEAR);
 	}
 	
 	public String [] getListaCustodias() {
 		
 		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
-		custodios = proveedoresDAO.getListado("", "Mercado");
+		custodios = proveedoresDAO.getListado("", "M");
 		String respuesta[] = new String [custodios.length + 1];
 		respuesta[0] = "Selecciones una opción";
 		int i = 1;
@@ -281,7 +307,7 @@ public class DtosMercadoValores {
 		return msgError;
 	}
 	
-	public boolean guardarOperacion() {  
+	public boolean guardarCompra() {  
 				
 		if(valor.getCustodia() == null)
 			valor.setCustodia(custodia);
@@ -301,14 +327,93 @@ public class DtosMercadoValores {
 		return false;
 	}
 	
+	public boolean guardarCotizaciones(JTable tablaCotizaciones) {
+		
+		int ultimaColumna = tablaCotizaciones.getColumnCount() - 1;
+		Cotizacion cot[] = new Cotizacion[valores.length];
+		
+		try {
+			
+			for(int i = 0; i < valores.length; i++) {
+				
+				cot[i] = new Cotizacion();
+				cot[i].setFecha(getFechaActual());
+				cot[i].setValor(Double.parseDouble((String)tablaCotizaciones.getValueAt(i, ultimaColumna)));
+				cot[i].setIdValores(valores[i].getId());
+			}			
+		} catch (Exception e) {
+
+			msgError = "Verifique la información de los campos.";
+			return false;
+		}
+		
+		if(mercadoValoresDAO.newCotizaciones(cot))
+			return true;
+		msgError = "Error al intentar guardar la información en la base de datos.";
+		return false;
+	}
+
+	public String getCantValores() {
+		
+		return valores.length + "";
+	}
+
+	public String getSuma() {
+		
+		return formatoResultado.format(suma);
+	}
 	
+	public String getNombreValor() {
+		
+		return valor.getNombre();
+	}
 	
+	public String getCantValor() {
+		
+		return String.format("%.2f", valor.getCant());
+	}
 	
+	public DefaultTableModel getListadoOperaciones() {
+		
+		if(!operacionDAO.getListaOperaciones(valor))
+			System.out.println("Algo salió mal");
+		String titulo[] = {"Fecha", "Operación", "Cantidad", "Precio", "Comisión", "Comentario"};
+		String tabla[][] = new String [valor.getCotizaciones().length][7];
+		int i = 0;
+		
+		for(Operacion oper: valor.getOperaciones()) {
+			
+			tabla[i][0] = oper.getFecha();
+			tabla[i][1] = oper.getOperacion();
+			tabla[i][2] = formatoResultado.format(oper.getCant());
+			tabla[i][3] = formatoResultado.format(oper.getPrecio());
+			tabla[i][4] = formatoResultado.format(oper.getComision());
+			tabla[i][5] = oper.getComentario();
+			i++;
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
+		return tablaModelo;
+	}
 	
-	
-	
-	
-	
-	
-	
+	public boolean guardarVenta() {
+				
+		if(valor.getId() == 0) {
+
+			msgError = "No se ha defino el valor a operar.";
+			return false;
+		}
+		
+		if(valor.getCustodia() == null)
+			valor.setCustodia(custodia);
+		operacion.setIdCustodia(custodia.getId());
+		operacion.setIdValores(valor.getId());
+			
+		if(operacionDAO.newVenta(operacion)) {
+			
+			msgError = "Se guardó correctamente la operacion.";
+			return true;
+		}
+		msgError = "Error al intentar guardar la compra.";
+		return false;
+	}
 }

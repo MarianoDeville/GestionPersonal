@@ -10,10 +10,10 @@ import vista.Listado;
 public class CtrlInversiones implements ActionListener {
 	
 	private Botones ventana;
+	private Listado ventanaFiat;
 	private Listado ventanaMercadoValores;
 	private Listado ventanaPropiedades;
 	private Listado ventanaCripto;
-	private Listado ventanaFiat;
 	private Listado ventanaResumen;
 
 	public CtrlInversiones(Botones vista) {
@@ -29,14 +29,14 @@ public class CtrlInversiones implements ActionListener {
 	
 	public void iniciar() {
 
-		ventana.lbl1A.setText("Mercado de valores");
-		ventana.btn1A.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Bolsa.png"));
+		ventana.lbl1A.setText("Fiat");
+		ventana.btn1A.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Fiat.png"));
 		ventana.btn1A.setVisible(true);
-		ventana.lbl1B.setText("Cripto monedas");
-		ventana.btn1B.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Cripto.png"));
+		ventana.lbl1B.setText("Mercado de valores");
+		ventana.btn1B.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Bolsa.png"));
 		ventana.btn1B.setVisible(true);
-		ventana.lbl1C.setText("Fiat");
-		ventana.btn1C.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Fiat.png"));
+		ventana.lbl1C.setText("Cripto monedas");
+		ventana.btn1C.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Cripto.png"));
 		ventana.btn1C.setVisible(true);
 		ventana.lbl2A.setText("Inmobiliario");
 		ventana.btn2A.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Inmobiliario.png"));
@@ -51,18 +51,18 @@ public class CtrlInversiones implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if(e.getSource() == ventana.btn1A) {
-			
-			mercadoValores();
+
+			fiat();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			cripto();
+			mercadoValores();
 		}	
 
 		if(e.getSource() == ventana.btn1C) {
 			
-			fiat();
+			cripto();
 		}
 		
 		if(e.getSource() == ventana.btn2A) {
@@ -94,7 +94,16 @@ public class CtrlInversiones implements ActionListener {
 			ventana.dispose();
 		}
 	}
-
+	
+	private void fiat() {
+		
+		if(ventanaFiat != null)
+			ventanaFiat.dispose();
+		ventanaFiat = new Listado("Gestión dinero FIAT", ventana.getX(), ventana.getY());
+		CtrlMercadoFIAT ctrlMercadoFIAT = new CtrlMercadoFIAT(ventanaFiat);
+		ctrlMercadoFIAT.iniciar();
+	}
+	
 	private void mercadoValores() {
 		
 		if(ventanaMercadoValores != null)
@@ -106,14 +115,9 @@ public class CtrlInversiones implements ActionListener {
 
 	private void cripto() {
 		
-		
+
 	}
-	
-	private void fiat() {
-		
-		
-	}
-	
+
 	private void inmobiliario() {
 		
 	

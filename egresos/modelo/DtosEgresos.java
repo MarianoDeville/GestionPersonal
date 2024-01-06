@@ -148,9 +148,12 @@ public class DtosEgresos {
 	public String getFechaActual() {
 		
 		calendario = new GregorianCalendar();
-		return calendario.get(Calendar.DAY_OF_MONTH) + "/" + (calendario.get(Calendar.MONTH) + 1) + "/" + calendario.get(Calendar.YEAR);
+		DecimalFormat formato = new DecimalFormat("00");
+		String dia = formato.format(calendario.get(Calendar.DAY_OF_MONTH));
+		String mes = formato.format((calendario.get(Calendar.MONTH) + 1));
+		return dia + "/" + mes + "/" + calendario.get(Calendar.YEAR);
 	}
-	
+
 	public DefaultTableModel getListaProveedores(String filtro) {
 		
 		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
@@ -312,7 +315,7 @@ public class DtosEgresos {
 	
 	public String getMonto() {
 		
-		return String.format("%.2f", egreso.getMonto());
+		return formatoResultado.format(egreso.getMonto());
 	}
 	
 	public String getMoneda() {
@@ -322,7 +325,7 @@ public class DtosEgresos {
 	
 	public String getCotizacion() {
 		
-		return String.format("%.2f", egreso.getCotizacion());
+		return formatoResultado.format(egreso.getCotizacion());
 	}
 	
 	public boolean actualizarEgreso() {

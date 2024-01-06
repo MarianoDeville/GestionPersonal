@@ -3,7 +3,6 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import modelo.Cotizacion;
 import modelo.Instrumento;
 import modelo.Proveedor;
@@ -84,7 +83,7 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 						+ "FROM gpiygdb.valores "
 						+ "JOIN gpiygdb.instrumento ON instrumento.id = idTipo "
 						+ "JOIN gpiygdb.proveedores ON proveedores.id = idCustodia "
-						+ "WHERE valores.nombre LIKE ?";
+						+ "WHERE (valores.nombre LIKE ? AND cant > 0) ORDER BY idCustodia";
 		
 		try {
 			
@@ -123,17 +122,64 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 		}
 		return respuesta;
 	}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	@Override////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	public Cotizacion [] getCotizaciones(String año, int mes) {
+
+	@Override
+	public int getCotizaciones(String año, int mes, Valores valores[]) {
+
+		String fechas[] = null;
+		String cmdStm = "SELECT DATE_FORMAT(fecha, '%d/%m/%Y') FROM gpiygdb.cotizaciones WHERE (YEAR(fecha) = ? AND MONTH(fecha) = ?) GROUP BY DAY(fecha)";
 		
-		Cotizacion respuesta[] = null;
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setString(1, año);
+			stm.setInt(2, mes);
+			ResultSet  rs = stm.executeQuery();
+			rs.last();
+			fechas = new String[rs.getRow()];
+			rs.beforeFirst();
+			int i = 0;			
+			
+			while(rs.next()) {
+				
+				fechas[i] = rs.getString(1);
+				i++;
+			}
 		
+			for(i = 0; i < valores.length; i++) {
+
+				valores[i].setCotizaciones(new Cotizacion[fechas.length]);
+				
+				for(int e = 0; e < fechas.length; e++) {
+					
+					valores[i].getCotizaciones()[e] = new Cotizacion();
+					cmdStm = "SELECT id, valor FROM gpiygdb.cotizaciones WHERE DATE_FORMAT(fecha, '%d/%m/%Y') = ? AND idValores = ?";
+					stm = conexion.prepareStatement(cmdStm);
+					stm.setString(1, fechas[e]);
+					stm.setInt(2, valores[i].getId());
+					rs = stm.executeQuery();
+					
+					if(rs.next()) {
+						
+						valores[i].getCotizaciones()[e].setId(rs.getInt(1));
+						valores[i].getCotizaciones()[e].setValor(rs.getDouble(2));
+					}
+					valores[i].getCotizaciones()[e].setFecha(fechas[e]);
+				}
+			}
+		} catch (Exception e) {
 		
+			System.err.println(cmdStm);
+			System.err.println(e.getMessage());
+			System.err.println("MercadoValoresMySQL, getCotizaciones");
+		} finally {
 		
-		return respuesta;
-	}////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			this.cerrar();
+		}
+		return fechas.length;
+	}
+	
 	@Override
 	public boolean newValor(Valores valor) {
 
@@ -180,9 +226,57 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 		return bandera;
 	}
 	
+	@Override
+	public boolean newCotizaciones(Cotizacion cotizaciones[]) {
+		
+		boolean bandera = true;
+		String cmdStm = null;
+		
+		try {
+			
+			this.conectar();
+			PreparedStatement stm;
 	
+			for(Cotizacion cot: cotizaciones) {
+
+				cmdStm = "INSERT INTO gpiygdb.cotizaciones (fecha, valor, ";
+				
+				if(cot.getIdValores() != 0)				
+					cmdStm += "idValores) VALUES (STR_TO_DATE(?, '%d/%m/%Y'), ?, ?)";
+				
+				if(cot.getIdCripto() != 0)				
+					cmdStm += "idCripto) VALUES (STR_TO_DATE(?, '%d/%m/%Y'), ?, ?)";
+				
+				if(cot.getIdFiat() != 0)				
+					cmdStm += "idFiat) VALUES (STR_TO_DATE(?, '%d/%m/%Y'), ?, ?)";
+				stm = conexion.prepareStatement(cmdStm);
+				stm.setString(1, cot.getFecha());
+				stm.setDouble(2, cot.getValor());
+				
+				if(cot.getIdValores() != 0)				
+					stm.setInt(3, cot.getIdValores());
+				
+				if(cot.getIdCripto() != 0)				
+					stm.setInt(3, cot.getIdCripto());
+				
+				if(cot.getIdFiat() != 0)				
+					stm.setInt(3, cot.getIdFiat());
+				stm.executeUpdate();				
+			}
+		} catch (Exception e) {
+		
+			bandera = false;
+			System.err.println(cmdStm);
+			System.err.println(e.getMessage());
+			System.err.println("MercadoValoresMySQL, newCotizaciones");
+		} finally {
+		
+			this.cerrar();
+		}
+		return bandera;
+	}
 	
-	
+
 	
 	
 	

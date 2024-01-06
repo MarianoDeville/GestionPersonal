@@ -151,7 +151,10 @@ public class DtosIngresos {
 	public String getFechaActual() {
 		
 		calendario = new GregorianCalendar();
-		return calendario.get(Calendar.DAY_OF_MONTH) + "/" + (calendario.get(Calendar.MONTH) + 1) + "/" + calendario.get(Calendar.YEAR);
+		DecimalFormat formato = new DecimalFormat("00");
+		String dia = formato.format(calendario.get(Calendar.DAY_OF_MONTH));
+		String mes = formato.format((calendario.get(Calendar.MONTH) + 1));
+		return dia + "/" + mes + "/" + calendario.get(Calendar.YEAR);
 	}
 	
 	public void setFuente(int pos) {
@@ -326,7 +329,7 @@ public class DtosIngresos {
 	
 	public String getMonto() {
 		
-		return String.format("%.2f", ingreso.getMonto());
+		return formatoResultado.format(ingreso.getMonto());
 	}
 	
 	public String getMoneda() {
@@ -336,7 +339,7 @@ public class DtosIngresos {
 	
 	public String getCtizacion() {
 		
-		return String.format("%.2f", ingreso.getCotizacion());
+		return formatoResultado.format(ingreso.getCotizacion());
 	}
 	
 	public boolean actualizarIngreso() {

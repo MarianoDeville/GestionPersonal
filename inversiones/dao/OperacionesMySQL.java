@@ -3,6 +3,7 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import modelo.Operacion;
+import modelo.Valores;
 
 public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 	
@@ -100,7 +101,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 		String cmdStm = null;
 		int idTransaccion = 0;
 		int idConcepto = 0;
-		cmdStm = "SELECT id FROM gpiygdb.transaccion WHERE descripcion = 'Débito en cuenta'";
+		cmdStm = "SELECT id FROM gpiygdb.transaccion WHERE descripcion = 'Acreditación en cuenta'";
 
 		try {
 			
@@ -110,7 +111,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 
 			if(rs.next())
 				idTransaccion = rs.getInt(1);
-			cmdStm = "SELECT id FROM gpiygdb.concepto WHERE descripcion = 'Venta'";
+			cmdStm = "SELECT id FROM gpiygdb.concepto WHERE descripcion = 'Venta activos/pasivos'";
 			rs = stm.executeQuery(cmdStm);
 			
 			if(rs.next())
@@ -178,7 +179,48 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 		return bandera;
 	}
 
-	
+	@Override
+	public boolean getListaOperaciones(Valores valor) {
+		
+		boolean bandera = true;
+		String cmdStm = "SELECT id, DATE_FORMAT(fecha, '%d/%m/%Y'), operacion, cant, precio, comision, comentario "
+						+ "FROM gpiygdb.operaciones WHERE idInversion = ? ORDER BY fecha DESC";
+		
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setInt(1, valor.getId());
+			ResultSet rs = stm.executeQuery();
+			rs.last();
+			valor.setOperaciones(new Operacion[rs.getRow()]);
+			rs.beforeFirst();
+			int i = 0;
+			
+			while(rs.next()) {
+
+				valor.getOperaciones()[i] = new Operacion();
+				valor.getOperaciones()[i].setId(rs.getInt(1));
+				valor.getOperaciones()[i].setFecha(rs.getString(2));
+				valor.getOperaciones()[i].setOperacion(rs.getString(3));
+				valor.getOperaciones()[i].setCant(rs.getDouble(4));
+				valor.getOperaciones()[i].setPrecio(rs.getDouble(5));
+				valor.getOperaciones()[i].setComision(rs.getDouble(6));
+				valor.getOperaciones()[i].setComentario(rs.getString(7));
+				i++;
+			}
+		} catch (Exception e) {
+		
+			bandera = false;
+			System.err.println(cmdStm);
+			System.err.println(e.getMessage());
+			System.err.println("MercadoValoresMySQL, getListaOperaciones");
+		} finally {
+		
+			this.cerrar();
+		}
+		return bandera;
+	}
 	
 	
 	

@@ -10,16 +10,19 @@ public class ProveedorMySQL extends ConexiónMySQL implements ProveedorDAO {
 	public Proveedor [] getListado(String filtro, String egresoIngreso) {
 		
 		Proveedor respuesta[] = null;
-		String cmdStm = "SELECT id, nombre, direccion, cuit, comentario, mercado FROM gpiygdb.proveedores WHERE (nombre LIKE ? AND (egresoIngreso = ? OR egresoIngreso = ?))";
-		boolean mercado = (egresoIngreso.equals("E") || egresoIngreso.equals("I"))? false: true; 
+		String cmdStm = "SELECT id, nombre, direccion, cuit, comentario, mercado FROM gpiygdb.proveedores WHERE (nombre LIKE ? AND ";
 
+		if(egresoIngreso.equals("M"))
+			cmdStm += "(egresoIngreso = ?))";
+		else
+			cmdStm += "(egresoIngreso = ? OR egresoIngreso = 'A'  OR egresoIngreso = 'M'))";
+		
 		try {
 			
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			stm.setString(1, "%" + filtro + "%");
 			stm.setString(2, egresoIngreso);
-			stm.setString(3, mercado? "M": "A");
 			ResultSet rs = stm.executeQuery();
 			rs.last();	
 			respuesta = new Proveedor[rs.getRow()];

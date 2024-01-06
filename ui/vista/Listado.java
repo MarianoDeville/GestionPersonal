@@ -20,6 +20,11 @@ public class Listado extends VentanaModelo {
 	public JComboBox<String> comboBoxMes;
 	public JComboBox<String> comboBoxTipo;
 	public JComboBox<String> comboBoxPago;
+	public JLabel lblCotizacion;
+	public JLabel lblDolar;
+	public JLabel lblEuro;
+	public JTextField txtDolar;
+	public JTextField txtEuro;
 	public JTextField txtCant;
 	public JTextField txtSuma;
 	public JTextField txtBusqueda;
@@ -63,6 +68,43 @@ public class Listado extends VentanaModelo {
 		contenedor.putConstraint(SpringLayout.WEST, comboBoxTipo, 20, SpringLayout.EAST, comboBoxMes);
 		panel.add(comboBoxTipo);
 			
+		lblCotizacion = new JLabel("Cotización");
+		contenedor.putConstraint(SpringLayout.NORTH, lblCotizacion, 0, SpringLayout.NORTH, comboBoxAño);
+		contenedor.putConstraint(SpringLayout.WEST, lblCotizacion, 20, SpringLayout.EAST, comboBoxMes);
+		contenedor.putConstraint(SpringLayout.SOUTH, lblCotizacion, 0, SpringLayout.SOUTH, comboBoxAño);
+		panel.add(lblCotizacion);
+		lblCotizacion.setVisible(false);
+		
+		lblDolar = new JLabel("U$S:");
+		contenedor.putConstraint(SpringLayout.NORTH, lblDolar, 0, SpringLayout.NORTH, comboBoxAño);
+		contenedor.putConstraint(SpringLayout.WEST, lblDolar, 20, SpringLayout.EAST, lblCotizacion);
+		contenedor.putConstraint(SpringLayout.SOUTH, lblDolar, 0, SpringLayout.SOUTH, comboBoxAño);
+		panel.add(lblDolar);
+		lblDolar.setVisible(false);
+		
+		txtDolar = new JTextField();
+		contenedor.putConstraint(SpringLayout.NORTH, txtDolar, 0, SpringLayout.NORTH, comboBoxAño);
+		contenedor.putConstraint(SpringLayout.WEST, txtDolar, 5, SpringLayout.EAST, lblDolar);
+		contenedor.putConstraint(SpringLayout.SOUTH, txtDolar, 0, SpringLayout.SOUTH, comboBoxAño);
+		txtDolar.setColumns(6);
+		panel.add(txtDolar);
+		txtDolar.setVisible(false);
+
+		lblEuro = new JLabel("EURO:");
+		contenedor.putConstraint(SpringLayout.NORTH, lblEuro, 0, SpringLayout.NORTH, comboBoxAño);
+		contenedor.putConstraint(SpringLayout.WEST, lblEuro, 20, SpringLayout.EAST, txtDolar);
+		contenedor.putConstraint(SpringLayout.SOUTH, lblEuro, 0, SpringLayout.SOUTH, comboBoxAño);
+		panel.add(lblEuro);
+		lblEuro.setVisible(false);
+		
+		txtEuro = new JTextField();
+		contenedor.putConstraint(SpringLayout.NORTH, txtEuro, 0, SpringLayout.NORTH, comboBoxAño);
+		contenedor.putConstraint(SpringLayout.WEST, txtEuro, 5, SpringLayout.EAST, lblEuro);
+		contenedor.putConstraint(SpringLayout.SOUTH, txtEuro, 0, SpringLayout.SOUTH, comboBoxAño);
+		txtEuro.setColumns(6);
+		panel.add(txtEuro);
+		txtEuro.setVisible(false);
+
 		comboBoxPago = new JComboBox<String>();
 		contenedor.putConstraint(SpringLayout.NORTH, comboBoxPago, 0, SpringLayout.NORTH, comboBoxAño);
 		contenedor.putConstraint(SpringLayout.WEST, comboBoxPago, 20, SpringLayout.EAST, comboBoxTipo);
@@ -79,6 +121,7 @@ public class Listado extends VentanaModelo {
 		txtCant.setHorizontalAlignment(SwingConstants.RIGHT);
 		contenedor.putConstraint(SpringLayout.NORTH, txtCant, 0, SpringLayout.NORTH, lblCant);
 		contenedor.putConstraint(SpringLayout.WEST, txtCant, 2, SpringLayout.EAST, lblCant);
+		contenedor.putConstraint(SpringLayout.SOUTH, txtCant, 0, SpringLayout.SOUTH, comboBoxAño);
 		txtCant.setColumns(3);
 		txtCant.setEditable(false);
 		panel.add(txtCant);
@@ -94,6 +137,7 @@ public class Listado extends VentanaModelo {
 		txtSuma.setHorizontalAlignment(SwingConstants.RIGHT);
 		contenedor.putConstraint(SpringLayout.NORTH, txtSuma, 0, SpringLayout.NORTH, lblSuma);
 		contenedor.putConstraint(SpringLayout.WEST, txtSuma, 2, SpringLayout.EAST, lblSuma);
+		contenedor.putConstraint(SpringLayout.SOUTH, txtSuma, 0, SpringLayout.SOUTH, comboBoxAño);
 		txtSuma.setColumns(10);
 		txtSuma.setEditable(false);
 		panel.add(txtSuma);

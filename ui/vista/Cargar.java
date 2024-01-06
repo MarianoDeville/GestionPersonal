@@ -22,11 +22,15 @@ public class Cargar extends VentanaModelo{
 	public JLabel lblTipo;
 	public JLabel lblMonto;
 	public JLabel lblCotizacion;
+	public JLabel lblInfoCot;
 	public JLabel lblComentario;
 	public JLabel lblAux1;
 	public JTextField txtFecha;
 	public JTextField txtProv;
+	public JTextField txtPago;
+	public JTextField txtTipo;
 	public JTextField txtMonto;
+	public JTextField txtMoneda;
 	public JTextField txtCotizacion;
 	public JTextField txtComentario;
 	public JTextField txtAux1;
@@ -88,6 +92,13 @@ public class Cargar extends VentanaModelo{
 		contenedor.putConstraint(SpringLayout.SOUTH, cmbBxPago, 20, SpringLayout.NORTH, lblFormPago);
 		panel.add(cmbBxPago);
 		
+		txtPago = new JTextField();
+		contenedor.putConstraint(SpringLayout.NORTH, txtPago, 0, SpringLayout.NORTH, lblFormPago);
+		contenedor.putConstraint(SpringLayout.WEST, txtPago, 10, SpringLayout.EAST, lblFormPago);
+		panel.add(txtPago);
+		txtPago.setColumns(20);
+		txtPago.setVisible(false);
+		
 		lblTipo = new JLabel("Destino:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblTipo, 20, SpringLayout.SOUTH, lblFormPago);
 		contenedor.putConstraint(SpringLayout.WEST, lblTipo, 0, SpringLayout.WEST, lblFormPago);
@@ -102,6 +113,13 @@ public class Cargar extends VentanaModelo{
 		contenedor.putConstraint(SpringLayout.SOUTH, cmbBxTipo, 20, SpringLayout.NORTH, lblTipo);
 		panel.add(cmbBxTipo);
 		
+		txtTipo = new JTextField();
+		contenedor.putConstraint(SpringLayout.NORTH, txtTipo, 0, SpringLayout.NORTH, lblTipo);
+		contenedor.putConstraint(SpringLayout.WEST, txtTipo, 10, SpringLayout.EAST, lblTipo);
+		panel.add(txtTipo);
+		txtTipo.setColumns(20);
+		txtTipo.setVisible(false);
+		
 		lblMonto = new JLabel("Monto:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblMonto, 20, SpringLayout.SOUTH, lblTipo);
 		contenedor.putConstraint(SpringLayout.WEST, lblMonto, 0, SpringLayout.WEST, lblTipo);
@@ -113,7 +131,7 @@ public class Cargar extends VentanaModelo{
 		contenedor.putConstraint(SpringLayout.NORTH, txtMonto, 0, SpringLayout.NORTH, lblMonto);
 		contenedor.putConstraint(SpringLayout.WEST, txtMonto, 10, SpringLayout.EAST, lblMonto);
 		panel.add(txtMonto);
-		txtMonto.setColumns(7);
+		txtMonto.setColumns(8);
 		
 		cmbBxMoneda = new JComboBox<String>(new String[] {"Pesos", "Dólares", "Euros"});
 		contenedor.putConstraint(SpringLayout.NORTH, cmbBxMoneda, 0, SpringLayout.NORTH, txtMonto);
@@ -121,6 +139,13 @@ public class Cargar extends VentanaModelo{
 		contenedor.putConstraint(SpringLayout.EAST, cmbBxMoneda, 100, SpringLayout.EAST, txtMonto);
 		contenedor.putConstraint(SpringLayout.SOUTH, cmbBxMoneda, 20, SpringLayout.NORTH, txtMonto);
 		panel.add(cmbBxMoneda);
+		
+		txtMoneda = new JTextField();
+		contenedor.putConstraint(SpringLayout.NORTH, txtMoneda, 0, SpringLayout.NORTH, txtMonto);
+		contenedor.putConstraint(SpringLayout.WEST, txtMoneda, 10, SpringLayout.EAST, txtMonto);
+		panel.add(txtMoneda);
+		txtMoneda.setColumns(7);
+		txtMoneda.setVisible(false);
 		
 		lblCotizacion = new JLabel("Cotización:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblCotizacion, 20, SpringLayout.SOUTH, lblMonto);
@@ -135,6 +160,12 @@ public class Cargar extends VentanaModelo{
 		panel.add(txtCotizacion);
 		txtCotizacion.setColumns(7);
 		txtCotizacion.setEditable(false);
+		
+		lblInfoCot= new JLabel();
+		contenedor.putConstraint(SpringLayout.NORTH, lblInfoCot, 0, SpringLayout.NORTH, txtCotizacion);
+		contenedor.putConstraint(SpringLayout.WEST, lblInfoCot, 10, SpringLayout.EAST, txtCotizacion);
+		contenedor.putConstraint(SpringLayout.SOUTH, lblInfoCot, 0, SpringLayout.SOUTH, txtCotizacion);
+		panel.add(lblInfoCot);
 		
 		lblComentario = new JLabel("Comentario:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblComentario, 20, SpringLayout.SOUTH, lblCotizacion);
