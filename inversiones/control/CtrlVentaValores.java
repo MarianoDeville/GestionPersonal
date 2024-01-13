@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
+import modelo.DtosComunes;
 import modelo.DtosMercadoValores;
 import vista.Cargar;
 
@@ -44,7 +45,7 @@ public class CtrlVentaValores implements ActionListener {
 	
 	public void iniciar() {
 
-		ventana.txtFecha.setText(dtosMercadoValores.getFechaActual());
+		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.lblProv.setText("Designación:");
 		ventana.lblFormPago.setText("Custodia:");
 		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<>(dtosMercadoValores.getListaCustodias()));
@@ -131,7 +132,7 @@ public class CtrlVentaValores implements ActionListener {
 		ventana.cmbBxPago.setEnabled(true);
 		ventana.cmbBxTipo.setEnabled(true);
 		ventana.cmbBxTipo.setSelectedIndex(0);
-		ventana.txtFecha.setText(dtosMercadoValores.getFechaActual());
+		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.txtMonto.setText("");
 		ventana.txtProv.setText("");
 		ventana.txtCotizacion.setText("");

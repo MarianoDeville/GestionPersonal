@@ -44,17 +44,6 @@ public class DtosEgresos {
 		return temp;
 	}
 
-	public String [] getListaMeses() {
-		
-		return new String [] {"Todos", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-	}
-	
-	public int getMesActual() {
-		
-		calendario = new GregorianCalendar();
-		return calendario.get(Calendar.MONTH) + 1;
-	}
-	
 	public String [] getListaDestinos(String cabecera) {
 		
 		if(destinos == null || destinos.length < 1) {
@@ -143,15 +132,6 @@ public class DtosEgresos {
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
 		cantidadElementos = tabla.length;
 		return tablaModelo;
-	}
-	
-	public String getFechaActual() {
-		
-		calendario = new GregorianCalendar();
-		DecimalFormat formato = new DecimalFormat("00");
-		String dia = formato.format(calendario.get(Calendar.DAY_OF_MONTH));
-		String mes = formato.format((calendario.get(Calendar.MONTH) + 1));
-		return dia + "/" + mes + "/" + calendario.get(Calendar.YEAR);
 	}
 
 	public DefaultTableModel getListaProveedores(String filtro) {

@@ -16,6 +16,9 @@ public class Listado extends VentanaModelo {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panel;
+	private SpringLayout contenedor = new SpringLayout();
+	private JScrollPane scrollTabla;
+	private JScrollPane scrollTabla1;
 	public JComboBox<String> comboBoxAño;
 	public JComboBox<String> comboBoxMes;
 	public JComboBox<String> comboBoxTipo;
@@ -23,12 +26,15 @@ public class Listado extends VentanaModelo {
 	public JLabel lblCotizacion;
 	public JLabel lblDolar;
 	public JLabel lblEuro;
+	public JLabel lblTabla;
+	public JLabel lblTabla1;
 	public JTextField txtDolar;
 	public JTextField txtEuro;
 	public JTextField txtCant;
 	public JTextField txtSuma;
 	public JTextField txtBusqueda;
 	public JTable tabla;
+	public JTable tabla1;
 	public JCheckBox chkBxPesos;
 	public JCheckBox chkBxDolares;
 	public JCheckBox chkBxEuros;
@@ -46,7 +52,6 @@ public class Listado extends VentanaModelo {
 		panel = new JPanel();
 		setContentPane(panel);
 		setLocation(x + 5, y + 5);
-		SpringLayout contenedor = new SpringLayout();
 		panel.setLayout(contenedor);
 		setMinimumSize(new Dimension(950, 600));
 		setSize(950, 600);
@@ -142,7 +147,15 @@ public class Listado extends VentanaModelo {
 		txtSuma.setEditable(false);
 		panel.add(txtSuma);
 		
-		JScrollPane scrollTabla = new JScrollPane();
+		lblTabla = new JLabel("Movimientos");
+		lblTabla.setHorizontalAlignment(SwingConstants.CENTER);
+		contenedor.putConstraint(SpringLayout.NORTH, lblTabla, 50, SpringLayout.NORTH, panel);
+		contenedor.putConstraint(SpringLayout.WEST, lblTabla, 10, SpringLayout.WEST, panel);
+		contenedor.putConstraint(SpringLayout.EAST, lblTabla, -110, SpringLayout.EAST, panel);
+		panel.add(lblTabla);
+		lblTabla.setVisible(false);
+		
+		scrollTabla = new JScrollPane();
 		contenedor.putConstraint(SpringLayout.NORTH, scrollTabla, 50, SpringLayout.NORTH, panel);
 		contenedor.putConstraint(SpringLayout.WEST, scrollTabla, 10, SpringLayout.WEST, panel);
 		contenedor.putConstraint(SpringLayout.SOUTH, scrollTabla, -10, SpringLayout.SOUTH, panel);
@@ -150,6 +163,24 @@ public class Listado extends VentanaModelo {
 		panel.add(scrollTabla);
 		tabla = new JTable();
 		scrollTabla.setViewportView(tabla);
+		
+		lblTabla1 = new JLabel("Cotizaciones");
+		lblTabla1.setHorizontalAlignment(SwingConstants.CENTER);
+		contenedor.putConstraint(SpringLayout.NORTH, lblTabla1, 15, SpringLayout.SOUTH, scrollTabla);
+		contenedor.putConstraint(SpringLayout.WEST, lblTabla1, 10, SpringLayout.WEST, panel);
+		contenedor.putConstraint(SpringLayout.EAST, lblTabla1, -110, SpringLayout.EAST, panel);
+		panel.add(lblTabla1);
+		lblTabla1.setVisible(false);
+		
+		scrollTabla1 = new JScrollPane();
+		contenedor.putConstraint(SpringLayout.NORTH, scrollTabla1, 10, SpringLayout.SOUTH, lblTabla1);
+		contenedor.putConstraint(SpringLayout.WEST, scrollTabla1, 10, SpringLayout.WEST, panel);
+		contenedor.putConstraint(SpringLayout.SOUTH, scrollTabla1, -10, SpringLayout.SOUTH, panel);
+		contenedor.putConstraint(SpringLayout.EAST, scrollTabla1, -110, SpringLayout.EAST, panel);
+		panel.add(scrollTabla1);
+		tabla1 = new JTable();
+		scrollTabla1.setViewportView(tabla1);
+		scrollTabla1.setVisible(false);
 		
 		btnNuevo = new JButton("Nuevo");
 		contenedor.putConstraint(SpringLayout.NORTH, btnNuevo, 50, SpringLayout.NORTH, panel);
@@ -221,5 +252,14 @@ public class Listado extends VentanaModelo {
 		contenedor.putConstraint(SpringLayout.WEST, btnGuardar, 0, SpringLayout.WEST, btnNuevo);
 		panel.add(btnGuardar);
 		btnGuardar.setVisible(false);
+	}
+	
+	public void setVisibleSegundaTabla() {
+
+		contenedor.putConstraint(SpringLayout.NORTH, scrollTabla, 1, SpringLayout.SOUTH, lblTabla);
+		contenedor.putConstraint(SpringLayout.SOUTH, scrollTabla, -200, SpringLayout.SOUTH, panel);
+		lblTabla.setVisible(true);
+		lblTabla1.setVisible(true);
+		scrollTabla1.setVisible(true);
 	}
 }

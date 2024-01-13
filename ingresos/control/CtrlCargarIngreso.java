@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
+import modelo.DtosComunes;
 import modelo.DtosIngresos;
 import vista.Cargar;
 
@@ -50,7 +51,7 @@ public class CtrlCargarIngreso implements ActionListener {
 		ventana.btnNuevo.setEnabled(false);
 		ventana.lblProv.setText("Fuente:");
 		ventana.lblTipo.setText("Concepto:");
-		ventana.txtFecha.setText(dtosIngreso.getFechaActual());
+		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<String>(dtosIngreso.getFormasCobro("Seleccione un método de pago.")));
 		ventana.cmbBxPago.setSelectedIndex(0);
 		ventana.cmbBxTipo.setModel(new DefaultComboBoxModel<String>(dtosIngreso.getListaConceptos("Seleccione una opción.")));
@@ -133,7 +134,7 @@ public class CtrlCargarIngreso implements ActionListener {
 		
 		ventana.btnNuevo.setEnabled(false);
 		ventana.btnGuardar.setEnabled(true);
-		ventana.txtFecha.setText(dtosIngreso.getFechaActual());
+		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.txtMonto.setText("");
 		ventana.txtProv.setText("");		
 		ventana.msgError.setText("");

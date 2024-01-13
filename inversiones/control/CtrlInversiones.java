@@ -100,7 +100,7 @@ public class CtrlInversiones implements ActionListener {
 		if(ventanaFiat != null)
 			ventanaFiat.dispose();
 		ventanaFiat = new Listado("Gestión dinero FIAT", ventana.getX(), ventana.getY());
-		CtrlMercadoFIAT ctrlMercadoFIAT = new CtrlMercadoFIAT(ventanaFiat);
+		CtrlMercadoFiat ctrlMercadoFIAT = new CtrlMercadoFiat(ventanaFiat);
 		ctrlMercadoFIAT.iniciar();
 	}
 	

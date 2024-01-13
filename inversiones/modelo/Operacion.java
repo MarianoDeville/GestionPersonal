@@ -7,6 +7,7 @@ public class Operacion {
 	private String operacion;
 	private String moneda;
 	private String comentario;
+	private String transaccion;
 	private double cant;
 	private double precio;
 	private double comision;
@@ -25,6 +26,7 @@ public class Operacion {
 		operacion = "";
 		moneda = "";
 		comentario = "";
+		transaccion = "";
 		cant = 0;
 		precio = 0;
 		comision = 0;
@@ -85,6 +87,16 @@ public class Operacion {
 	public void setComentario(String comentario) {
 		
 		this.comentario = comentario;
+	}
+
+	public String getTransaccion() {
+		
+		return transaccion;
+	}
+
+	public void setTransaccion(String transaccion) {
+		
+		this.transaccion = transaccion;
 	}
 
 	public double getCant() {

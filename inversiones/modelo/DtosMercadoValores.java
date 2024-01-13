@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import dao.CotizacionesMySQL;
+import dao.CotizacioonesDAO;
 import dao.MercadoValoresDAO;
 import dao.MercadoValoresMySQL;
 import dao.OperacionesDAO;
@@ -14,8 +16,8 @@ import dao.ProveedorMySQL;
 
 public class DtosMercadoValores {
 	
-	MercadoValoresDAO mercadoValoresDAO = new MercadoValoresMySQL();
-	OperacionesDAO operacionDAO = new OperacionesMySQL();
+	private MercadoValoresDAO mercadoValoresDAO = new MercadoValoresMySQL();
+	private OperacionesDAO operacionDAO = new OperacionesMySQL();
 	private DecimalFormat formatoResultado = new DecimalFormat("###,###,##0.00");
 	private Proveedor custodios[];
 	private Proveedor custodia;
@@ -44,21 +46,11 @@ public class DtosMercadoValores {
 		return temp;
 	}
 
-	public String [] getListaMeses(String primero) {
-		
-		return new String [] {primero, "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-	}
-	
-	public int getMesActual() {
-		
-		calendario = new GregorianCalendar();
-		return calendario.get(Calendar.MONTH) + 1;
-	}
-
 	public DefaultTableModel getTablaValores(String año, int mes, boolean agregar) {
 		
+		CotizacioonesDAO cotizacionesDAO = new CotizacionesMySQL();
 		valores = mercadoValoresDAO.getListado("");
-		int tamaño = mercadoValoresDAO.getCotizaciones(año, mes, valores);
+		int tamaño = cotizacionesDAO.getCotizaciones(año, mes, valores);
 		String tabla[][] = new String[valores.length + 1][5];
 		String titulo[] = new String[tamaño + (agregar? 4: 3)];
 		System.arraycopy(new String[]{"Nombre", "Cant.", "Custodio"}, 0, titulo, 0, 3);
@@ -86,7 +78,7 @@ public class DtosMercadoValores {
 		}
 		
 		if(agregar)
-			titulo[titulo.length - 1] = getFechaActual();
+			titulo[titulo.length - 1] = DtosComunes.getFechaActual();
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo){
 
 			private static final long serialVersionUID = 1L;
@@ -100,16 +92,7 @@ public class DtosMercadoValores {
 		};
 		return tablaModelo;
 	}
-	
-	public String getFechaActual() {
-		
-		calendario = new GregorianCalendar();
-		DecimalFormat formato = new DecimalFormat("00");
-		String dia = formato.format(calendario.get(Calendar.DAY_OF_MONTH));
-		String mes = formato.format((calendario.get(Calendar.MONTH) + 1));
-		return dia + "/" + mes + "/" + calendario.get(Calendar.YEAR);
-	}
-	
+
 	public String [] getListaCustodias() {
 		
 		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
@@ -316,6 +299,7 @@ public class DtosMercadoValores {
 		if(mercadoValoresDAO.newValor(valor)) {
 
 			operacion.setIdValores(valor.getId());
+			operacion.setTransaccion("Débito en cuenta");
 			
 			if(operacionDAO.newCompra(operacion)) {
 				
@@ -337,7 +321,7 @@ public class DtosMercadoValores {
 			for(int i = 0; i < valores.length; i++) {
 				
 				cot[i] = new Cotizacion();
-				cot[i].setFecha(getFechaActual());
+				cot[i].setFecha(DtosComunes.getFechaActual());
 				cot[i].setValor(Double.parseDouble((String)tablaCotizaciones.getValueAt(i, ultimaColumna)));
 				cot[i].setIdValores(valores[i].getId());
 			}			
@@ -375,7 +359,7 @@ public class DtosMercadoValores {
 	
 	public DefaultTableModel getListadoOperaciones() {
 		
-		if(!operacionDAO.getListaOperaciones(valor))
+		if(!operacionDAO.getListado(valor))
 			System.out.println("Algo salió mal");
 		String titulo[] = {"Fecha", "Operación", "Cantidad", "Precio", "Comisión", "Comentario"};
 		String tabla[][] = new String [valor.getCotizaciones().length][7];

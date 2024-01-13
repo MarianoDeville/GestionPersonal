@@ -9,19 +9,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
 import modelo.DtosComunes;
-import modelo.DtosMercadoValores;
+import modelo.DtosMercadoFiat;
 import vista.Cargar;
 
-public class CtrlCompraValores implements ActionListener {
+public class CtrlCompraFiat implements ActionListener {
 	
 	private Cargar ventana;
-	private DtosMercadoValores dtosMercadoValores;
+	private DtosMercadoFiat dtosMercadoFiat;
 	private int elemento = -1;
 
-	public CtrlCompraValores(Cargar vista) {
+	public CtrlCompraFiat(Cargar vista) {
 		
 		this.ventana = vista;
-		this.dtosMercadoValores = new DtosMercadoValores();
+		this.dtosMercadoFiat = new DtosMercadoFiat();
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
@@ -46,18 +46,13 @@ public class CtrlCompraValores implements ActionListener {
 	public void iniciar() {
 
 		ventana.txtFecha.setText(DtosComunes.getFechaActual());
-		ventana.lblProv.setText("Designación:");
-		ventana.lblFormPago.setText("Custodia:");
-		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<>(dtosMercadoValores.getListaCustodias()));
-		ventana.lblTipo.setText("Instrumento:");
-		ventana.cmbBxTipo.setModel(new DefaultComboBoxModel<>(dtosMercadoValores.getListaInstrumentos()));
+		ventana.lblProv.setText("Localización:");
+		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListadoMetPago()));
+		ventana.lblTipo.setText("Moneda:");
+		ventana.cmbBxTipo.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListaMonedas()));
 		ventana.txtCotizacion.setEditable(true);
 		ventana.lblMonto.setText("Precio:");
 		ventana.lblCotizacion.setText("Cantidad:");
-		ventana.lblComentario.setText("Comisión:");
-		ventana.txtComentario.setColumns(6);
-		ventana.lblAux1.setText("Comentario");
-		ventana.txtAux1.setVisible(true);
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
 		ventana.setVisible(true);
@@ -87,39 +82,33 @@ public class CtrlCompraValores implements ActionListener {
 			
 			ventana.txtProv.setText((String)ventana.tabla.getValueAt(elemento, 0));
 			ventana.txtProv.setEditable(false);
-			dtosMercadoValores.setValor(elemento);
-			ventana.cmbBxPago.setSelectedItem(dtosMercadoValores.getCustodiaValor());
-			ventana.cmbBxPago.setEnabled(false);
-			ventana.cmbBxTipo.setSelectedItem(dtosMercadoValores.getTipoInstrumento());
-			ventana.cmbBxTipo.setEnabled(false);
+			dtosMercadoFiat.setLocalizacion(elemento);
 			elemento = -1;
 		}
-		ventana.tabla.setModel(dtosMercadoValores.getListadoValores(ventana.txtProv.getText()));
+		ventana.tabla.setModel(dtosMercadoFiat.getListadoLocalizaciones(ventana.txtProv.getText()));
 	}
 	
 	private void guardarCompra() {
 		
-		dtosMercadoValores.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
-		dtosMercadoValores.setComentario(ventana.txtAux1.getText());
-		dtosMercadoValores.setTipoOperacion("Compra");
+		dtosMercadoFiat.setMonedaPago((String)ventana.cmbBxMoneda.getSelectedItem());
+		dtosMercadoFiat.setComentario(ventana.txtComentario.getText());
+		dtosMercadoFiat.setTipoOperacion("Compra");
 
-		if(dtosMercadoValores.setNombre(ventana.txtProv.getText()) && 
-				dtosMercadoValores.setFecha(ventana.txtFecha.getText()) && 
-				dtosMercadoValores.setCustodia(ventana.cmbBxPago.getSelectedIndex()) && 
-				dtosMercadoValores.setTipoInstrumento(ventana.cmbBxTipo.getSelectedIndex()) && 
-				dtosMercadoValores.setPrecio(ventana.txtMonto.getText()) && 
-				dtosMercadoValores.setCantidad(ventana.txtCotizacion.getText()) &&
-				dtosMercadoValores.setComision(ventana.txtComentario.getText()) &&
-				dtosMercadoValores.guardarCompra()) {
+		if(dtosMercadoFiat.setFecha(ventana.txtFecha.getText()) && 
+				dtosMercadoFiat.setMetodoPago(ventana.cmbBxPago.getSelectedIndex()) && 
+				dtosMercadoFiat.setMoneda(ventana.cmbBxTipo.getSelectedIndex()) && 
+				dtosMercadoFiat.setPrecio(ventana.txtMonto.getText()) && 
+				dtosMercadoFiat.setCantidad(ventana.txtCotizacion.getText()) && 
+				dtosMercadoFiat.guardarCompra()) {
 			
 			ventana.msgError.setForeground(Color.BLUE);
-			ventana.msgError.setText(dtosMercadoValores.getMsgError());
+			ventana.msgError.setText(dtosMercadoFiat.getMsgError());
 			ventana.btnNuevo.setEnabled(true);
 			ventana.btnGuardar.setEnabled(false);
 			return;
 		}
 		ventana.msgError.setForeground(Color.RED);
-		ventana.msgError.setText(dtosMercadoValores.getMsgError());
+		ventana.msgError.setText(dtosMercadoFiat.getMsgError());
 	}
 	
 	private void limpiarCampos() {
@@ -127,17 +116,14 @@ public class CtrlCompraValores implements ActionListener {
 		ventana.btnNuevo.setEnabled(false);
 		ventana.btnGuardar.setEnabled(true);
 		ventana.txtProv.setEditable(true);
-		ventana.cmbBxPago.setEnabled(true);
-		ventana.cmbBxTipo.setEnabled(true);
 		ventana.cmbBxTipo.setSelectedIndex(0);
 		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.txtMonto.setText("");
 		ventana.txtProv.setText("");
 		ventana.txtCotizacion.setText("");
 		ventana.txtComentario.setText("");
-		ventana.txtAux1.setText("");
 		ventana.msgError.setText("");
-		dtosMercadoValores.resetValor();
+		dtosMercadoFiat.resetMoneda();
 		actualizar();
 	}
 }

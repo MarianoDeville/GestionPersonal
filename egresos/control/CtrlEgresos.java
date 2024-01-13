@@ -10,6 +10,7 @@ import java.awt.print.PrinterException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
+import modelo.DtosComunes;
 import modelo.DtosEgresos;
 import vista.Cargar;
 import vista.Listado;
@@ -63,8 +64,8 @@ public class CtrlEgresos implements ActionListener {
 		ventana.btnCargar.setVisible(true);
 		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaAños()));
 		ventana.comboBoxAño.setSelectedIndex(0);
-		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaMeses()));
-		ventana.comboBoxMes.setSelectedIndex(dtosEgreso.getMesActual());
+		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<String>(DtosComunes.getListaMeses("Todos")));
+		ventana.comboBoxMes.setSelectedIndex(DtosComunes.getMesActual());
 		ventana.comboBoxTipo.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaDestinos("Todos")));
 		ventana.comboBoxTipo.setSelectedIndex(0);
 		ventana.comboBoxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago("Todos")));
@@ -117,8 +118,12 @@ public class CtrlEgresos implements ActionListener {
 			return;
 		}
 		
-		if(ventana.isVisible())
+		if(ventana.isVisible()) {
+
 			actualizar();
+			ventana.setVisible(true);
+			return;
+		}
 	}
 	
 	private void actualizar() {

@@ -2,6 +2,7 @@ package control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import modelo.DtosComunes;
 import modelo.DtosMercadoValores;
 import vista.Cargar;
 
@@ -20,7 +21,7 @@ public class CtrlDetalleValores implements ActionListener {
 	public void iniciar() {
 
 		ventana.txtFecha.setEditable(false);
-		ventana.txtFecha.setText(dtosMercadoValores.getFechaActual());
+		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.lblProv.setText("Designación:");
 		ventana.txtProv.setEditable(false);
 		ventana.txtProv.setText(dtosMercadoValores.getNombreValor());

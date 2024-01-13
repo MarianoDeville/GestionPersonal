@@ -42,17 +42,6 @@ public class DtosIngresos {
 		return temp;
 	}
 
-	public String [] getListaMeses() {
-		
-		return new String [] {"Todos", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-	}
-	
-	public int getMesActual() {
-		
-		calendario = new GregorianCalendar();
-		return calendario.get(Calendar.MONTH) + 1;
-	}
-	
 	public String [] getListaConceptos(String cabecera) {
 		
 		if(conceptos == null || conceptos.length < 1) {
@@ -147,16 +136,7 @@ public class DtosIngresos {
 		
 		ingreso = ingresos[pos];
 	}
-	
-	public String getFechaActual() {
-		
-		calendario = new GregorianCalendar();
-		DecimalFormat formato = new DecimalFormat("00");
-		String dia = formato.format(calendario.get(Calendar.DAY_OF_MONTH));
-		String mes = formato.format((calendario.get(Calendar.MONTH) + 1));
-		return dia + "/" + mes + "/" + calendario.get(Calendar.YEAR);
-	}
-	
+
 	public void setFuente(int pos) {
 		
 		if(ingreso == null)
