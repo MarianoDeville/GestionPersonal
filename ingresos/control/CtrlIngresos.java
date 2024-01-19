@@ -119,7 +119,7 @@ public class CtrlIngresos implements ActionListener {
 		derecha.setHorizontalAlignment(JLabel.RIGHT);
 		ventana.tabla.setModel(dtosIngreso.getTablaIngresos((String)ventana.comboBoxAño.getSelectedItem(), 
 														  ventana.comboBoxMes.getSelectedIndex(), 
-														  ventana.comboBoxTipo.getSelectedIndex(), 
+														  (String)ventana.comboBoxTipo.getSelectedItem(), 
 														  ventana.comboBoxPago.getSelectedIndex(), 
 														  monedas ,
 														  ventana.txtBusqueda.getText()));

@@ -99,7 +99,7 @@ public class CtrlCompraValores implements ActionListener {
 	
 	private void guardarCompra() {
 		
-		dtosMercadoValores.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
+		dtosMercadoValores.setMonedaCompra((String)ventana.cmbBxMoneda.getSelectedItem());
 		dtosMercadoValores.setComentario(ventana.txtAux1.getText());
 		dtosMercadoValores.setTipoOperacion("Compra");
 

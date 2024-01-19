@@ -101,7 +101,7 @@ public class CtrlVentaValores implements ActionListener {
 	
 	private void guardarVenta() {
 		
-		dtosMercadoValores.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
+		dtosMercadoValores.setMonedaVenta((String)ventana.cmbBxMoneda.getSelectedItem());
 		dtosMercadoValores.setComentario(ventana.txtAux1.getText());
 		dtosMercadoValores.setTipoOperacion("Venta");
 

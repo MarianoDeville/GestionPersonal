@@ -23,6 +23,8 @@ public class Listado extends VentanaModelo {
 	public JComboBox<String> comboBoxMes;
 	public JComboBox<String> comboBoxTipo;
 	public JComboBox<String> comboBoxPago;
+	public JLabel lblCant;
+	public JLabel lblSuma;
 	public JLabel lblCotizacion;
 	public JLabel lblDolar;
 	public JLabel lblEuro;
@@ -115,7 +117,7 @@ public class Listado extends VentanaModelo {
 		contenedor.putConstraint(SpringLayout.WEST, comboBoxPago, 20, SpringLayout.EAST, comboBoxTipo);
 		panel.add(comboBoxPago);
 		
-		JLabel lblCant = new JLabel("Cant.:");
+		lblCant = new JLabel("Cant.:");
 		lblCant.setHorizontalAlignment(SwingConstants.RIGHT);
 		contenedor.putConstraint(SpringLayout.NORTH, lblCant, 0, SpringLayout.NORTH, comboBoxAño);
 		contenedor.putConstraint(SpringLayout.EAST, lblCant, -210, SpringLayout.EAST, panel);
@@ -131,7 +133,7 @@ public class Listado extends VentanaModelo {
 		txtCant.setEditable(false);
 		panel.add(txtCant);
 		
-		JLabel lblSuma = new JLabel("$");
+		lblSuma = new JLabel("$");
 		lblCant.setHorizontalAlignment(SwingConstants.RIGHT);
 		contenedor.putConstraint(SpringLayout.NORTH, lblSuma, 0, SpringLayout.NORTH, txtCant);
 		contenedor.putConstraint(SpringLayout.WEST, lblSuma, 20, SpringLayout.EAST, txtCant);

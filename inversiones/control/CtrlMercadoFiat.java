@@ -5,11 +5,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosComunes;
 import modelo.DtosMercadoFiat;
 import vista.Cargar;
@@ -57,22 +56,20 @@ public class CtrlMercadoFiat implements ActionListener {
 		ventana.chkBxPesos.setVisible(false);
 		ventana.txtBusqueda.setVisible(false);
 		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListaAños()));
-		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<>(DtosComunes.getListaMeses("Seleccione uno")));
+		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<>(DtosComunes.getListaMeses("Todos")));
 		ventana.comboBoxMes.setSelectedIndex(DtosComunes.getMesActual());
 		ventana.btnNuevo.setText("Ingreso");
 		ventana.btnCargar.setVisible(true);
 		ventana.btnCargar.setText("Egreso");
 		ventana.btnCotizar.setVisible(true);
 		ventana.btnGuardar.setVisible(true);
-		ventana.lblCotizacion.setVisible(true);
-		ventana.lblDolar.setVisible(true);
-		ventana.txtDolar.setVisible(true);
-		ventana.lblEuro.setVisible(true);
-		ventana.txtEuro.setVisible(true);
+		ventana.lblCant.setVisible(false);
+		ventana.txtCant.setVisible(false);
+		ventana.lblSuma.setVisible(false);
+		ventana.txtSuma.setVisible(false);
 		ventana.chkBxDolares.setSelected(true);
 		ventana.chkBxEuros.setSelected(true);
 		ventana.setVisibleSegundaTabla();
-		
 		actualizar();
 		ventana.setVisible(true);
 	}
@@ -147,8 +144,6 @@ public class CtrlMercadoFiat implements ActionListener {
 		elemento = -1;
 		DefaultTableCellRenderer derecha = new DefaultTableCellRenderer();
 		derecha.setHorizontalAlignment(JLabel.RIGHT);
-		
-		
 		ventana.tabla.setModel(dtosMercadoFiat.getListadoOperaciones((String)ventana.comboBoxAño.getSelectedItem(), 
 																	ventana.comboBoxMes.getSelectedIndex()));
 		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(70);
@@ -169,6 +164,7 @@ public class CtrlMercadoFiat implements ActionListener {
 			ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(60);
 			ventana.tabla.getColumnModel().getColumn(i).setCellRenderer(derecha);
 		}
+		ventana.tabla.setDefaultEditor(Object.class, null);
 		ventana.tabla1.setModel(dtosMercadoFiat.getTablaCotizaciones((String)ventana.comboBoxAño.getSelectedItem(), 
 																ventana.comboBoxMes.getSelectedIndex(), 
 																nuevaCotizacion));
@@ -187,8 +183,6 @@ public class CtrlMercadoFiat implements ActionListener {
 			ventana.tabla1.getColumnModel().getColumn(i).setPreferredWidth(60);
 			ventana.tabla1.getColumnModel().getColumn(i).setCellRenderer(derecha);
 		}
-		ventana.txtSuma.setText(dtosMercadoFiat.getSuma());
-		ventana.txtCant.setText(dtosMercadoFiat.getCantFiat());
 	}
 	
 	private void ingreso() {
@@ -218,7 +212,11 @@ public class CtrlMercadoFiat implements ActionListener {
 		
 		if(ventanaHistorial != null)
 			ventanaHistorial.dispose();
-
+		dtosMercadoFiat.getDetalle(elemento);
+		elemento = -1;
+		ventanaHistorial = new Cargar("Detalle operiones", ventana.getX(), ventana.getY());
+		CtrlDetalleFiat ctrlDetalleFiat = new CtrlDetalleFiat(ventanaHistorial);
+		ctrlDetalleFiat.iniciar();
 	}
 	
 	private void cotizar() {
@@ -231,7 +229,13 @@ public class CtrlMercadoFiat implements ActionListener {
 
 	private void guardar() {
 		
-
-		actualizar();
+		if(dtosMercadoFiat.guardarCotizacion(ventana.tabla1)) {
+			
+			ventana.btnGuardar.setEnabled(false);
+			nuevaCotizacion = false;
+			actualizar();
+			return;
+		}
+		JOptionPane.showMessageDialog(ventana, dtosMercadoFiat.getMsgError());
 	}
 }

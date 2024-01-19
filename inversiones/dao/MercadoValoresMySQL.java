@@ -84,7 +84,7 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 						+ "FROM gpiygdb.valores "
 						+ "JOIN gpiygdb.instrumento ON instrumento.id = idTipo "
 						+ "JOIN gpiygdb.proveedores ON proveedores.id = idCustodia "
-						+ "WHERE (valores.nombre LIKE ? AND cant > 0) ORDER BY idCustodia";
+						+ "WHERE valores.nombre LIKE ? ORDER BY idCustodia";
 		
 		try {
 			
@@ -128,16 +128,26 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 	public boolean newValor(Valores valor) {
 
 		boolean bandera = true;
-		String cmdStm = null;
-		if(valor.getId() == 0)
-			cmdStm = "INSERT INTO gpiygdb.valores (nombre, cant, idTipo, idCustodia) VALUES (?, ?, ?, ?)";
-		else
-			cmdStm = "UPDATE gpiygdb.valores SET nombre = ?, cant = cant + ?, idTipo = ?, idCustodia = ? WHERE id = ?";
+		String cmdStm = "SELECT id FROM gpiygdb.valores WHERE nombre = ? AND idCustodia = ?";
 
 		try {
 			
 			this.conectar();
 			PreparedStatement stm = conexion.prepareStatement(cmdStm);
+			stm.setString(1, valor.getNombre());
+			stm.setInt(2, valor.getCustodia().getId());
+			ResultSet rs = stm.executeQuery();
+			
+			if(rs.next())
+				valor.setId(rs.getInt(1));
+			
+			if(valor.getId() == 0)
+				cmdStm = "INSERT INTO gpiygdb.valores (nombre, cant, idTipo, idCustodia) VALUES (?, ?, ?, ?)";
+			else
+				cmdStm = "UPDATE gpiygdb.valores SET nombre = ?, cant = cant + ?, idTipo = ?, idCustodia = ? WHERE id = ?";
+	
+			
+			stm = conexion.prepareStatement(cmdStm);
 			stm.setString(1, valor.getNombre());
 			stm.setDouble(2, valor.getCant());
 			stm.setInt(3, valor.getInstrumento().getId());
@@ -150,12 +160,10 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 			if(valor.getId() == 0) {
 				
 				cmdStm = "SELECT id FROM gpiygdb.valores ORDER BY id DESC LIMIT 1";
-				ResultSet rs = stm.executeQuery(cmdStm);
+				rs = stm.executeQuery(cmdStm);
 				
-				if(rs.next()) {
-
+				if(rs.next())
 					valor.setId(rs.getInt(1));
-				}
 			}
 		} catch (Exception e) {
 		

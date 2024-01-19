@@ -22,6 +22,7 @@ public class CtrlCompraFiat implements ActionListener {
 		
 		this.ventana = vista;
 		this.dtosMercadoFiat = new DtosMercadoFiat();
+		this.ventana.chkBoxAcreditacion.addActionListener(this);
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
@@ -45,14 +46,20 @@ public class CtrlCompraFiat implements ActionListener {
 	
 	public void iniciar() {
 
+		ventana.chkBoxAcreditacion.setVisible(true);
 		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.lblProv.setText("Localización:");
-		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListadoMetPago()));
+		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListadoMetPago(ventana.chkBoxAcreditacion.isSelected())));
 		ventana.lblTipo.setText("Moneda:");
 		ventana.cmbBxTipo.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListaMonedas()));
 		ventana.txtCotizacion.setEditable(true);
 		ventana.lblMonto.setText("Precio:");
 		ventana.lblCotizacion.setText("Cantidad:");
+		ventana.lblComentario.setText("Comisión:");
+		ventana.txtComentario.setColumns(6);
+		ventana.lblAux1.setVisible(true);
+		ventana.lblAux1.setText("Comentario:");
+		ventana.txtAux1.setVisible(true);
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
 		ventana.setVisible(true);
@@ -74,6 +81,11 @@ public class CtrlCompraFiat implements ActionListener {
 			
 			ventana.dispose();
 		}
+		
+		if(e.getSource() == ventana.chkBoxAcreditacion) {
+			
+			configuracion();
+		}
 	}
 	
 	private void actualizar() {
@@ -90,20 +102,26 @@ public class CtrlCompraFiat implements ActionListener {
 	
 	private void guardarCompra() {
 		
-		dtosMercadoFiat.setMonedaPago((String)ventana.cmbBxMoneda.getSelectedItem());
-		dtosMercadoFiat.setComentario(ventana.txtComentario.getText());
-		dtosMercadoFiat.setTipoOperacion("Compra");
-
+		if(ventana.chkBoxAcreditacion.isSelected()) {
+			
+			dtosMercadoFiat.setMonedaPago("Pesos");
+			dtosMercadoFiat.setConcepto((String)ventana.cmbBxMoneda.getSelectedItem());
+		} else {
+			
+			dtosMercadoFiat.setMonedaPago((String)ventana.cmbBxMoneda.getSelectedItem());
+		}
+		dtosMercadoFiat.setComentario(ventana.txtAux1.getText());
+		
 		if(dtosMercadoFiat.setFecha(ventana.txtFecha.getText()) && 
 				dtosMercadoFiat.setMetodoPago(ventana.cmbBxPago.getSelectedIndex()) && 
 				dtosMercadoFiat.setMoneda(ventana.cmbBxTipo.getSelectedIndex()) && 
 				dtosMercadoFiat.setPrecio(ventana.txtMonto.getText()) && 
 				dtosMercadoFiat.setCantidad(ventana.txtCotizacion.getText()) && 
-				dtosMercadoFiat.guardarCompra()) {
+				dtosMercadoFiat.setComision(ventana.txtComentario.getText()) && 
+				dtosMercadoFiat.guardarCompra(ventana.chkBoxAcreditacion.isSelected())) {
 			
 			ventana.msgError.setForeground(Color.BLUE);
 			ventana.msgError.setText(dtosMercadoFiat.getMsgError());
-			ventana.btnNuevo.setEnabled(true);
 			ventana.btnGuardar.setEnabled(false);
 			return;
 		}
@@ -113,7 +131,6 @@ public class CtrlCompraFiat implements ActionListener {
 	
 	private void limpiarCampos() {
 		
-		ventana.btnNuevo.setEnabled(false);
 		ventana.btnGuardar.setEnabled(true);
 		ventana.txtProv.setEditable(true);
 		ventana.cmbBxTipo.setSelectedIndex(0);
@@ -122,8 +139,26 @@ public class CtrlCompraFiat implements ActionListener {
 		ventana.txtProv.setText("");
 		ventana.txtCotizacion.setText("");
 		ventana.txtComentario.setText("");
+		ventana.txtAux1.setText("");
 		ventana.msgError.setText("");
 		dtosMercadoFiat.resetMoneda();
 		actualizar();
+	}
+	
+	private void configuracion() {
+		
+		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListadoMetPago(ventana.chkBoxAcreditacion.isSelected())));
+		
+		if(ventana.chkBoxAcreditacion.isSelected()) {
+			
+			ventana.lblMonto.setText("Cotización:");
+			ventana.txtMonto.setText("");
+			ventana.cmbBxMoneda.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListaConceptos()));
+		} else {
+			
+			ventana.lblMonto.setText("Precio:");
+			ventana.txtMonto.setText("");
+			ventana.cmbBxMoneda.setModel(new DefaultComboBoxModel<>(new String [] {"Pesos", "Dólares", "Euros"}));
+		}
 	}
 }

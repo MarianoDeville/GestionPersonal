@@ -6,12 +6,22 @@ public class Ingreso {
 	private String fecha;
 	private double monto;
 	private String moneda;
-	private float cotizacion;
+	private double cotizacion;
 	private String comentario;
-	private Concepto concepto;
+	private String concepto;
 	private Proveedor fuente;
 	private Transaccion formaCobro;
 
+	public Ingreso() {
+		
+		id = 0;
+		fecha = "";
+		monto = 0;
+		moneda = "";
+		cotizacion = 0;
+		comentario = "";
+		concepto = "";
+	}
 	public int getId() {
 		
 		return id;
@@ -52,12 +62,12 @@ public class Ingreso {
 		this.moneda = moneda;
 	}
 
-	public float getCotizacion() {
+	public double getCotizacion() {
 		
 		return cotizacion;
 	}
 
-	public void setCotizacion(float cotizacion) {
+	public void setCotizacion(double cotizacion) {
 		
 		this.cotizacion = cotizacion;
 	}
@@ -72,12 +82,12 @@ public class Ingreso {
 		this.comentario = comentario;
 	}
 
-	public Concepto getConcepto() {
+	public String getConcepto() {
 		
 		return concepto;
 	}
 
-	public void setConcepto(Concepto concepto) {
+	public void setConcepto(String concepto) {
 		
 		this.concepto = concepto;
 	}

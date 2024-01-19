@@ -6,12 +6,23 @@ public class Egreso {
 	private String fecha;
 	private double monto;
 	private String moneda;
-	private float cotizacion;
+	private double cotizacion;
 	private String comentario;
+	private String tipoConsumo;
 	private Proveedor proveedor;
 	private Transaccion formaPago;
-	private ClasificacionEgreso tipoConsumo;
-
+	
+	public Egreso() {
+	
+		id = 0;
+		fecha = "";
+		monto = 0;
+		moneda = "";
+		cotizacion = 0;
+		comentario = "";
+		tipoConsumo = "";
+	}
+	
 	public int getId() {
 		
 		return id;
@@ -52,12 +63,12 @@ public class Egreso {
 		this.moneda = moneda;
 	}
 
-	public float getCotizacion() {
+	public double getCotizacion() {
 		
 		return cotizacion;
 	}
 
-	public void setCotizacion(float cotizacion) {
+	public void setCotizacion(double cotizacion) {
 		
 		this.cotizacion = cotizacion;
 	}
@@ -92,12 +103,12 @@ public class Egreso {
 		this.formaPago = formaPago;
 	}
 
-	public ClasificacionEgreso getTipoConsumo() {
+	public String getTipoConsumo() {
 		
 		return tipoConsumo;
 	}
 
-	public void setTipoConsumo(ClasificacionEgreso tipoConsumo) {
+	public void setTipoConsumo(String tipoConsumo) {
 		
 		this.tipoConsumo = tipoConsumo;
 	}

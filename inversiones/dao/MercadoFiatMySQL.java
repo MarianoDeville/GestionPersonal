@@ -4,7 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import modelo.Fiat;
-import modelo.Proveedor;
 
 public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 
@@ -39,66 +38,30 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 		}
 		return respuesta;
 	}
-	
-	@Override
-	public Fiat [] getListado(boolean agrupar) {
-		
-		Fiat respuesta[] = null;
-		String cmdStm = "SELECT fiat.id, moneda, SUM(cant), idCustodia, proveedores.nombre "
-						+ "FROM gpiygdb.fiat "
-						+ "JOIN gpiygdb.proveedores ON proveedores.id = idCustodia "
-						+ "WHERE cant > 0 ";
-		if(agrupar)
-			cmdStm += "GROUP BY moneda ";
-		cmdStm += "ORDER BY idCustodia";
-		
-		try {
-			
-			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery();
-			rs.last();	
-			respuesta = new Fiat[rs.getRow()];
-			rs.beforeFirst();
-			int i = 0;
-
-			while (rs.next()) {
-				
-				respuesta[i] = new Fiat();
-				respuesta[i].setId(rs.getInt("fiat.id"));
-				respuesta[i].setMoneda(rs.getString("moneda"));
-				respuesta[i].setCant(rs.getDouble("SUM(cant)"));
-				respuesta[i].setCustodia(new Proveedor());
-				respuesta[i].getCustodia().setId(rs.getInt("idCustodia"));
-				respuesta[i].getCustodia().setNombre(rs.getString("proveedores.nombre"));
-				i++;
-			}
-		} catch (Exception e) {
-			
-			System.err.println(cmdStm);
-			System.err.println(e.getMessage());
-			System.err.println("MercadoFiatMySQL, getListado");
-		} finally {
-			
-			this.cerrar();
-		}
-		return respuesta;
-	}
 
 	@Override
-	public boolean newFiat(Fiat fiat) {
+	public boolean newMovimiento(Fiat fiat) {
 
 		boolean bandera = true;
-		String cmdStm = null;
-		if(fiat.getId() == 0)
-			cmdStm = "INSERT INTO gpiygdb.fiat (moneda, cant, idCustodia) VALUES (?, ?, ?)";
-		else
-			cmdStm = "UPDATE gpiygdb.fiat SET moneda = ?, cant = cant + ?, idCustodia = ? WHERE id = ?";
+		String cmdStm = "SELECT id FROM gpiygdb.fiat WHERE idCustodia = ? AND moneda = ?";
 
 		try {
 			
 			this.conectar();
 			PreparedStatement stm = conexion.prepareStatement(cmdStm);
+			stm.setInt(1, fiat.getCustodia().getId());
+			stm.setString(2, fiat.getMoneda());
+			ResultSet rs = stm.executeQuery();
+			
+			if(rs.next())
+				fiat.setId(rs.getInt("id"));
+			
+			if(fiat.getId() == 0)
+				cmdStm = "INSERT INTO gpiygdb.fiat (moneda, cant, idCustodia) VALUES (?, ?, ?)";
+			else
+				cmdStm = "UPDATE gpiygdb.fiat SET moneda = ?, cant = cant + ?, idCustodia = ? WHERE id = ?";
+
+			stm = conexion.prepareStatement(cmdStm);
 			stm.setString(1, fiat.getMoneda());
 			stm.setDouble(2, fiat.getCant());
 			stm.setInt(3, fiat.getCustodia().getId());
@@ -110,23 +73,49 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 			if(fiat.getId() == 0) {
 				
 				cmdStm = "SELECT id FROM gpiygdb.fiat ORDER BY id DESC LIMIT 1";
-				ResultSet rs = stm.executeQuery(cmdStm);
+				rs = stm.executeQuery(cmdStm);
 				
-				if(rs.next()) {
-
-					fiat.setId(rs.getInt(1));
-				}
+				if(rs.next())
+					fiat.setId(rs.getInt("id"));
 			}
 		} catch (Exception e) {
 		
 			bandera = false;
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("MercadoValoresMySQL, createCompra");
+			System.err.println("MercadoValoresMySQL, newMovimiento");
 		} finally {
 		
 			this.cerrar();
 		}
 		return bandera;
+	}
+	
+	@Override
+	public double getSaldo(Fiat moneda) {
+
+		double disponible = 0;
+		String cmdStm = "SELECT cant FROM gpiygdb.fiat WHERE idCustodia = ? AND moneda = ?";
+		
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = conexion.prepareStatement(cmdStm);
+			stm.setInt(1, moneda.getCustodia().getId());
+			stm.setString(2, moneda.getMoneda());
+			ResultSet rs = stm.executeQuery();
+			
+			if(rs.next())
+				disponible = rs.getDouble(1);
+		} catch (Exception e) {
+		
+			System.err.println(cmdStm);
+			System.err.println(e.getMessage());
+			System.err.println("MercadoValoresMySQL, newMovimiento");
+		} finally {
+		
+			this.cerrar();
+		}
+		return disponible;
 	}
 }

@@ -18,7 +18,7 @@ public class DtosIngresos {
 	private static Ingreso ingreso;
 	private static Proveedor fuentes[];
 	private static Transaccion formasCobro[];
-	private static Concepto conceptos[];
+	private static String conceptos[];
 	private double suma;
 	private int cantidadElementos;
 	private String msgError;
@@ -44,21 +44,25 @@ public class DtosIngresos {
 
 	public String [] getListaConceptos(String cabecera) {
 		
-		if(conceptos == null || conceptos.length < 1) {
-			conceptos = ingresosDAO.getConcepto();
-			
-			if(conceptos == null)
-				conceptos = new Concepto[0];
-		}
+		conceptos = new String[]{
+				
+			"Canasta básica",
+			"Vestimenta",
+			"Impuestos",
+			"Servicios",
+			"Salud",
+			"Ahorro / Inversión",
+			"Viajes",
+			"Lujo / Superfluo",
+			"Ocio",
+			"Estudio / Capacitación",
+			"Varios",
+			"Pichos",
+			"Tarjetas"
+		};
 		String respuesta[] = new String[conceptos.length + 1];
 		respuesta[0] = cabecera;
-		int i = 1;
-		
-		for(Concepto concepto: conceptos) {
-			
-			respuesta[i] = concepto.getDescripcion();
-			i++;
-		}
+		System.arraycopy(conceptos, 0, respuesta, 1, conceptos.length);
 		return respuesta;
 	}
 	
@@ -84,13 +88,12 @@ public class DtosIngresos {
 		return respuesta;
 	}
 	
-	public DefaultTableModel getTablaIngresos(String año, int mes, int tipo, int pago, String monedas, String filtro) {
+	public DefaultTableModel getTablaIngresos(String año, int mes, String tipo, int pago, String monedas, String filtro) {
 		
-		int idConcepto = (tipo == 0 ? 0: conceptos[tipo - 1].getId());
 		int idFormaCobro = pago == 0 ? 0: formasCobro[pago - 1].getId();
 		suma = 0;
 		cantidadElementos = 0;
-		ingresos = ingresosDAO.getListado(año, mes, idConcepto, idFormaCobro, monedas, filtro);
+		ingresos = ingresosDAO.getListado(año, mes, tipo, idFormaCobro, monedas, filtro);
 		String titulo[] = {"Fecha", "Nombre", "Forma de cobro", "Concepto", "Dólares", "Euros", "Monto en pesos"};
 		String tabla[][] = new String [ingresos.length][7];
 
@@ -99,7 +102,7 @@ public class DtosIngresos {
 			tabla[i][0] = ingresos[i].getFecha();
 			tabla[i][1] = ingresos[i].getFuente().getNombre();
 			tabla[i][2] = ingresos[i].getFormaCobro().getDescripcion();
-			tabla[i][3] = ingresos[i].getConcepto().getDescripcion();
+			tabla[i][3] = ingresos[i].getConcepto();
 			
 			if(ingresos[i].getMoneda().equals("Pesos")) {
 				
@@ -215,8 +218,7 @@ public class DtosIngresos {
 			msgError = "Debe definir el tipo de gasto.";
 			return false;
 		}
-		ingreso.setConcepto(new Concepto());
-		ingreso.getConcepto().setId(conceptos[pos - 1].getId());
+		ingreso.setConcepto(conceptos[pos - 1]);
 		return true;
 	}
 
@@ -249,7 +251,7 @@ public class DtosIngresos {
 		
 		if(ingreso.getMoneda().equals("Pesos")) {
 			
-			ingreso.setCotizacion(0);
+			ingreso.setCotizacion(1);
 			return true;
 		}
 		
@@ -352,7 +354,7 @@ public class DtosIngresos {
 	
 	public String getConcepto() {
 		
-		return ingreso.getConcepto().getDescripcion();
+		return ingreso.getConcepto();
 	}
 	
 	public boolean borrarEgreso() {

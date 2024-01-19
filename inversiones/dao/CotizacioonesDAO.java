@@ -6,5 +6,7 @@ import modelo.Valores;
 public interface CotizacioonesDAO {
 
 	public int getCotizaciones(String año, int mes, Valores valores[]);
-	public int getCotizaciones(String año, int mes, Fiat monedas[]);
+	public Fiat [] getCotizaciones(String año, int mes);
+	public boolean newCotizacion(Fiat monedas[]);
+	public double getUltima(String moneda);
 }

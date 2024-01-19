@@ -1,6 +1,7 @@
 package vista;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,6 +15,7 @@ public class Cargar extends VentanaModelo{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panel;
+	public JCheckBox chkBoxAcreditacion;
 	public JScrollPane scrollTabla;
 	public JTable tabla;
 	public JLabel msgError;
@@ -64,6 +66,13 @@ public class Cargar extends VentanaModelo{
 		contenedor.putConstraint(SpringLayout.WEST, txtFecha, 10, SpringLayout.EAST, lblFecha);
 		panel.add(txtFecha);
 		txtFecha.setColumns(6);
+		
+		chkBoxAcreditacion = new JCheckBox("Acreditación");
+		contenedor.putConstraint(SpringLayout.NORTH, chkBoxAcreditacion, 0, SpringLayout.NORTH, lblFecha);
+		contenedor.putConstraint(SpringLayout.WEST, chkBoxAcreditacion, 10, SpringLayout.EAST, txtFecha);
+		contenedor.putConstraint(SpringLayout.SOUTH, chkBoxAcreditacion, 0, SpringLayout.SOUTH, lblFecha);
+		chkBoxAcreditacion.setVisible(false);
+		panel.add(chkBoxAcreditacion);
 		
 		lblProv = new JLabel("Proveedor:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblProv, 20, SpringLayout.SOUTH, lblFecha);
@@ -136,7 +145,7 @@ public class Cargar extends VentanaModelo{
 		cmbBxMoneda = new JComboBox<String>(new String[] {"Pesos", "Dólares", "Euros"});
 		contenedor.putConstraint(SpringLayout.NORTH, cmbBxMoneda, 0, SpringLayout.NORTH, txtMonto);
 		contenedor.putConstraint(SpringLayout.WEST, cmbBxMoneda, 10, SpringLayout.EAST, txtMonto);
-		contenedor.putConstraint(SpringLayout.EAST, cmbBxMoneda, 100, SpringLayout.EAST, txtMonto);
+		contenedor.putConstraint(SpringLayout.EAST, cmbBxMoneda, 130, SpringLayout.EAST, txtMonto);
 		contenedor.putConstraint(SpringLayout.SOUTH, cmbBxMoneda, 20, SpringLayout.NORTH, txtMonto);
 		panel.add(cmbBxMoneda);
 		

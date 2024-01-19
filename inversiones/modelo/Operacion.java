@@ -5,28 +5,23 @@ public class Operacion {
 	private int id;
 	private String fecha;
 	private String operacion;
-	private String moneda;
-	private String comentario;
-	private String transaccion;
 	private double cant;
 	private double precio;
-	private double comision;
+	private double comision;	
+	private String comentario;
 	private int idValores;
 	private int idCripto;
 	private int idFiat;
 	private int idInmobiliario;
 	private int idEgreso;
 	private int idIngreso;
-	private int idCustodia;
 
 	public Operacion() {
 	
 		id = 0;
 		fecha = "";
 		operacion = "";
-		moneda = "";
 		comentario = "";
-		transaccion = "";
 		cant = 0;
 		precio = 0;
 		comision = 0;
@@ -36,7 +31,6 @@ public class Operacion {
 		idInmobiliario = 0;
 		idEgreso = 0;
 		idIngreso = 0;
-		idCustodia = 0;
 	}
 	
 	public int getId() {
@@ -69,36 +63,6 @@ public class Operacion {
 		this.operacion = operacion;
 	}
 
-	public String getMoneda() {
-		
-		return moneda;
-	}
-
-	public void setMoneda(String moneda) {
-		
-		this.moneda = moneda;
-	}
-
-	public String getComentario() {
-		
-		return comentario;
-	}
-
-	public void setComentario(String comentario) {
-		
-		this.comentario = comentario;
-	}
-
-	public String getTransaccion() {
-		
-		return transaccion;
-	}
-
-	public void setTransaccion(String transaccion) {
-		
-		this.transaccion = transaccion;
-	}
-
 	public double getCant() {
 		
 		return cant;
@@ -127,6 +91,16 @@ public class Operacion {
 	public void setComision(double comision) {
 		
 		this.comision = comision;
+	}
+
+	public String getComentario() {
+		
+		return comentario;
+	}
+
+	public void setComentario(String comentario) {
+		
+		this.comentario = comentario;
 	}
 
 	public int getIdValores() {
@@ -187,15 +161,5 @@ public class Operacion {
 	public void setIdIngreso(int idIngreso) {
 		
 		this.idIngreso = idIngreso;
-	}
-
-	public int getIdCustodia() {
-		
-		return idCustodia;
-	}
-
-	public void setIdCustodia(int idCustodia) {
-		
-		this.idCustodia = idCustodia;
 	}
 }

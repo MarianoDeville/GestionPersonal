@@ -3,11 +3,18 @@ package modelo;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import dao.CotizacionesMySQL;
 import dao.CotizacioonesDAO;
+import dao.EgresosDAO;
+import dao.EgresosMySQL;
+import dao.IngresosDAO;
+import dao.IngresosMySQL;
 import dao.MercadoFiatDAO;
 import dao.MercadoFiatMySQL;
+import dao.MercadoValoresDAO;
+import dao.MercadoValoresMySQL;
 import dao.OperacionesDAO;
 import dao.OperacionesMySQL;
 import dao.ProveedorDAO;
@@ -19,14 +26,18 @@ public class DtosMercadoFiat {
 
 	private MercadoFiatDAO mercadoFiatDAO = new MercadoFiatMySQL();
 	private OperacionesDAO operacionesDAO = new OperacionesMySQL();
+	private CotizacioonesDAO cotizacionesDAO = new CotizacionesMySQL();
 	private DecimalFormat formatoResultado = new DecimalFormat("###,###,##0.00");
 	private Calendar calendario;
 	private Fiat monedas[];
 	private Fiat monedasAgrupadas[];
-	private Fiat moneda;
+	private static Fiat moneda;
+	private Operacion operacion;
+	private Egreso egreso;
+	private Ingreso ingreso;
 	private Proveedor localizaciones[];
 	private Transaccion metodosPago[];
-	private double suma;
+	private Instrumento instrumentos[];
 	private String listaMonedas[] = {"Selecciones una opción", "Dólares", "Euros"};
 	private String msgError;
 	
@@ -48,9 +59,16 @@ public class DtosMercadoFiat {
 	}
 
 	public DefaultTableModel getListadoOperaciones(String año, int mes) {
+
+		monedas = operacionesDAO.getListado(año, mes);
+		int tamaño = 0;
 		
-		monedas = mercadoFiatDAO.getListado(false);
-		int tamaño = operacionesDAO.getListado(año, mes, monedas);
+		try {
+			
+			tamaño = monedas[0].getOperaciones().length;
+		} catch (Exception e) {
+
+		}
 		String tabla[][] = new String [monedas.length][tamaño + 3];
 		String titulo[] = new String[tamaño + 3];
 		System.arraycopy(new String[]{"Moneda", "Cant.", "Localización"}, 0, titulo, 0, 3);
@@ -63,8 +81,7 @@ public class DtosMercadoFiat {
 			
 			for(int e = 0; e < tamaño; e++) {
 
-				tabla[i][e + 3] = monedas[i].getOperaciones()[e].getOperacion().equals("Compra")? "+": "-";
-				tabla[i][e + 3] += formatoResultado.format(monedas[i].getOperaciones()[e].getCant());
+				tabla[i][e + 3] = formatoResultado.format(monedas[i].getOperaciones()[e].getCant());
 				titulo[e + 3] = monedas[i].getOperaciones()[e].getFecha();
 			}
 		}
@@ -72,19 +89,21 @@ public class DtosMercadoFiat {
 		return tablaModelo;
 	}
 	
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public DefaultTableModel getTablaCotizaciones(String año, int mes, boolean agregar) {
 		
-		monedasAgrupadas = mercadoFiatDAO.getListado(true);
-		CotizacioonesDAO cotizacionesDAO = new CotizacionesMySQL();
-		int tamaño = cotizacionesDAO.getCotizaciones(año, mes, monedasAgrupadas);
+		monedasAgrupadas = cotizacionesDAO.getCotizaciones(año, mes);
+		int tamaño = 0;
 
+		try {
+
+			tamaño = monedasAgrupadas[0].getCotizaciones().length;
+		} catch (Exception e) {
+
+		}
 		String tabla[][] = new String[monedasAgrupadas.length][tamaño + (agregar? 3: 2)];
 		String titulo[] = new String[tamaño + (agregar? 3: 2)];
 		System.arraycopy(new String[]{"Moneda", "Cant."}, 0, titulo, 0, 2);
-		
-		
+
 		for(int i = 0; i < monedasAgrupadas.length; i++) {
 			
 			tabla[i][0] = monedasAgrupadas[i].getMoneda();
@@ -96,9 +115,7 @@ public class DtosMercadoFiat {
 					tabla[i][e + 2] = formatoResultado.format(monedasAgrupadas[i].getCotizaciones()[e].getValor());
 				else
 					tabla[i][e + 2] = "-";
-				titulo[e + 3] = monedasAgrupadas[i].getCotizaciones()[e].getFecha();
-				
-
+				titulo[e + 2] = monedasAgrupadas[i].getCotizaciones()[e].getFecha();
 			}
 		}
 		
@@ -117,23 +134,30 @@ public class DtosMercadoFiat {
 		};
 		return tablaModelo;
 	}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	
-	
-	
-
-	public String getSuma() {
+	public boolean guardarCotizacion(JTable tablaCotizaciones) {
 		
-		return formatoResultado.format(suma);
-	}
-	
-	public String getCantFiat() {
+		int ultCol = tablaCotizaciones.getColumnCount() - 1;
+		msgError = "Error al intentar guardar la información";
 		
-		return monedas.length + "";
+		try {
+		
+			for(int i = 0; i < monedasAgrupadas.length; i++) {
+			
+				monedasAgrupadas[i].setCotizaciones(new Cotizacion[1]);
+				monedasAgrupadas[i].getCotizaciones()[0] = new Cotizacion();
+				monedasAgrupadas[i].getCotizaciones()[0].setFecha(DtosComunes.getFechaActual());
+				monedasAgrupadas[i].getCotizaciones()[0].setValor(Double.parseDouble((String)tablaCotizaciones.getValueAt(i, ultCol)));
+			}
+		} catch (Exception e) {
+			
+			msgError = "El valor de las cotizaciones debe ser numérico.";
+			return false;
+		}
+		return cotizacionesDAO.newCotizacion(monedasAgrupadas);
 	}
-///////////////////////////////////////////// Inicio compra de fiat ///////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+///////////////////////////////////////////// Inicio compra de fiat //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public DefaultTableModel getListadoLocalizaciones(String filtro) {
 		
 		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
@@ -150,10 +174,10 @@ public class DtosMercadoFiat {
 		return tablaModelo;
 	}
 
-	public String [] getListadoMetPago() {
+	public String [] getListadoMetPago(boolean ingreso) {
 		
 		TransaccionDAO transaccionDAO = new TransaccionMySQL();
-		metodosPago = transaccionDAO.getMetodos("E");
+		metodosPago = transaccionDAO.getMetodos(ingreso? "I":"E");
 		String respuesta[] = new String [metodosPago.length + 1];
 		respuesta[0] = "Selecciones una opción";
 		int i = 1;
@@ -183,25 +207,27 @@ public class DtosMercadoFiat {
 		moneda = null;
 	}
 	
-	public void setMonedaPago(String mon) {
+	public void setMonedaPago(String mon) {	
 		
-		if(moneda == null)
-			moneda = new Fiat();
-		moneda.setOperaciones(new Operacion[1]);
-		moneda.getOperaciones()[0] = new Operacion();
-		moneda.getOperaciones()[0].setMoneda(mon);
+		if(egreso == null)
+			egreso = new Egreso();
+		egreso.setMoneda(mon);
+	}
+	
+	public void setConcepto(String concepto) {
+	
+		if(operacion == null)
+			operacion = new Operacion();
+		operacion.setOperacion("Pago dividendos de " + concepto);
 	}
 	
 	public void setComentario(String comentario) {
 		
-		moneda.getOperaciones()[0].setComentario(comentario);
+		if(operacion == null)
+			operacion = new Operacion();
+		operacion.setComentario(comentario);
 	}
-	
-	public void setTipoOperacion(String tipoOper) {
-		
-		moneda.getOperaciones()[0].setOperacion(tipoOper);
-	}
-	
+
 	public String getMsgError() {
 		
 		return msgError;
@@ -209,7 +235,6 @@ public class DtosMercadoFiat {
 	
 	public boolean setFecha(String fecha) {
 		
-		calendario = new GregorianCalendar();
 		msgError = "El formato de la fecha es incorrecto, debe ser DD/MM/AAAA";
 		
 		try {
@@ -227,7 +252,7 @@ public class DtosMercadoFiat {
 				msgError = "El valor del mes está comprendido entre 1 y 12";
 				return false;
 			}
-			moneda.getOperaciones()[0].setFecha(partes[2] + "/" + partes[1] + "/" + partes[0]);	
+			operacion.setFecha(partes[2] + "/" + partes[1] + "/" + partes[0]);
 		} catch(Exception e) {
 			
 			return false;
@@ -243,7 +268,7 @@ public class DtosMercadoFiat {
 			msgError = "Debe elegir un método de pago.";
 			return false;
 		}
-		moneda.getOperaciones()[0].setTransaccion(metodosPago[pos - 1].getDescripcion());
+		egreso.setFormaPago(metodosPago[pos - 1]);
 		return true;
 	}
 	
@@ -262,7 +287,7 @@ public class DtosMercadoFiat {
 		
 		try {
 			
-			moneda.getOperaciones()[0].setPrecio(Double.parseDouble(precio));
+			operacion.setPrecio(Double.parseDouble(precio));
 		} catch (Exception e) {
 
 			msgError = "El precio debe ser un valor numérico.";
@@ -275,7 +300,7 @@ public class DtosMercadoFiat {
 
 		try {
 			
-			moneda.setCant(Double.parseDouble(cantidad));
+			operacion.setCant(Double.parseDouble(cantidad));
 		} catch (Exception e) {
 
 			msgError = "La cantidad debe ser un valor numérico.";
@@ -284,9 +309,42 @@ public class DtosMercadoFiat {
 		return true;
 	}
 
-	public boolean guardarCompra() {
+	public boolean setComision(String comision) {
 		
-				try {
+		try {
+			
+			operacion.setComision(Double.parseDouble(comision));
+		} catch (Exception e) {
+
+			msgError = "La comisión debe ser un valor numérico.";
+			return false;
+		}
+		return true;		
+	}
+	
+	public String [] getListaConceptos() {
+		
+		MercadoValoresDAO mercadoValoresDAO = new MercadoValoresMySQL();
+		instrumentos = mercadoValoresDAO.getIntrumentos();
+		String respuesta[] = new String [instrumentos.length + 1];
+		respuesta[0] = "Seleccione uno";
+		
+		for(int i = 0; i < instrumentos.length; i++) {
+			
+			respuesta[i + 1] = instrumentos[i].getNombre();
+		}
+		return respuesta;
+	}
+	
+	public boolean guardarCompra(boolean acreditacion) {
+
+		if(acreditacion && operacion.getOperacion().contains("Seleccione")) {
+			
+			msgError = "Debe seleccionar una fuente de dividendos.";
+			return false;
+		}
+			
+		try {
 		
 			if(moneda.getCustodia().getId() == 0) {
 				
@@ -298,15 +356,51 @@ public class DtosMercadoFiat {
 			msgError = "Debe elegir el lugar donde se depositará la compra.";
 			return false;
 		}
+		egreso.setFecha(operacion.getFecha());
+		egreso.setProveedor(moneda.getCustodia());
+		egreso.setComentario(operacion.getComentario());
+		ingreso = new Ingreso();
+		ingreso.setFecha(operacion.getFecha());
+		ingreso.setMonto(operacion.getCant());
+		ingreso.setMoneda(moneda.getMoneda());
+		ingreso.setComentario(operacion.getComentario());
+		ingreso.setConcepto("Ahorro / Inversión");
+		ingreso.setFuente(new Proveedor());
+		ingreso.getFuente().setId(moneda.getCustodia().getId());
+		ingreso.setFormaCobro(new Transaccion());
+		ingreso.setFormaCobro(egreso.getFormaPago());
+		moneda.setCant(operacion.getCant());
 
-		if(mercadoFiatDAO.newFiat(moneda)) {
+		if(mercadoFiatDAO.newMovimiento(moneda)) {
 
-			moneda.getOperaciones()[0].setIdFiat(moneda.getId());
-			moneda.getOperaciones()[0].setIdCustodia(moneda.getCustodia().getId());
-			moneda.getOperaciones()[0].setCant(moneda.getCant());
-			
-			if(operacionesDAO.newCompra(moneda.getOperaciones()[0])) {
+			operacion.setIdFiat(moneda.getId());
+			IngresosDAO ingresosDAO = new IngresosMySQL();
+			EgresosDAO egresosDAO = new EgresosMySQL();
+
+			if(acreditacion) {
 				
+				egreso.setMoneda("Pesos");
+				egreso.setTipoConsumo("Comisiones");
+				egreso.setCotizacion(1);
+				egreso.setMonto(operacion.getComision());
+				ingreso.setCotizacion(operacion.getPrecio());
+				operacion.setPrecio(0);
+			} else {
+
+				operacion.setOperacion("Compra");
+				egreso.setTipoConsumo("Ahorro / Inversión");
+				egreso.setCotizacion(cotizacionesDAO.getUltima(moneda.getMoneda()));
+				egreso.setMonto((operacion.getPrecio() * operacion.getCant()) + operacion.getComision());
+				ingreso.setCotizacion(operacion.getPrecio());
+			}
+			ingresosDAO.nuevo(ingreso);
+			egresosDAO.nuevo(egreso);
+			operacion.setIdEgreso(egreso.getId());
+			operacion.setIdIngreso(ingreso.getId());
+			
+			if(operacionesDAO.create(operacion)) {
+				
+				operacion = null;
 				msgError = "Se guardó correctamente la operacion.";
 				return true;
 			}
@@ -314,8 +408,28 @@ public class DtosMercadoFiat {
 		msgError = "Error al intentar guardar la compra.";
 		return false;
 	}
-///////////////////////////////////////////// Fin compra de fiat ///////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////// Inicio compra de fiat ///////////////////////////////////////////////////////////////////////////////////////////////////////	
+///////////////////////////////////////////// Fin compra de fiat /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////// Inicio venta de fiat ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	public void setMonedaCobro(String mon) {
+		
+		if(ingreso == null)
+			ingreso = new Ingreso();
+		ingreso.setMoneda(mon);
+	}
+	
+	public boolean setMetodoCobro(int pos) {
+		
+		if(pos == 0) {
+			
+			msgError = "Debe elegir un método de pago.";
+			return false;
+		}
+		ingreso.setFormaCobro(metodosPago[pos - 1]);
+		return true;
+	}
+	
 	public boolean guardarVenta() {
 		
 		try {
@@ -330,26 +444,94 @@ public class DtosMercadoFiat {
 			msgError = "Debe elegir el lugar donde se depositará la compra.";
 			return false;
 		}
-		
-// debo consultar si en el proveedor hay saldo suficiente para la venta de la moneda.
-/*		
-		if(mercadoFiatDAO.newFiat(moneda)) {
-		
-			moneda.getOperaciones()[0].setIdFiat(moneda.getId());
-			moneda.getOperaciones()[0].setIdCustodia(moneda.getCustodia().getId());
-			moneda.getOperaciones()[0].setCant(moneda.getCant());
+		double saldo = mercadoFiatDAO.getSaldo(moneda);
+
+		if(saldo < operacion.getCant()) {
 			
-			if(operacionesDAO.newCompra(moneda.getOperaciones()[0])) {
+			msgError = "El saldo disponible es de: " + formatoResultado.format(saldo);
+			return false;
+		}
+		moneda.setCant(- operacion.getCant());
+
+		if(mercadoFiatDAO.newMovimiento(moneda)) {
+		
+			IngresosDAO ingresosDAO = new IngresosMySQL();
+			EgresosDAO egresosDAO = new EgresosMySQL();
+			ingreso.setFecha(operacion.getFecha());
+			ingreso.setMonto(operacion.getPrecio() * operacion.getCant());
+			ingreso.setCotizacion(ingreso.getMoneda().equals("Pesos")? 1: operacion.getPrecio());
+			ingreso.setComentario(operacion.getComentario());
+			ingreso.setConcepto("Ahorro / Inversión");
+			ingreso.setFuente(moneda.getCustodia());
+			egreso = new Egreso();
+			egreso.setFecha(operacion.getFecha());
+			egreso.setMonto(operacion.getComision());
+			egreso.setMoneda("Pesos");
+			egreso.setCotizacion(1);
+			egreso.setTipoConsumo("Comision");
+			egreso.setComentario(operacion.getComentario());
+			egreso.setProveedor(moneda.getCustodia());
+			egreso.setFormaPago(ingreso.getFormaCobro());
+			ingresosDAO.nuevo(ingreso);
+			egresosDAO.nuevo(egreso);
+			egreso.setMonto(operacion.getCant());
+			egreso.setMoneda(moneda.getMoneda());
+			egreso.setCotizacion(operacion.getPrecio());
+			egreso.setTipoConsumo("Ahorro / Inversión");
+			egresosDAO.nuevo(egreso);
+			operacion.setOperacion("Venta");
+			operacion.setIdFiat(moneda.getId());
+			operacion.setIdEgreso(egreso.getId());
+			operacion.setIdIngreso(ingreso.getId());
+			operacion.setCant(moneda.getCant());
+			
+			if(operacionesDAO.create(operacion)) {
 				
+				operacion = null;
 				msgError = "Se guardó correctamente la operacion.";
 				return true;
 			}
 		}
-*/		msgError = "Error al intentar guardar la compra.";
+		msgError = "Error al intentar guardar la venta.";
 		return false;
+	}
+///////////////////////////////////////////// Fin venta de fiat //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////// Inicio detalle operaciones ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	public void getDetalle(int pos) {
+		
+		moneda = monedas[pos];
+
 	}
 	
 	
 	
-///////////////////////////////////////////// Fin compra de fiat ///////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+///////////////////////////////////////////// Fin detalle operaciones //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

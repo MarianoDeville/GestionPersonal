@@ -18,7 +18,7 @@ public class DtosEgresos {
 	private static Egreso egreso;
 	private static Transaccion formasPago[];
 	private static Proveedor proveedores[];
-	private static ClasificacionEgreso destinos[];
+	private static String destinos[];
 	private Calendar calendario;
 	private String msgError;
 	private double suma;
@@ -46,21 +46,25 @@ public class DtosEgresos {
 
 	public String [] getListaDestinos(String cabecera) {
 		
-		if(destinos == null || destinos.length < 1) {
-			destinos = egresosDAO.getDestino();
-			
-			if(destinos == null)
-				destinos = new ClasificacionEgreso[0];
-		}
-		String respuesta[] = new String[destinos.length + 1];
+		destinos = new String[] {
+				"Canasta básica",
+				"Vestimenta",
+				"Impuestos",
+				"Servicios",
+				"Salud",
+				"Ahorro / Inversión",
+				"Viajes",
+				"Lujo / Superfluo",
+				"Ocio",
+				"Estudio / Capacitación",
+				"Varios",
+				"Pichos",
+				"Tarjetas",
+				"Comisiones"
+		};
+		String respuesta[] = new String[destinos.length + 1]; 
 		respuesta[0] = cabecera;
-		int i = 1;
-		
-		for(ClasificacionEgreso destino: destinos) {
-			
-			respuesta[i] = destino.getDescripcion();
-			i++;
-		}
+		System.arraycopy(destinos, 0, respuesta, 1, destinos.length);
 		return respuesta;
 	}
 	
@@ -86,13 +90,12 @@ public class DtosEgresos {
 		return respuesta;
 	}
 	
-	public DefaultTableModel getTablaEgresos(String año, int mes, int tipo, int pago, String monedas, String filtro, boolean financiado) {
+	public DefaultTableModel getTablaEgresos(String año, int mes, String tipo, int pago, String monedas, String filtro, boolean financiado) {
 		
-		int idDestino = (tipo == 0 ? 0: destinos[tipo - 1].getId());
 		int idFormaPago = pago == 0 ? 0: formasPago[pago - 1].getId();
 		suma = 0;
 		cantidadElementos = 0;
-		egresos = egresosDAO.getListado(año, mes, idDestino, idFormaPago, monedas, filtro);
+		egresos = egresosDAO.getListado(año, mes, tipo, idFormaPago, monedas, filtro);
 		String titulo[] = {"Fecha", "Nombre", "Forma de pago", "Dólares", "Euros", "Monto en pesos"};
 		String tabla[][] = null;
 		
@@ -230,8 +233,7 @@ public class DtosEgresos {
 			msgError = "Debe definir el tipo de gasto.";
 			return false;
 		}
-		egreso.setTipoConsumo(new ClasificacionEgreso());
-		egreso.getTipoConsumo().setId(destinos[pos - 1].getId());
+		egreso.setTipoConsumo(destinos[pos - 1]);
 		return true;
 	}
 
@@ -280,7 +282,7 @@ public class DtosEgresos {
 	
 	public String getDestinoConsumo() {
 		
-		return egreso.getTipoConsumo().getDescripcion();
+		return egreso.getTipoConsumo();
 	}
 	
 	public String getFecha() {
@@ -352,7 +354,7 @@ public class DtosEgresos {
 		
 		if(egreso.getMoneda().equals("Pesos")) {
 			
-			egreso.setCotizacion(0);
+			egreso.setCotizacion(1);
 			return true;
 		}
 		

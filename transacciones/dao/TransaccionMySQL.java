@@ -23,7 +23,7 @@ public class TransaccionMySQL extends ConexiónMySQL implements TransaccionDAO {
 			rs.beforeFirst();
 			int i = 0;
 
-			while (rs.next()) {
+			while(rs.next()) {
 					
 				respuesta[i] = new Transaccion();
 				respuesta[i].setId(rs.getInt(1));
@@ -43,4 +43,34 @@ public class TransaccionMySQL extends ConexiónMySQL implements TransaccionDAO {
 		return respuesta;
 	}
 	
+	@Override
+	public Transaccion getId(String nombre) {
+		
+		Transaccion respuesta = new Transaccion();
+		String cmdStm = "SELECT id, descripcion, financiado FROM gpiygdb.transaccion WHERE descripcion = ?";
+		
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
+			stm.setString(1, nombre);
+			ResultSet rs = stm.executeQuery();
+
+			if(rs.next()) {
+					
+				respuesta.setId(rs.getInt(1));
+				respuesta.setDescripcion(rs.getString(2));
+				respuesta.setFinanciado(rs.getInt(3));
+			}
+		} catch (Exception e) {
+			
+			System.err.println(e.getMessage());
+			System.err.println(cmdStm);
+			System.err.println("TransaccionMySQL, getId");
+		} finally {
+			
+			this.cerrar();
+		}
+		return respuesta;
+	}
 }

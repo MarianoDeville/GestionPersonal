@@ -147,7 +147,7 @@ public class CtrlEgresos implements ActionListener {
 		derecha.setHorizontalAlignment(JLabel.RIGHT);
 		ventana.tabla.setModel(dtosEgreso.getTablaEgresos((String)ventana.comboBoxAño.getSelectedItem(), 
 														  ventana.comboBoxMes.getSelectedIndex(), 
-														  ventana.comboBoxTipo.getSelectedIndex(), 
+														  (String)ventana.comboBoxTipo.getSelectedItem(), 
 														  ventana.comboBoxPago.getSelectedIndex(), 
 														  monedas ,
 														  ventana.txtBusqueda.getText(), 

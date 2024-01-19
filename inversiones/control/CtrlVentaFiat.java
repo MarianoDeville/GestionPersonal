@@ -48,12 +48,17 @@ public class CtrlVentaFiat implements ActionListener {
 		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.lblProv.setText("Localización:");
 		ventana.lblFormPago.setText("Forma de cobro");
-		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListadoMetPago()));
+		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListadoMetPago(true)));
 		ventana.lblTipo.setText("Moneda:");
 		ventana.cmbBxTipo.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListaMonedas()));
 		ventana.txtCotizacion.setEditable(true);
 		ventana.lblMonto.setText("Precio:");
 		ventana.lblCotizacion.setText("Cantidad:");
+		ventana.lblComentario.setText("Comisión:");
+		ventana.txtComentario.setColumns(6);
+		ventana.lblAux1.setVisible(true);
+		ventana.lblAux1.setText("Comentario:");
+		ventana.txtAux1.setVisible(true);
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
 		ventana.setVisible(true);
@@ -68,7 +73,7 @@ public class CtrlVentaFiat implements ActionListener {
 		
 		if(e.getSource() == ventana.btnGuardar) {
 			
-			guardarCompra();
+			guardarVenta();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
@@ -89,17 +94,17 @@ public class CtrlVentaFiat implements ActionListener {
 		ventana.tabla.setModel(dtosMercadoFiat.getListadoLocalizaciones(ventana.txtProv.getText()));
 	}
 	
-	private void guardarCompra() {
+	private void guardarVenta() {
 		
-		dtosMercadoFiat.setMonedaPago((String)ventana.cmbBxMoneda.getSelectedItem());
-		dtosMercadoFiat.setComentario(ventana.txtComentario.getText());
-		dtosMercadoFiat.setTipoOperacion("Compra");
+		dtosMercadoFiat.setMonedaCobro((String)ventana.cmbBxMoneda.getSelectedItem());
+		dtosMercadoFiat.setComentario(ventana.txtAux1.getText());
 
 		if(dtosMercadoFiat.setFecha(ventana.txtFecha.getText()) && 
-				dtosMercadoFiat.setMetodoPago(ventana.cmbBxPago.getSelectedIndex()) && 
+				dtosMercadoFiat.setMetodoCobro(ventana.cmbBxPago.getSelectedIndex()) && 
 				dtosMercadoFiat.setMoneda(ventana.cmbBxTipo.getSelectedIndex()) && 
 				dtosMercadoFiat.setPrecio(ventana.txtMonto.getText()) && 
 				dtosMercadoFiat.setCantidad(ventana.txtCotizacion.getText()) && 
+				dtosMercadoFiat.setComision(ventana.txtComentario.getText()) && 
 				dtosMercadoFiat.guardarVenta()) {
 			
 			ventana.msgError.setForeground(Color.BLUE);
@@ -123,6 +128,7 @@ public class CtrlVentaFiat implements ActionListener {
 		ventana.txtProv.setText("");
 		ventana.txtCotizacion.setText("");
 		ventana.txtComentario.setText("");
+		ventana.txtAux1.setText("");
 		ventana.msgError.setText("");
 		dtosMercadoFiat.resetMoneda();
 		actualizar();

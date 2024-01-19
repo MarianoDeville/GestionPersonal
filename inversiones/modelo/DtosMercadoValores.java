@@ -7,12 +7,18 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import dao.CotizacionesMySQL;
 import dao.CotizacioonesDAO;
+import dao.EgresosDAO;
+import dao.EgresosMySQL;
+import dao.IngresosDAO;
+import dao.IngresosMySQL;
 import dao.MercadoValoresDAO;
 import dao.MercadoValoresMySQL;
 import dao.OperacionesDAO;
 import dao.OperacionesMySQL;
 import dao.ProveedorDAO;
 import dao.ProveedorMySQL;
+import dao.TransaccionDAO;
+import dao.TransaccionMySQL;
 
 public class DtosMercadoValores {
 	
@@ -25,10 +31,14 @@ public class DtosMercadoValores {
 	private static Valores valores[];
 	private static Valores valor;
 	private Operacion operacion;
+	private Ingreso ingreso;
+	private Egreso egreso;
 	private String msgError;
 	private double suma;
 	private Calendar calendario;
-		
+	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////// Inicio Mercado de valores //////////////////////////////////////////////////////////////////////////////
 	public String [] getListaAños() {
 		
 		String respuesta[] = null;
@@ -45,7 +55,7 @@ public class DtosMercadoValores {
 		System.arraycopy(respuesta, 0, temp, 1, respuesta.length);
 		return temp;
 	}
-
+	
 	public DefaultTableModel getTablaValores(String año, int mes, boolean agregar) {
 		
 		CotizacioonesDAO cotizacionesDAO = new CotizacionesMySQL();
@@ -93,6 +103,58 @@ public class DtosMercadoValores {
 		return tablaModelo;
 	}
 
+	public String getSuma() {
+		
+		return formatoResultado.format(suma);
+	}
+	
+	public String getCantValores() {
+		
+		return valores.length + "";
+	}
+
+	public void setValor(int pos) {
+		
+		valor = valores[pos];
+	}
+	
+	public boolean guardarCotizaciones(JTable tablaCotizaciones) {
+		
+		int ultimaColumna = tablaCotizaciones.getColumnCount() - 1;
+		Cotizacion cot[] = new Cotizacion[valores.length];
+		
+		try {
+			
+			for(int i = 0; i < valores.length; i++) {
+				
+				cot[i] = new Cotizacion();
+				cot[i].setFecha(DtosComunes.getFechaActual());
+				cot[i].setValor(Double.parseDouble((String)tablaCotizaciones.getValueAt(i, ultimaColumna)));
+				cot[i].setIdValores(valores[i].getId());
+			}			
+		} catch (Exception e) {
+
+			msgError = "Verifique la información de los campos.";
+			return false;
+		}
+		
+		if(mercadoValoresDAO.newCotizaciones(cot))
+			return true;
+		msgError = "Error al intentar guardar la información en la base de datos.";
+		return false;
+	}
+	
+	public String getMsgError() {
+		
+		return msgError;
+	}
+//////////////////////////////////////////////////////////////////////////  Fin Mercado de valores  ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
+	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////Inicio compra de valores ////////////////////////////////////////////////////////////////////////////////
 	public String [] getListaCustodias() {
 		
 		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
@@ -124,6 +186,16 @@ public class DtosMercadoValores {
 		return respuesta;
 	}
 	
+	public String getCustodiaValor() {
+		
+		return valor.getCustodia().getNombre() + " - " + valor.getCustodia().getMercado();
+	}
+
+	public String getTipoInstrumento() {
+	
+		return valor.getInstrumento().getNombre();
+	}
+
 	public DefaultTableModel getListadoValores(String filtro) {
 		
 		valores = mercadoValoresDAO.getListado(filtro);
@@ -139,33 +211,42 @@ public class DtosMercadoValores {
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, new String [] {"Nombre", "Mercado"});
 		return tablaModelo;
 	}
+
+	public void setMonedaCompra(String moneda) {
 	
-	public void setValor(int pos) {
-		
-		valor = valores[pos];
+		if(egreso == null)
+			egreso = new Egreso();
+
+		egreso.setMoneda(moneda);
 	}
 	
-	public String getCustodiaValor() {
+	public void setComentario(String comentario) {
+	
+		operacion = new Operacion();
+		operacion.setComentario(comentario);
+	}
+
+	public void setTipoOperacion(String operacion) {
 		
-		return valor.getCustodia().getNombre() + " - " + valor.getCustodia().getMercado();
+		this.operacion.setOperacion(operacion);
 	}
 	
-	public String getTipoInstrumento() {
-	
-		return valor.getInstrumento().getNombre();
-	}
-	
-	public void resetValor() {
+	public boolean setNombre(String nombre) {
 		
-		valor = null;
-		operacion = null;
+		if(nombre.length() < 3) {
+			
+			msgError = "No ha definido el nombre de la especie.";
+			return false;
+		}
+		
+		if(valor == null)
+			valor = new Valores();
+		valor.setNombre(nombre);
+		return true;
 	}
 
 	public boolean setFecha(String fecha) {
-		
-		if(operacion == null)
-			operacion = new Operacion();
-		calendario = new GregorianCalendar();
+
 		msgError = "El formato de la fecha es incorrecto, debe ser DD/MM/AAAA";
 		
 		try {
@@ -191,21 +272,29 @@ public class DtosMercadoValores {
 		msgError = "";
 		return true;
 	}
-	
-	public boolean setNombre(String nombre) {
+
+	public boolean setCustodia(int pos) {
 		
-		if(nombre.length() < 3) {
+		if(pos == 0) {
 			
-			msgError = "No ha definido el nombre de la especie.";
+			msgError = "Debe seleccionar una custodia.";
 			return false;
 		}
-		
-		if(valor == null)
-			valor = new Valores();
-		valor.setNombre(nombre);
+		custodia = custodios[pos - 1];
 		return true;
 	}
-	
+
+	public boolean setTipoInstrumento(int pos) {
+		
+		if(pos == 0) {
+			
+			msgError = "Debe seleccionar el tipo de intrumento que se está operando.";
+			return false;
+		}
+		valor.setInstrumento(instrumentos[pos -1]);
+		return true;
+	}
+
 	public boolean setPrecio(String precio) {
 		
 		try {
@@ -218,13 +307,12 @@ public class DtosMercadoValores {
 		}
 		return true;		
 	}
-	
+
 	public boolean setCantidad(String cant) {
 		
 		try {
 		
 			operacion.setCant(Double.parseDouble(cant));
-			valor.setCant(Double.parseDouble(cant));
 		} catch (Exception e) {
 
 			msgError = "La cantidad debe ser un valor numérico.";
@@ -233,24 +321,6 @@ public class DtosMercadoValores {
 		return true;
 	}
 
-	public void setMoneda(String moneda) {
-	
-		if(operacion == null)
-			operacion = new Operacion();
-		operacion.setMoneda(moneda);
-	}
-	
-	public boolean setCustodia(int pos) {
-		
-		if(pos == 0) {
-			
-			msgError = "Debe seleccionar una custodia.";
-			return false;
-		}
-		custodia = custodios[pos - 1];
-		return true;
-	}
-	
 	public boolean setComision(String comision) {
 		
 		try {
@@ -263,46 +333,31 @@ public class DtosMercadoValores {
 		}
 		return true;
 	}
-	
-	public void setComentario(String comentario) {
-	
-		operacion.setComentario(comentario);
-	}
-	
-	public void setTipoOperacion(String operacion) {
+
+	public boolean guardarCompra() {  // como es una compra solo debo cargar el egreso
 		
-		this.operacion.setOperacion(operacion);
-	}
-	
-	public boolean setTipoInstrumento(int pos) {
-		
-		if(pos == 0) {
-			
-			msgError = "Debe seleccionar el tipo de intrumento que se está operando.";
-			return false;
-		}
-		valor.setInstrumento(instrumentos[pos -1]);
-		return true;
-	}
-	
-	public String getMsgError() {
-		
-		return msgError;
-	}
-	
-	public boolean guardarCompra() {  
-				
-		if(valor.getCustodia() == null)
-			valor.setCustodia(custodia);
-		operacion.setIdCustodia(custodia.getId());
+		valor.setCustodia(custodia);
+		valor.setCant(operacion.getCant());
 
 		if(mercadoValoresDAO.newValor(valor)) {
-
-			operacion.setIdValores(valor.getId());
-			operacion.setTransaccion("Débito en cuenta");
 			
-			if(operacionDAO.newCompra(operacion)) {
-				
+			TransaccionDAO transaccionDAO = new TransaccionMySQL();
+			EgresosDAO egresosDAO = new EgresosMySQL();			
+			egreso.setFecha(operacion.getFecha());
+			egreso.setMonto((operacion.getCant() * operacion.getPrecio()) + operacion.getComision());
+			egreso.setCotizacion(operacion.getPrecio());
+			egreso.setComentario(operacion.getComentario());
+			egreso.setTipoConsumo("Ahorro / Inversión");
+			egreso.setProveedor(custodia);
+			egreso.setFormaPago(transaccionDAO.getId("Débito en cuenta"));
+			egresosDAO.nuevo(egreso);
+			operacion.setIdValores(valor.getId());
+			operacion.setIdEgreso(egreso.getId());
+			
+			if(operacionDAO.create(operacion)) {
+		
+				valor = null;
+				custodia = null;
 				msgError = "Se guardó correctamente la operacion.";
 				return true;
 			}
@@ -310,51 +365,80 @@ public class DtosMercadoValores {
 		msgError = "Error al intentar guardar la compra.";
 		return false;
 	}
-	
-	public boolean guardarCotizaciones(JTable tablaCotizaciones) {
-		
-		int ultimaColumna = tablaCotizaciones.getColumnCount() - 1;
-		Cotizacion cot[] = new Cotizacion[valores.length];
-		
-		try {
-			
-			for(int i = 0; i < valores.length; i++) {
-				
-				cot[i] = new Cotizacion();
-				cot[i].setFecha(DtosComunes.getFechaActual());
-				cot[i].setValor(Double.parseDouble((String)tablaCotizaciones.getValueAt(i, ultimaColumna)));
-				cot[i].setIdValores(valores[i].getId());
-			}			
-		} catch (Exception e) {
 
-			msgError = "Verifique la información de los campos.";
-			return false;
-		}
+	public void resetValor() {
 		
-		if(mercadoValoresDAO.newCotizaciones(cot))
-			return true;
-		msgError = "Error al intentar guardar la información en la base de datos.";
-		return false;
+		valor = null;
+		custodia = null;
 	}
-
-	public String getCantValores() {
-		
-		return valores.length + "";
-	}
-
-	public String getSuma() {
-		
-		return formatoResultado.format(suma);
-	}
+//////////////////////////////////////////////////////////////////////////Fin compra de valores  /////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public String getNombreValor() {
-		
-		return valor.getNombre();
-	}
 	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////Inicio venta de valores /////////////////////////////////////////////////////////////////////////////////
 	public String getCantValor() {
 		
 		return String.format("%.2f", valor.getCant());
+	}
+
+	public void setMonedaVenta(String moneda) {
+		
+		if(ingreso == null)
+			ingreso = new Ingreso();
+		ingreso.setMoneda(moneda);
+	}
+			
+	public boolean guardarVenta() {
+		
+		if(operacion.getCant() > valor.getCant()) {
+			
+			msgError = "No tiene saldo suficiente.";
+			return false;			
+		}
+		
+		if(valor.getId() == 0) {
+
+			msgError = "No se ha defino el valor a operar.";
+			return false;
+		}
+		valor.setCant(- operacion.getCant());
+		
+		if(!mercadoValoresDAO.newValor(valor)){
+
+			msgError = "Error al intentar actualizar los valores.";
+			return false;
+		}
+		IngresosDAO ingresosDAO = new IngresosMySQL();
+		TransaccionDAO transaccionDAO = new TransaccionMySQL();
+		ingreso.setFecha(operacion.getFecha());
+		ingreso.setMonto((operacion.getCant() * operacion.getPrecio()) - operacion.getComision() );
+		ingreso.setCotizacion(ingreso.getMoneda().equals("Pesos")? 1: operacion.getPrecio());
+		ingreso.setComentario(operacion.getComentario());
+		ingreso.setConcepto("Ahorro / Inversión");
+		ingreso.setFuente(valor.getCustodia());
+		ingreso.setFormaCobro(transaccionDAO.getId("Acreditación en cuenta"));
+		ingresosDAO.nuevo(ingreso);
+		operacion.setIdValores(valor.getId());
+		operacion.setIdIngreso(ingreso.getId());
+		operacion.setCant(valor.getCant());
+		
+		if(operacionDAO.create(operacion)) {
+			
+			msgError = "Se guardó correctamente la operacion.";
+			return true;
+		}
+		msgError = "Error al intentar guardar la operación.";
+		return false;
+	}
+//////////////////////////////////////////////////////////////////////////Fin venta de valores  ///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////Inicio detalle de valores ///////////////////////////////////////////////////////////////////////////////
+	public String getNombreValor() {
+		
+		return valor.getNombre();
 	}
 	
 	public DefaultTableModel getListadoOperaciones() {
@@ -378,26 +462,6 @@ public class DtosMercadoValores {
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
 		return tablaModelo;
 	}
-	
-	public boolean guardarVenta() {
-				
-		if(valor.getId() == 0) {
-
-			msgError = "No se ha defino el valor a operar.";
-			return false;
-		}
-		
-		if(valor.getCustodia() == null)
-			valor.setCustodia(custodia);
-		operacion.setIdCustodia(custodia.getId());
-		operacion.setIdValores(valor.getId());
-			
-		if(operacionDAO.newVenta(operacion)) {
-			
-			msgError = "Se guardó correctamente la operacion.";
-			return true;
-		}
-		msgError = "Error al intentar guardar la compra.";
-		return false;
-	}
+//////////////////////////////////////////////////////////////////////////Fin detalle de valores  /////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
