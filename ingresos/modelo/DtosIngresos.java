@@ -46,19 +46,14 @@ public class DtosIngresos {
 		
 		conceptos = new String[]{
 				
-			"Canasta básica",
-			"Vestimenta",
-			"Impuestos",
-			"Servicios",
-			"Salud",
-			"Ahorro / Inversión",
-			"Viajes",
-			"Lujo / Superfluo",
-			"Ocio",
-			"Estudio / Capacitación",
-			"Varios",
-			"Pichos",
-			"Tarjetas"
+			"Sueldo mensual",
+			"Guardias",
+			"Alquiler",
+			"Acreditación Dividendos / Cupones / Intereses",
+			"Viáticos",
+			"Venta Activos / Pasivos",
+			"Compra / Venta moneda extrangera",
+			"Bonos / Retroactivos sueldo"
 		};
 		String respuesta[] = new String[conceptos.length + 1];
 		respuesta[0] = cabecera;

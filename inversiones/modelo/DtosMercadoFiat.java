@@ -60,7 +60,7 @@ public class DtosMercadoFiat {
 
 	public DefaultTableModel getListadoOperaciones(String año, int mes) {
 
-		monedas = operacionesDAO.getListado(año, mes);
+		monedas = operacionesDAO.getListadoFiat(año, mes);
 		int tamaño = 0;
 		
 		try {
@@ -156,8 +156,7 @@ public class DtosMercadoFiat {
 		}
 		return cotizacionesDAO.newCotizacion(monedasAgrupadas);
 	}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-///////////////////////////////////////////// Inicio compra de fiat //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	public DefaultTableModel getListadoLocalizaciones(String filtro) {
 		
 		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
@@ -364,7 +363,11 @@ public class DtosMercadoFiat {
 		ingreso.setMonto(operacion.getCant());
 		ingreso.setMoneda(moneda.getMoneda());
 		ingreso.setComentario(operacion.getComentario());
-		ingreso.setConcepto("Ahorro / Inversión");
+		
+		if(acreditacion)
+			ingreso.setConcepto("Acreditación Dividendos / Cupones / Intereses");
+		else
+			ingreso.setConcepto("Compra / Venta moneda extrangera");
 		ingreso.setFuente(new Proveedor());
 		ingreso.getFuente().setId(moneda.getCustodia().getId());
 		ingreso.setFormaCobro(new Transaccion());
@@ -398,7 +401,7 @@ public class DtosMercadoFiat {
 			operacion.setIdEgreso(egreso.getId());
 			operacion.setIdIngreso(ingreso.getId());
 			
-			if(operacionesDAO.create(operacion)) {
+			if(operacionesDAO.update(operacion)) {
 				
 				operacion = null;
 				msgError = "Se guardó correctamente la operacion.";
@@ -408,10 +411,7 @@ public class DtosMercadoFiat {
 		msgError = "Error al intentar guardar la compra.";
 		return false;
 	}
-///////////////////////////////////////////// Fin compra de fiat /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////// Inicio venta de fiat ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	public void setMonedaCobro(String mon) {
 		
 		if(ingreso == null)
@@ -461,7 +461,7 @@ public class DtosMercadoFiat {
 			ingreso.setMonto(operacion.getPrecio() * operacion.getCant());
 			ingreso.setCotizacion(ingreso.getMoneda().equals("Pesos")? 1: operacion.getPrecio());
 			ingreso.setComentario(operacion.getComentario());
-			ingreso.setConcepto("Ahorro / Inversión");
+			ingreso.setConcepto("Compra / Venta moneda extrangera");
 			ingreso.setFuente(moneda.getCustodia());
 			egreso = new Egreso();
 			egreso.setFecha(operacion.getFecha());
@@ -485,7 +485,7 @@ public class DtosMercadoFiat {
 			operacion.setIdIngreso(ingreso.getId());
 			operacion.setCant(moneda.getCant());
 			
-			if(operacionesDAO.create(operacion)) {
+			if(operacionesDAO.update(operacion)) {
 				
 				operacion = null;
 				msgError = "Se guardó correctamente la operacion.";
@@ -495,11 +495,7 @@ public class DtosMercadoFiat {
 		msgError = "Error al intentar guardar la venta.";
 		return false;
 	}
-///////////////////////////////////////////// Fin venta de fiat //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////// Inicio detalle operaciones ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	public void getDetalle(int pos) {
 		
 		moneda = monedas[pos];

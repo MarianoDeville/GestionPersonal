@@ -48,7 +48,6 @@ public class CtrlCargarEgreso implements ActionListener {
 	
 	public void iniciar() {
 
-		ventana.btnNuevo.setEnabled(false);
 		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago("Seleccione un método de pago.")));
 		ventana.cmbBxPago.setSelectedIndex(0);
@@ -93,6 +92,7 @@ public class CtrlCargarEgreso implements ActionListener {
 			
 			ventana.txtProv.setText((String)ventana.tabla.getValueAt(elemento, 0));
 			dtosEgreso.setProveedor(elemento);
+			ventana.txtProv.setEnabled(false);
 			elemento = -1;
 		}
 		ventana.tabla.setModel(dtosEgreso.getListaProveedores(ventana.txtProv.getText()));
@@ -120,7 +120,6 @@ public class CtrlCargarEgreso implements ActionListener {
 			
 			ventana.msgError.setForeground(Color.BLUE);
 			ventana.msgError.setText(dtosEgreso.getMsgError());
-			ventana.btnNuevo.setEnabled(true);
 			ventana.btnGuardar.setEnabled(false);
 			return;	
 		}
@@ -130,7 +129,7 @@ public class CtrlCargarEgreso implements ActionListener {
 	
 	private void limpiar() {
 		
-		ventana.btnNuevo.setEnabled(false);
+		ventana.txtProv.setEnabled(true);
 		ventana.btnGuardar.setEnabled(true);
 		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.txtMonto.setText("");

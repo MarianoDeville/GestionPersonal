@@ -239,7 +239,7 @@ public class DtosEgresos {
 
 	public boolean guardarEgreso() {
 		
-		if(egreso.getProveedor().getId() < 1) {
+		if(egreso.getProveedor() == null || egreso.getProveedor().getId() < 1) {
 			
 			msgError = "El proveedor no está definido.";
 			return false;

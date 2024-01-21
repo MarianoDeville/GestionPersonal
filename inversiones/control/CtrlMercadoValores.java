@@ -31,6 +31,7 @@ public class CtrlMercadoValores implements ActionListener {
 		this.dtosInversiones = new DtosMercadoValores();
 		this.ventana.comboBoxAño.addActionListener(this);
 		this.ventana.comboBoxMes.addActionListener(this);
+		this.ventana.chkBxPesos.addActionListener(this);
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnCargar.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
@@ -59,7 +60,7 @@ public class CtrlMercadoValores implements ActionListener {
 		ventana.comboBoxPago.setVisible(false);
 		ventana.comboBoxTipo.setVisible(false);
 		ventana.txtBusqueda.setVisible(false);
-		ventana.chkBxPesos.setVisible(false);
+		ventana.chkBxPesos.setText("Existentes");
 		ventana.chkBxDolares.setVisible(false);
 		ventana.chkBxEuros.setVisible(false);
 		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosInversiones.getListaAños()));
@@ -142,17 +143,17 @@ public class CtrlMercadoValores implements ActionListener {
 		derecha.setHorizontalAlignment(JLabel.RIGHT);
 		ventana.tabla.setModel(dtosInversiones.getTablaValores((String)ventana.comboBoxAño.getSelectedItem(), 
 																ventana.comboBoxMes.getSelectedIndex(), 
-																nuevaCotizacion));
-		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(70);
-		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);
-		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(80);
-		ventana.tabla.getColumnModel().getColumn(1).setMinWidth(40);
-		ventana.tabla.getColumnModel().getColumn(1).setMaxWidth(70);
+																nuevaCotizacion,
+																ventana.chkBxPesos.isSelected()));
+		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
+		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(80);
+		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(70);
 		ventana.tabla.getColumnModel().getColumn(1).setPreferredWidth(60);
-		ventana.tabla.getColumnModel().getColumn(1).setCellRenderer(derecha);
-		ventana.tabla.getColumnModel().getColumn(2).setMinWidth(70);
-		ventana.tabla.getColumnModel().getColumn(2).setMaxWidth(100);
+		ventana.tabla.getColumnModel().getColumn(1).setMinWidth(70);
+		ventana.tabla.getColumnModel().getColumn(1).setMaxWidth(100);
 		ventana.tabla.getColumnModel().getColumn(2).setPreferredWidth(80);
+		ventana.tabla.getColumnModel().getColumn(2).setMinWidth(40);
+		ventana.tabla.getColumnModel().getColumn(2).setMaxWidth(70);
 		ventana.tabla.getColumnModel().getColumn(2).setCellRenderer(derecha);
 
 		for(int i = 3; i < ventana.tabla.getColumnCount(); i++) {

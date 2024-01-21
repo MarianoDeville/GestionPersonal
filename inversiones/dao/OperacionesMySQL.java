@@ -3,6 +3,7 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import modelo.Fiat;
+import modelo.Instrumento;
 import modelo.Operacion;
 import modelo.Proveedor;
 import modelo.Valores;
@@ -10,7 +11,7 @@ import modelo.Valores;
 public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 	
 	@Override
-	public boolean create(Operacion operacion) {
+	public boolean update(Operacion operacion) {
 		
 		boolean bandera = true;
 		String campo = "";
@@ -84,9 +85,9 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 	}
 
 	@Override
-	public boolean getListado(Valores valor) {
+	public Operacion [] getListado(Valores valor) {
 		
-		boolean bandera = true;
+		Operacion operaciones[] = null;
 		String cmdStm = "SELECT id, DATE_FORMAT(fecha, '%d/%m/%Y'), operacion, cant, precio, comision, comentario "
 						+ "FROM gpiygdb.operaciones WHERE idInversion = ? ORDER BY fecha DESC";
 		
@@ -97,25 +98,24 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 			stm.setInt(1, valor.getId());
 			ResultSet rs = stm.executeQuery();
 			rs.last();
-			valor.setOperaciones(new Operacion[rs.getRow()]);
+			operaciones = new Operacion[rs.getRow()];
 			rs.beforeFirst();
 			int i = 0;
 			
 			while(rs.next()) {
 
-				valor.getOperaciones()[i] = new Operacion();
-				valor.getOperaciones()[i].setId(rs.getInt(1));
-				valor.getOperaciones()[i].setFecha(rs.getString(2));
-				valor.getOperaciones()[i].setOperacion(rs.getString(3));
-				valor.getOperaciones()[i].setCant(rs.getDouble(4));
-				valor.getOperaciones()[i].setPrecio(rs.getDouble(5));
-				valor.getOperaciones()[i].setComision(rs.getDouble(6));
-				valor.getOperaciones()[i].setComentario(rs.getString(7));
+				operaciones[i] = new Operacion();
+				operaciones[i].setId(rs.getInt(1));
+				operaciones[i].setFecha(rs.getString(2));
+				operaciones[i].setOperacion(rs.getString(3));
+				operaciones[i].setCant(rs.getDouble(4));
+				operaciones[i].setPrecio(rs.getDouble(5));
+				operaciones[i].setComision(rs.getDouble(6));
+				operaciones[i].setComentario(rs.getString(7));
 				i++;
 			}
 		} catch (Exception e) {
 		
-			bandera = false;
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
 			System.err.println("MercadoValoresMySQL, getListado");
@@ -123,11 +123,11 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 		
 			this.cerrar();
 		}
-		return bandera;
+		return operaciones;
 	}
 	
 	@Override
-	public Fiat [] getListado(String año, int mes) {
+	public Fiat [] getListadoFiat(String año, int mes) {
 	
 		Fiat monedas[] = null;
 		String fechas[] = null;
@@ -218,11 +218,65 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 		
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("OperacionesMySQL, getListado");
+			System.err.println("OperacionesMySQL, Fiat [] getListadoFiat(String año, int mes)");
 		} finally {
 		
 			this.cerrar();
 		}
 		return monedas;	
+	}
+	
+	@Override
+	public Valores [] getListadoValores(String año, int mes, boolean existente) {
+	
+		Valores valores[] = null;
+		String cmdStm = "SELECT idInversion, valores.nombre, SUM(operaciones.cant), idTipo, instrumento.nombre, descripcion, idCustodia, proveedores.nombre "
+						+ "FROM gpiygdb.operaciones "
+						+ "JOIN gpiygdb.valores ON idInversion = valores.id "
+						+ "JOIN gpiygdb.proveedores ON idCustodia = proveedores.id "
+						+ "JOIN gpiygdb.instrumento ON idTipo = instrumento.id "
+						+ "WHERE YEAR(fecha) <= ? " + (mes != 0? "AND MONTH(fecha) <= ? ":"")
+						+ "GROUP BY idCustodia, valores.nombre "
+						+ (existente? "HAVING SUM(operaciones.cant) > 0": "");
+		
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setString(1, año);
+			
+			if(mes != 0)
+				stm.setInt(2, mes);
+			ResultSet rs = stm.executeQuery();
+			rs.last();
+			valores = new Valores[rs.getRow()];
+			rs.beforeFirst();
+			int i = 0;
+			
+			while(rs.next()) {
+				
+				valores[i] = new Valores();
+				valores[i].setId(rs.getInt("idInversion"));
+				valores[i].setNombre(rs.getString("valores.nombre"));
+				valores[i].setCant(rs.getDouble("SUM(operaciones.cant)"));
+				valores[i].setInstrumento(new Instrumento());
+				valores[i].getInstrumento().setId(rs.getInt("idTipo"));
+				valores[i].getInstrumento().setNombre(rs.getString("instrumento.nombre"));
+				valores[i].getInstrumento().setDescripcion(rs.getString("descripcion"));
+				valores[i].setCustodia(new Proveedor());
+				valores[i].getCustodia().setId(rs.getInt("idCustodia"));
+				valores[i].getCustodia().setNombre(rs.getString("proveedores.nombre"));
+				i++;
+			}
+		} catch (Exception e) {
+		
+			System.err.println(cmdStm);
+			System.err.println(e.getMessage());
+			System.err.println("OperacionesMySQL, Valores [] getListadoValores(String año, int mes)");
+		} finally {
+		
+			this.cerrar();
+		}
+		return valores;	
 	}
 }

@@ -6,7 +6,8 @@ import modelo.Valores;
 
 public interface OperacionesDAO {
 
-	public boolean create(Operacion operacion);
-	public boolean getListado(Valores valor);
-	public Fiat [] getListado(String año, int mes);
+	public boolean update(Operacion operacion);
+	public Operacion [] getListado(Valores valor);
+	public Fiat [] getListadoFiat(String año, int mes);
+	public Valores [] getListadoValores(String año, int mes, boolean existente);
 }
