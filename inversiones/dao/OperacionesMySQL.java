@@ -131,12 +131,14 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 	
 		Fiat monedas[] = null;
 		String fechas[] = null;
-		String cmdStm = "SELECT moneda, SUM(operaciones.cant), nombre, idCustodia "
+		String cmdStm = "SELECT idMoneda, moneda.nombre, SUM(operaciones.cant), proveedores.nombre, idCustodia "
 						+ "FROM gpiygdb.operaciones "
 						+ "JOIN gpiygdb.fiat ON idFiat = fiat.id "
 						+ "JOIN gpiygdb.proveedores ON idCustodia = proveedores.id "
-						+ "WHERE YEAR(fecha) = ? " + (mes != 0? "AND MONTH(fecha) = ? ":"")
-						+ "GROUP BY idCustodia, moneda";
+						+ "JOIN gpiygdb.moneda ON idMoneda = moneda.id "
+						+ "WHERE YEAR(fecha) <= ? " + (mes != 0? "AND MONTH(fecha) <= ? ":"")
+						+ "GROUP BY idCustodia, idMoneda "
+						+ "HAVING SUM(operaciones.cant) > 0";
 		
 		try {
 			
@@ -155,11 +157,12 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 			while(rs.next()) {
 				
 				monedas[i] = new Fiat();
-				monedas[i].setMoneda(rs.getString(1));
-				monedas[i].setCant(rs.getDouble(2));
+				monedas[i].getMoneda().setId(rs.getInt("idMoneda"));
+				monedas[i].getMoneda().setNombre(rs.getString("moneda.nombre"));
+				monedas[i].setCant(rs.getDouble("SUM(operaciones.cant)"));
 				monedas[i].setCustodia(new Proveedor());
-				monedas[i].getCustodia().setNombre(rs.getString(3));
-				monedas[i].getCustodia().setId(rs.getInt(4));
+				monedas[i].getCustodia().setNombre(rs.getString("proveedores.nombre"));
+				monedas[i].getCustodia().setId(rs.getInt("idCustodia"));
 				i++;
 			}
 			cmdStm = "SELECT DATE_FORMAT(fecha, '%d/%m/%Y') "
@@ -194,10 +197,11 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 					cmdStm = "SELECT operaciones.id, operacion, SUM(operaciones.cant), precio, comision, comentario "
 							+ "FROM gpiygdb.operaciones "
 							+ "JOIN gpiygdb.fiat ON idFiat = fiat.id "
-							+ "WHERE (idCustodia = ? AND moneda = ? AND DATE_FORMAT(fecha, '%d/%m/%Y') = ?)";
+							+ "JOIN gpiygdb.moneda ON idMoneda = moneda.id "
+							+ "WHERE (idCustodia = ? AND idMoneda = ? AND DATE_FORMAT(fecha, '%d/%m/%Y') = ?)";
 					stm = conexion.prepareStatement(cmdStm);
 					stm.setInt(1, monedas[i].getCustodia().getId());
-					stm.setString(2, monedas[i].getMoneda());
+					stm.setInt(2, monedas[i].getMoneda().getId());
 					stm.setString(3, fechas[e]);
 					rs = stm.executeQuery();
 					
@@ -218,7 +222,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 		
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("OperacionesMySQL, Fiat [] getListadoFiat(String año, int mes)");
+			System.err.println("OperacionesMySQL, getListadoFiat()");
 		} finally {
 		
 			this.cerrar();
@@ -272,7 +276,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 		
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("OperacionesMySQL, Valores [] getListadoValores(String año, int mes)");
+			System.err.println("OperacionesMySQL, getListadoValores()");
 		} finally {
 		
 			this.cerrar();

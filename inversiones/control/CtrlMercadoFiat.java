@@ -56,7 +56,7 @@ public class CtrlMercadoFiat implements ActionListener {
 		ventana.chkBxPesos.setVisible(false);
 		ventana.txtBusqueda.setVisible(false);
 		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListaAños()));
-		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<>(DtosComunes.getListaMeses("Todos")));
+		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<>(DtosComunes.getListaMeses("Seleccione uno")));
 		ventana.comboBoxMes.setSelectedIndex(DtosComunes.getMesActual());
 		ventana.btnNuevo.setText("Ingreso");
 		ventana.btnCargar.setVisible(true);
@@ -171,16 +171,16 @@ public class CtrlMercadoFiat implements ActionListener {
 		ventana.tabla1.getColumnModel().getColumn(0).setMinWidth(70);
 		ventana.tabla1.getColumnModel().getColumn(0).setMaxWidth(100);
 		ventana.tabla1.getColumnModel().getColumn(0).setPreferredWidth(80);
-		ventana.tabla1.getColumnModel().getColumn(1).setMinWidth(40);
-		ventana.tabla1.getColumnModel().getColumn(1).setMaxWidth(70);
+		ventana.tabla1.getColumnModel().getColumn(1).setMinWidth(55);
+		ventana.tabla1.getColumnModel().getColumn(1).setMaxWidth(80);
 		ventana.tabla1.getColumnModel().getColumn(1).setPreferredWidth(60);
 		ventana.tabla1.getColumnModel().getColumn(1).setCellRenderer(derecha);
 		
 		for(int i = 2; i < ventana.tabla1.getColumnCount(); i++) {
 		
 			ventana.tabla1.getColumnModel().getColumn(i).setMinWidth(50);
-			ventana.tabla1.getColumnModel().getColumn(i).setMaxWidth(100);
-			ventana.tabla1.getColumnModel().getColumn(i).setPreferredWidth(60);
+			ventana.tabla1.getColumnModel().getColumn(i).setMaxWidth(80);
+			ventana.tabla1.getColumnModel().getColumn(i).setPreferredWidth(70);
 			ventana.tabla1.getColumnModel().getColumn(i).setCellRenderer(derecha);
 		}
 	}

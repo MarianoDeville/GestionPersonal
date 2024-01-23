@@ -331,7 +331,7 @@ public class DtosMercadoValores {
 		valor.setCustodia(custodia);
 		valor.setCant(operacion.getCant());
 
-		if(mercadoValoresDAO.newValor(valor)) {
+		if(mercadoValoresDAO.update(valor)) {
 			
 			TransaccionDAO transaccionDAO = new TransaccionMySQL();
 			EgresosDAO egresosDAO = new EgresosMySQL();			
@@ -350,6 +350,9 @@ public class DtosMercadoValores {
 		
 				valor = null;
 				custodia = null;
+				egreso = null;
+				ingreso = null;
+				operacion = null;
 				msgError = "Se guardó correctamente la operacion.";
 				return true;
 			}
@@ -391,7 +394,7 @@ public class DtosMercadoValores {
 		}
 		valor.setCant(- operacion.getCant());
 		
-		if(!mercadoValoresDAO.newValor(valor)){
+		if(!mercadoValoresDAO.update(valor)){
 
 			msgError = "Error al intentar actualizar los valores.";
 			return false;
@@ -414,6 +417,9 @@ public class DtosMercadoValores {
 			
 			valor = null;
 			custodia = null;
+			egreso = null;
+			ingreso = null;
+			operacion = null;
 			msgError = "Se guardó correctamente la operacion.";
 			return true;
 		}

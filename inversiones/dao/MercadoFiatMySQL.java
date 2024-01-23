@@ -40,29 +40,32 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 	}
 
 	@Override
-	public boolean newMovimiento(Fiat fiat) {
+	public boolean update(Fiat fiat) {
 
 		boolean bandera = true;
-		String cmdStm = "SELECT id FROM gpiygdb.fiat WHERE idCustodia = ? AND moneda = ?";
+		String cmdStm = "SELECT id FROM gpiygdb.fiat WHERE idCustodia = ? AND IdMoneda = ?";
 
 		try {
 			
 			this.conectar();
 			PreparedStatement stm = conexion.prepareStatement(cmdStm);
-			stm.setInt(1, fiat.getCustodia().getId());
-			stm.setString(2, fiat.getMoneda());
-			ResultSet rs = stm.executeQuery();
+			ResultSet rs;
 			
-			if(rs.next())
-				fiat.setId(rs.getInt("id"));
-			
+			if(fiat.getId() == 0) {
+				
+				stm.setInt(1, fiat.getCustodia().getId());
+				stm.setInt(2, fiat.getMoneda().getId());
+				rs = stm.executeQuery();
+				
+				if(rs.next())
+					fiat.setId(rs.getInt("id"));
+			}
 			if(fiat.getId() == 0)
-				cmdStm = "INSERT INTO gpiygdb.fiat (moneda, cant, idCustodia) VALUES (?, ?, ?)";
+				cmdStm = "INSERT INTO gpiygdb.fiat (IdMoneda, cant, idCustodia) VALUES (?, ?, ?)";
 			else
 				cmdStm = "UPDATE gpiygdb.fiat SET moneda = ?, cant = cant + ?, idCustodia = ? WHERE id = ?";
-
 			stm = conexion.prepareStatement(cmdStm);
-			stm.setString(1, fiat.getMoneda());
+			stm.setInt(1, fiat.getMoneda().getId());
 			stm.setDouble(2, fiat.getCant());
 			stm.setInt(3, fiat.getCustodia().getId());
 			
@@ -83,7 +86,7 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 			bandera = false;
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("MercadoValoresMySQL, newMovimiento");
+			System.err.println("MercadoFiatMySQL, update");
 		} finally {
 		
 			this.cerrar();
@@ -102,7 +105,7 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 			this.conectar();
 			PreparedStatement stm = conexion.prepareStatement(cmdStm);
 			stm.setInt(1, moneda.getCustodia().getId());
-			stm.setString(2, moneda.getMoneda());
+			stm.setString(2, moneda.getMoneda().getNombre());
 			ResultSet rs = stm.executeQuery();
 			
 			if(rs.next())
@@ -111,7 +114,7 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 		
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("MercadoValoresMySQL, newMovimiento");
+			System.err.println("MercadoFiatMySQL, newMovimiento");
 		} finally {
 		
 			this.cerrar();

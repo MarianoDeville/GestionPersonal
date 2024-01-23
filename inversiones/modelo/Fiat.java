@@ -3,7 +3,7 @@ package modelo;
 public class Fiat {
 
 	private int id;
-	private String moneda;
+	private Moneda moneda;
 	private double cant;
 	private Proveedor custodia;
 	private Operacion operaciones[];
@@ -12,7 +12,7 @@ public class Fiat {
 	public Fiat() {
 		
 		id = 0;
-		moneda = "";
+		moneda = new Moneda();
 		cant = 0;		
 	}
 	
@@ -26,12 +26,12 @@ public class Fiat {
 		this.id = id;
 	}
 
-	public String getMoneda() {
+	public Moneda getMoneda() {
 		
 		return moneda;
 	}
 
-	public void setMoneda(String moneda) {
+	public void setMoneda(Moneda moneda) {
 		
 		this.moneda = moneda;
 	}

@@ -9,6 +9,6 @@ public interface MercadoValoresDAO {
 	public String [] getAñosCargados();
 	public Instrumento [] getIntrumentos();
 	public Valores [] getListado(String filtro);
-	public boolean newValor(Valores valor);
+	public boolean update(Valores valor);
 	public boolean newCotizaciones(Cotizacion cotizaciones[]);
 }

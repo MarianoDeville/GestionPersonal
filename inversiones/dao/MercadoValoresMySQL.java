@@ -125,7 +125,7 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 	}
 
 	@Override
-	public boolean newValor(Valores valor) {
+	public boolean update(Valores valor) {
 
 		boolean bandera = true;
 		String cmdStm = "SELECT id FROM gpiygdb.valores WHERE nombre = ? AND idCustodia = ?";
@@ -134,19 +134,22 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 			
 			this.conectar();
 			PreparedStatement stm = conexion.prepareStatement(cmdStm);
-			stm.setString(1, valor.getNombre());
-			stm.setInt(2, valor.getCustodia().getId());
-			ResultSet rs = stm.executeQuery();
+			ResultSet rs;
 			
-			if(rs.next())
-				valor.setId(rs.getInt(1));
+			if(valor.getId() == 0) {
+			
+				stm.setString(1, valor.getNombre());
+				stm.setInt(2, valor.getCustodia().getId());
+				rs = stm.executeQuery();
+				
+				if(rs.next())
+					valor.setId(rs.getInt(1));
+			}
 			
 			if(valor.getId() == 0)
 				cmdStm = "INSERT INTO gpiygdb.valores (nombre, cant, idTipo, idCustodia) VALUES (?, ?, ?, ?)";
 			else
 				cmdStm = "UPDATE gpiygdb.valores SET nombre = ?, cant = cant + ?, idTipo = ?, idCustodia = ? WHERE id = ?";
-	
-			
 			stm = conexion.prepareStatement(cmdStm);
 			stm.setString(1, valor.getNombre());
 			stm.setDouble(2, valor.getCant());
@@ -170,7 +173,7 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 			bandera = false;
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("MercadoValoresMySQL, createCompra");
+			System.err.println("MercadoValoresMySQL, update");
 		} finally {
 		
 			this.cerrar();
