@@ -49,6 +49,9 @@ public class CtrlEditarEgreso implements ActionListener {
 	
 	public void iniciar() {
 
+		ventana.chkBoxAcreditacion.setVisible(true);
+		ventana.chkBoxAcreditacion.setText("Gasto fijo");
+		ventana.chkBoxAcreditacion.setSelected(dtosEgreso.isGastoFijo());
 		ventana.btnNuevo.setText("Borrar");
 		ventana.txtFecha.setText(dtosEgreso.getFecha());
 		ventana.txtProv.setText(dtosEgreso.getProveedor());
@@ -119,6 +122,7 @@ public class CtrlEditarEgreso implements ActionListener {
 		
 		dtosEgreso.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
 		dtosEgreso.setComentario(ventana.txtComentario.getText());
+		dtosEgreso.setGastoFijo(ventana.chkBoxAcreditacion.isSelected());
 		
 		if(dtosEgreso.setFecha(ventana.txtFecha.getText()) && 
 				dtosEgreso.setDestino(ventana.cmbBxTipo.getSelectedIndex()) && 

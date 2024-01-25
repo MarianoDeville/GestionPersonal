@@ -208,7 +208,6 @@ public class DtosMercadoValores {
 	
 		if(egreso == null)
 			egreso = new Egreso();
-
 		egreso.setMoneda(moneda);
 	}
 	
@@ -291,6 +290,11 @@ public class DtosMercadoValores {
 		
 		try {
 			
+			if(precio.contains(",")) {
+				
+				precio = precio.replace(".", "");
+				precio = precio.replace(",", ".");
+			}
 			operacion.setPrecio(Double.parseDouble(precio));
 		} catch (Exception e) {
 
@@ -303,7 +307,12 @@ public class DtosMercadoValores {
 	public boolean setCantidad(String cant) {
 		
 		try {
-		
+			
+			if(cant.contains(",")) {
+				
+				cant = cant.replace(".", "");
+				cant = cant.replace(",", ".");
+			}
 			operacion.setCant(Double.parseDouble(cant));
 		} catch (Exception e) {
 
@@ -317,6 +326,11 @@ public class DtosMercadoValores {
 		
 		try {
 			
+			if(comision.contains(",")) {
+				
+				comision = comision.replace(".", "");
+				comision = comision.replace(",", ".");
+			}
 			operacion.setComision(Double.parseDouble(comision));
 		} catch (Exception e) {
 

@@ -21,7 +21,7 @@ public class Resumen extends VentanaModelo {
 		super(nombreVentana);
 		setResizable(true);
 		setMinimumSize(new Dimension(350, 480));
-		setBounds(x + 5, y + 5, 400, 480);
+		setBounds(x + 10, y + 10, 400, 480);
 		panel = new JPanel();
 		panel.setBorder(null);
 		setContentPane(panel);

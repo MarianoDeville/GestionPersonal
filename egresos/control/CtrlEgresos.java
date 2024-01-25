@@ -33,6 +33,7 @@ public class CtrlEgresos implements ActionListener {
 		this.ventana.comboBoxMes.addActionListener(this);
 		this.ventana.comboBoxTipo.addActionListener(this);
 		this.ventana.comboBoxPago.addActionListener(this);
+		this.ventana.chkBxFijo.addActionListener(this);
 		this.ventana.chkBxPesos.addActionListener(this);
 		this.ventana.chkBxDolares.addActionListener(this);
 		this.ventana.chkBxEuros.addActionListener(this);
@@ -60,6 +61,7 @@ public class CtrlEgresos implements ActionListener {
 	
 	public void iniciar() {
 
+		ventana.chkBxFijo.setVisible(true);
 		ventana.btnCargar.setText("Resumen");
 		ventana.btnCargar.setVisible(true);
 		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaAños()));
@@ -151,7 +153,8 @@ public class CtrlEgresos implements ActionListener {
 														  ventana.comboBoxPago.getSelectedIndex(), 
 														  monedas ,
 														  ventana.txtBusqueda.getText(), 
-														  ventana.chkBxFinanciado.isSelected()));
+														  ventana.chkBxFinanciado.isSelected(), 
+														  ventana.chkBxFijo.isSelected()));
 		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(70);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(80);
@@ -175,7 +178,7 @@ public class CtrlEgresos implements ActionListener {
 	
 	private void editar() {
 		
-		if(elemento == -1)
+		if(elemento == -1 || elemento == ventana.tabla.getRowCount() - 1)
 			return;
 		dtosEgreso.seleccionarEgreso(elemento);
 		elemento = -1;

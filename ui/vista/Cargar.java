@@ -47,7 +47,7 @@ public class Cargar extends VentanaModelo{
 		
 		super(nombreVentana);
 		setResizable(true);
-		setBounds(x + 5, y + 5, 640, 480);
+		setBounds(x + 10, y + 10, 640, 480);
 		panel = new JPanel();
 		panel.setBorder(null);
 		setContentPane(panel);

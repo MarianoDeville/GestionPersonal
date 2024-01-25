@@ -9,6 +9,7 @@ public class Egreso {
 	private double cotizacion;
 	private String comentario;
 	private String tipoConsumo;
+	private int gastoFijo;
 	private Proveedor proveedor;
 	private Transaccion formaPago;
 	
@@ -21,6 +22,7 @@ public class Egreso {
 		cotizacion = 0;
 		comentario = "";
 		tipoConsumo = "";
+		gastoFijo = 0;
 	}
 	
 	public int getId() {
@@ -83,6 +85,26 @@ public class Egreso {
 		this.comentario = comentario;
 	}
 
+	public String getTipoConsumo() {
+		
+		return tipoConsumo;
+	}
+
+	public void setTipoConsumo(String tipoConsumo) {
+		
+		this.tipoConsumo = tipoConsumo;
+	}
+
+	public int getGastoFijo() {
+		
+		return gastoFijo;
+	}
+
+	public void setGastoFijo(int gastoFijo) {
+		
+		this.gastoFijo = gastoFijo;
+	}
+
 	public Proveedor getProveedor() {
 		
 		return proveedor;
@@ -101,15 +123,5 @@ public class Egreso {
 	public void setFormaPago(Transaccion formaPago) {
 		
 		this.formaPago = formaPago;
-	}
-
-	public String getTipoConsumo() {
-		
-		return tipoConsumo;
-	}
-
-	public void setTipoConsumo(String tipoConsumo) {
-		
-		this.tipoConsumo = tipoConsumo;
 	}
 }

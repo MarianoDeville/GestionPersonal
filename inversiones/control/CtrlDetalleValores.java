@@ -39,10 +39,19 @@ public class CtrlDetalleValores implements ActionListener {
 		ventana.txtMonto.setEditable(false);
 		ventana.txtMonto.setText(dtosMercadoValores.getCantValor());
 		ventana.cmbBxMoneda.setVisible(false);
-		ventana.lblCotizacion.setVisible(false);
-		ventana.txtCotizacion.setVisible(false);
-		ventana.lblComentario.setVisible(false);
-		ventana.txtComentario.setVisible(false);
+		
+		ventana.lblCotizacion.setText("cotización:");
+		ventana.txtCotizacion.setEditable(false);
+		
+		ventana.lblComentario.setText("Fecha");
+		ventana.txtComentario.setEditable(false);
+		ventana.txtComentario.setColumns(6);
+		
+		ventana.lblAux1.setVisible(true);
+		ventana.lblAux1.setText("Valorización: ");
+		ventana.txtAux1.setVisible(true);
+		ventana.txtAux1.setEditable(false);
+		
 		ventana.btnGuardar.setVisible(false);
 		ventana.btnNuevo.setVisible(false);
 		ventana.tabla.setDefaultEditor(Object.class, null);

@@ -146,7 +146,7 @@ public class CtrlIngresos implements ActionListener {
 	
 	private void editar() {
 		
-		if(elemento == -1)
+		if(elemento == -1 || elemento == ventana.tabla.getRowCount() - 1)
 			return;
 		dtosIngreso.seleccionarIngreso(elemento);
 		elemento = -1;

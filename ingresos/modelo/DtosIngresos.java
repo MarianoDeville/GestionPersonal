@@ -53,7 +53,8 @@ public class DtosIngresos {
 			"Viáticos",
 			"Venta Activos / Pasivos",
 			"Compra / Venta moneda extrangera",
-			"Bonos / Retroactivos sueldo"
+			"Bonos / Retroactivos sueldo", 
+			"Préstamo"
 		};
 		String respuesta[] = new String[conceptos.length + 1];
 		respuesta[0] = cabecera;
@@ -90,9 +91,10 @@ public class DtosIngresos {
 		cantidadElementos = 0;
 		ingresos = ingresosDAO.getListado(año, mes, tipo, idFormaCobro, monedas, filtro);
 		String titulo[] = {"Fecha", "Nombre", "Forma de cobro", "Concepto", "Dólares", "Euros", "Monto en pesos"};
-		String tabla[][] = new String [ingresos.length][7];
+		String tabla[][] = new String [ingresos.length + 1][7];
+		double sumaColumnas[] = new double[2];
 
-		for(int i = 0; i < tabla.length; i++) {
+		for(int i = 0; i < ingresos.length; i++) {
 		
 			tabla[i][0] = ingresos[i].getFecha();
 			tabla[i][1] = ingresos[i].getFuente().getNombre();
@@ -108,13 +110,17 @@ public class DtosIngresos {
 				tabla[i][4] = formatoResultado.format(ingresos[i].getMonto());
 				tabla[i][6] = formatoResultado.format(ingresos[i].getMonto() * ingresos[i].getCotizacion());
 				suma += ingresos[i].getMonto() * ingresos[i].getCotizacion();
+				sumaColumnas[0] += ingresos[i].getMonto();
 			}else if(ingresos[i].getMoneda().equals("Euros")) {
 				
 				tabla[i][5] = formatoResultado.format(ingresos[i].getMonto());
 				tabla[i][6] = formatoResultado.format(ingresos[i].getMonto() * ingresos[i].getCotizacion());
 				suma += ingresos[i].getMonto() * ingresos[i].getCotizacion();
+				sumaColumnas[1] += ingresos[i].getMonto();
 			}
 		}
+		tabla[ingresos.length][4] = formatoResultado.format(sumaColumnas[0]);
+		tabla[ingresos.length][5] = formatoResultado.format(sumaColumnas[1]);
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
 		cantidadElementos = tabla.length;
 		return tablaModelo;
@@ -233,6 +239,11 @@ public class DtosIngresos {
 		
 		try {
 			
+			if(monto.contains(",")) {
+				
+				monto = monto.replace(".", "");
+				monto = monto.replace(",", ".");
+			}
 			ingreso.setMonto(Double.parseDouble(monto.replace(",", ".")));
 		} catch (Exception e) {
 			
@@ -251,7 +262,12 @@ public class DtosIngresos {
 		}
 		
 		try {
-
+			
+			if(cotizacion.contains(",")) {
+				
+				cotizacion = cotizacion.replace(".", "");
+				cotizacion = cotizacion.replace(",", ".");
+			}
 			ingreso.setCotizacion(Float.parseFloat(cotizacion));
 		} catch (Exception e) {
 			
@@ -271,7 +287,7 @@ public class DtosIngresos {
 		
 		if(ingreso.getMonto() <= 0) {
 			
-			msgError = "Debe especificar un moto.";
+			msgError = "Debe especificar un monto.";
 			return false;
 		} 
 		

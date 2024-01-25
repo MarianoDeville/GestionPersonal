@@ -299,6 +299,11 @@ public class DtosMercadoFiat {
 		
 		try {
 			
+			if(precio.contains(",")) {
+				
+				precio = precio.replace(".", "");
+				precio = precio.replace(",", ".");
+			}
 			operacion.setPrecio(Double.parseDouble(precio));
 		} catch (Exception e) {
 
@@ -312,6 +317,11 @@ public class DtosMercadoFiat {
 
 		try {
 			
+			if(cantidad.contains(",")) {
+				
+				cantidad = cantidad.replace(".", "");
+				cantidad = cantidad.replace(",", ".");
+			}
 			operacion.setCant(Double.parseDouble(cantidad));
 		} catch (Exception e) {
 
@@ -325,6 +335,11 @@ public class DtosMercadoFiat {
 		
 		try {
 			
+			if(comision.contains(",")) {
+				
+				comision = comision.replace(".", "");
+				comision = comision.replace(",", ".");
+			}
 			operacion.setComision(Double.parseDouble(comision));
 		} catch (Exception e) {
 

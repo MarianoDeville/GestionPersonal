@@ -48,6 +48,8 @@ public class CtrlCargarEgreso implements ActionListener {
 	
 	public void iniciar() {
 
+		ventana.chkBoxAcreditacion.setVisible(true);
+		ventana.chkBoxAcreditacion.setText("Gasto fijo");
 		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getFormasPago("Seleccione un método de pago.")));
 		ventana.cmbBxPago.setSelectedIndex(0);
@@ -110,7 +112,8 @@ public class CtrlCargarEgreso implements ActionListener {
 		
 		dtosEgreso.setMoneda((String)ventana.cmbBxMoneda.getSelectedItem());
 		dtosEgreso.setComentario(ventana.txtComentario.getText());
-			
+		dtosEgreso.setGastoFijo(ventana.chkBoxAcreditacion.isSelected());
+		
 		if(dtosEgreso.setFecha(ventana.txtFecha.getText()) && 
 				dtosEgreso.setDestino(ventana.cmbBxTipo.getSelectedIndex()) && 
 				dtosEgreso.setFormaPago(ventana.cmbBxPago.getSelectedIndex()) && 

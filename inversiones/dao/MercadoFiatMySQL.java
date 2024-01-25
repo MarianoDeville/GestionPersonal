@@ -61,9 +61,9 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 					fiat.setId(rs.getInt("id"));
 			}
 			if(fiat.getId() == 0)
-				cmdStm = "INSERT INTO gpiygdb.fiat (IdMoneda, cant, idCustodia) VALUES (?, ?, ?)";
+				cmdStm = "INSERT INTO gpiygdb.fiat (idMoneda, cant, idCustodia) VALUES (?, ?, ?)";
 			else
-				cmdStm = "UPDATE gpiygdb.fiat SET moneda = ?, cant = cant + ?, idCustodia = ? WHERE id = ?";
+				cmdStm = "UPDATE gpiygdb.fiat SET idMoneda = ?, cant = cant + ?, idCustodia = ? WHERE id = ?";
 			stm = conexion.prepareStatement(cmdStm);
 			stm.setInt(1, fiat.getMoneda().getId());
 			stm.setDouble(2, fiat.getCant());

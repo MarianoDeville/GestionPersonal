@@ -37,6 +37,7 @@ public class Listado extends VentanaModelo {
 	public JTextField txtBusqueda;
 	public JTable tabla;
 	public JTable tabla1;
+	public JCheckBox chkBxFijo;
 	public JCheckBox chkBxPesos;
 	public JCheckBox chkBxDolares;
 	public JCheckBox chkBxEuros;
@@ -53,21 +54,21 @@ public class Listado extends VentanaModelo {
 		super(nombreVentana);
 		panel = new JPanel();
 		setContentPane(panel);
-		setLocation(x + 5, y + 5);
+		setLocation(x + 10, y + 10);
 		panel.setLayout(contenedor);
-		setMinimumSize(new Dimension(950, 600));
-		setSize(950, 600);
+		setMinimumSize(new Dimension(1000, 600));
+		setSize(1000, 600);
 		
 		comboBoxAño = new JComboBox<String>();
 		contenedor.putConstraint(SpringLayout.NORTH, comboBoxAño, 10, SpringLayout.NORTH, panel);
 		contenedor.putConstraint(SpringLayout.WEST, comboBoxAño, 10, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, comboBoxAño, 75, SpringLayout.WEST, panel);
+		contenedor.putConstraint(SpringLayout.EAST, comboBoxAño, 70, SpringLayout.WEST, panel);
 		panel.add(comboBoxAño);
 		
 		comboBoxMes = new JComboBox<String>();
 		contenedor.putConstraint(SpringLayout.NORTH, comboBoxMes, 0, SpringLayout.NORTH, comboBoxAño);
-		contenedor.putConstraint(SpringLayout.WEST, comboBoxMes, 20, SpringLayout.EAST, comboBoxAño);
-		contenedor.putConstraint(SpringLayout.EAST, comboBoxMes, 115, SpringLayout.EAST, comboBoxAño);
+		contenedor.putConstraint(SpringLayout.WEST, comboBoxMes, 10, SpringLayout.EAST, comboBoxAño);
+		contenedor.putConstraint(SpringLayout.EAST, comboBoxMes, 110, SpringLayout.EAST, comboBoxAño);
 		panel.add(comboBoxMes);
 		
 		comboBoxTipo = new JComboBox<String>();
@@ -116,6 +117,13 @@ public class Listado extends VentanaModelo {
 		contenedor.putConstraint(SpringLayout.NORTH, comboBoxPago, 0, SpringLayout.NORTH, comboBoxAño);
 		contenedor.putConstraint(SpringLayout.WEST, comboBoxPago, 20, SpringLayout.EAST, comboBoxTipo);
 		panel.add(comboBoxPago);
+
+		chkBxFijo = new JCheckBox("Fijo");
+		contenedor.putConstraint(SpringLayout.NORTH, chkBxFijo, 0, SpringLayout.NORTH, comboBoxAño);
+		contenedor.putConstraint(SpringLayout.WEST, chkBxFijo, 20, SpringLayout.EAST, comboBoxPago);
+		panel.add(chkBxFijo);
+		chkBxFijo.setSelected(false);
+		chkBxFijo.setVisible(false);
 		
 		lblCant = new JLabel("Cant.:");
 		lblCant.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -263,5 +271,15 @@ public class Listado extends VentanaModelo {
 		lblTabla.setVisible(true);
 		lblTabla1.setVisible(true);
 		scrollTabla1.setVisible(true);
+	}
+	
+	public void irFinalTabla() {
+		
+		scrollTabla.getHorizontalScrollBar().setValue(scrollTabla.getHorizontalScrollBar().getMaximum());
+	}
+	
+	public void irFinalTabla1() {
+		
+		scrollTabla1.getHorizontalScrollBar().setValue(scrollTabla1.getHorizontalScrollBar().getMaximum());
 	}
 }

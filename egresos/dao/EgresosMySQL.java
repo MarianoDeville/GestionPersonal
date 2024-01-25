@@ -42,11 +42,11 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 	}
 
 	@Override
-	public Egreso [] getListado(String año, int mes, String tipoConsumo, int idFormaPago, String moneda, String filtro) {
+	public Egreso [] getListado(String año, int mes, String tipoConsumo, int idFormaPago, String moneda, String filtro, int gastoFijo) {
 
 		Egreso respuesta[] = new Egreso[0];
 		String cmdStm = "SELECT egresos.id, DATE_FORMAT(fecha, '%d/%m/%Y') AS fecha, ROUND(monto, 2) AS monto, moneda, cotizacion, "
-							+ "proveedores.nombre, proveedores.id, transaccion.descripcion, tipoGasto, egresos.comentario, financiado "
+							+ "proveedores.nombre, proveedores.id, transaccion.descripcion, tipoGasto, egresos.comentario, fijo, financiado "
 						+ "FROM gpiygdb.egresos "
 						+ "JOIN gpiygdb.proveedores ON proveedores.id = idProveedor "
 						+ "JOIN gpiygdb.transaccion ON transaccion.id = idFormaPago "
@@ -91,7 +91,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			cmdStm += " AND moneda = 'Dólares'";
 			break;
 		}
-		cmdStm += " AND proveedores.nombre LIKE ?) ORDER BY fecha DESC, egresos.id DESC"; 
+		cmdStm += " AND proveedores.nombre LIKE ? AND fijo >= ?) ORDER BY fecha DESC, egresos.id DESC"; 
 
 		try {
 			
@@ -99,6 +99,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			PreparedStatement stm = conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			stm.setString(1, año);
 			stm.setString(2, "%" + filtro + "%");
+			stm.setInt(3, gastoFijo);
 			ResultSet rs = stm.executeQuery();
 			rs.last();	
 			respuesta = new Egreso[rs.getRow()];
@@ -114,6 +115,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 				respuesta[i].setMoneda(rs.getNString("moneda"));
 				respuesta[i].setCotizacion(rs.getFloat("cotizacion"));
 				respuesta[i].setComentario(rs.getString("egresos.comentario"));
+				respuesta[i].setGastoFijo(rs.getInt("fijo"));
 				respuesta[i].setProveedor(new Proveedor());
 				respuesta[i].setTipoConsumo(rs.getString("tipoGasto"));
 				respuesta[i].getProveedor().setNombre(rs.getString("proveedores.nombre"));
@@ -121,7 +123,6 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 				respuesta[i].setFormaPago(new Transaccion());
 				respuesta[i].getFormaPago().setDescripcion(rs.getString("transaccion.descripcion"));
 				respuesta[i].getFormaPago().setFinanciado(rs.getInt("financiado"));
-
 				i++;
 			}
 		} catch (Exception e) {
@@ -139,11 +140,13 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 	@Override
 	public boolean nuevo(Egreso egreso) {
 		
+		if(egreso.getMonto() == 0)
+			return false;
 		boolean bandera = true;
 		int i = 1;
 		String cmdStm = "INSERT INTO gpiygdb.egresos "
-						+ "(fecha, monto, moneda, cotizacion, comentario, tipoGasto, idProveedor, idFormaPago) "
-						+ "VALUES (?, ROUND(?, 2), ?, ?, ?, ?, ?, ?)";
+						+ "(fecha, monto, moneda, cotizacion, comentario, tipoGasto, fijo, idProveedor, idFormaPago) "
+						+ "VALUES (?, ROUND(?, 2), ?, ?, ?, ?, ?, ?, ?)";
 		
 		try {
 			
@@ -155,6 +158,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			stm.setDouble(i++, egreso.getCotizacion());
 			stm.setString(i++, egreso.getComentario());
 			stm.setString(i++, egreso.getTipoConsumo());
+			stm.setInt(i++, egreso.getGastoFijo());
 			stm.setInt(i++, egreso.getProveedor().getId());
 			stm.setInt(i++, egreso.getFormaPago().getId());
 			stm.executeUpdate();
@@ -182,7 +186,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 		boolean bandera = true;
 		int i = 1;
 		String cmdStm = "UPDATE gpiygdb.egresos SET fecha = ?, monto = ROUND(?, 2), moneda = ?, cotizacion = ?, "
-						+ "comentario = ?, tipoGasto = ?, idProveedor = ?, idFormaPago = ? WHERE id = ?";
+						+ "comentario = ?, tipoGasto = ?, fijo = ?, idProveedor = ?, idFormaPago = ? WHERE id = ?";
 
 		try {
 			
@@ -194,6 +198,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			stm.setDouble(i++, egreso.getCotizacion());
 			stm.setString(i++, egreso.getComentario());
 			stm.setString(i++, egreso.getTipoConsumo());
+			stm.setInt(i++, egreso.getGastoFijo());
 			stm.setInt(i++, egreso.getProveedor().getId());
 			stm.setInt(i++, egreso.getFormaPago().getId());
 			stm.setInt(i++, egreso.getId());

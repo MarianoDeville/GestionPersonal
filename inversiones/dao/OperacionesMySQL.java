@@ -168,7 +168,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 			cmdStm = "SELECT DATE_FORMAT(fecha, '%d/%m/%Y') "
 					+ "FROM gpiygdb.operaciones "
 					+ "WHERE idFiat IS NOT NULL AND YEAR(fecha) = ? " + (mes != 0? "AND MONTH(fecha) = ? ":"")
-					+ "GROUP BY fecha ORDER BY fecha DESC";
+					+ "GROUP BY fecha ORDER BY fecha";
 			stm = conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			stm.setString(1, año);
 			

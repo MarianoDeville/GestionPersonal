@@ -8,6 +8,7 @@ import java.awt.print.PrinterException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import modelo.DtosComunes;
 import modelo.DtosMercadoFiat;
@@ -142,47 +143,57 @@ public class CtrlMercadoFiat implements ActionListener {
 	private void actualizar() {
 	
 		elemento = -1;
+		
 		DefaultTableCellRenderer derecha = new DefaultTableCellRenderer();
 		derecha.setHorizontalAlignment(JLabel.RIGHT);
+		DefaultTableCellRenderer centro = new DefaultTableCellRenderer();
+		centro.setHorizontalAlignment(JLabel.CENTER);
+		ventana.tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		ventana.tabla.doLayout();
 		ventana.tabla.setModel(dtosMercadoFiat.getListadoOperaciones((String)ventana.comboBoxAño.getSelectedItem(), 
 																	ventana.comboBoxMes.getSelectedIndex()));
-		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(70);
-		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);
-		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(80);
-		ventana.tabla.getColumnModel().getColumn(1).setMinWidth(40);
-		ventana.tabla.getColumnModel().getColumn(1).setMaxWidth(70);
-		ventana.tabla.getColumnModel().getColumn(1).setPreferredWidth(60);
+		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
+		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(80);
+		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(60);
+		ventana.tabla.getColumnModel().getColumn(1).setMinWidth(60);
+		ventana.tabla.getColumnModel().getColumn(1).setMaxWidth(100);
+		ventana.tabla.getColumnModel().getColumn(1).setPreferredWidth(70);
 		ventana.tabla.getColumnModel().getColumn(1).setCellRenderer(derecha);
 		ventana.tabla.getColumnModel().getColumn(2).setMinWidth(40);
-		ventana.tabla.getColumnModel().getColumn(2).setMaxWidth(100);
-		ventana.tabla.getColumnModel().getColumn(2).setPreferredWidth(80);
+		ventana.tabla.getColumnModel().getColumn(2).setMaxWidth(160);
+		ventana.tabla.getColumnModel().getColumn(2).setPreferredWidth(110);
 		
 		for(int i = 3; i < ventana.tabla.getColumnCount(); i++) {
 		
 			ventana.tabla.getColumnModel().getColumn(i).setMinWidth(50);
 			ventana.tabla.getColumnModel().getColumn(i).setMaxWidth(100);
-			ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(60);
-			ventana.tabla.getColumnModel().getColumn(i).setCellRenderer(derecha);
+			ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(70);
+			ventana.tabla.getColumnModel().getColumn(i).setCellRenderer(centro);
 		}
 		ventana.tabla.setDefaultEditor(Object.class, null);
+		ventana.tabla1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		ventana.tabla1.doLayout();
 		ventana.tabla1.setModel(dtosMercadoFiat.getTablaCotizaciones((String)ventana.comboBoxAño.getSelectedItem(), 
 																ventana.comboBoxMes.getSelectedIndex(), 
 																nuevaCotizacion));
-		ventana.tabla1.getColumnModel().getColumn(0).setMinWidth(70);
-		ventana.tabla1.getColumnModel().getColumn(0).setMaxWidth(100);
-		ventana.tabla1.getColumnModel().getColumn(0).setPreferredWidth(80);
-		ventana.tabla1.getColumnModel().getColumn(1).setMinWidth(55);
-		ventana.tabla1.getColumnModel().getColumn(1).setMaxWidth(80);
-		ventana.tabla1.getColumnModel().getColumn(1).setPreferredWidth(60);
+		ventana.tabla1.getColumnModel().getColumn(0).setMinWidth(50);
+		ventana.tabla1.getColumnModel().getColumn(0).setMaxWidth(80);
+		ventana.tabla1.getColumnModel().getColumn(0).setPreferredWidth(60);
+		ventana.tabla1.getColumnModel().getColumn(1).setMinWidth(60);
+		ventana.tabla1.getColumnModel().getColumn(1).setMaxWidth(100);
+		ventana.tabla1.getColumnModel().getColumn(1).setPreferredWidth(70);
 		ventana.tabla1.getColumnModel().getColumn(1).setCellRenderer(derecha);
 		
 		for(int i = 2; i < ventana.tabla1.getColumnCount(); i++) {
 		
 			ventana.tabla1.getColumnModel().getColumn(i).setMinWidth(50);
-			ventana.tabla1.getColumnModel().getColumn(i).setMaxWidth(80);
-			ventana.tabla1.getColumnModel().getColumn(i).setPreferredWidth(70);
+			ventana.tabla1.getColumnModel().getColumn(i).setMaxWidth(120);
+			ventana.tabla1.getColumnModel().getColumn(i).setPreferredWidth(100);
 			ventana.tabla1.getColumnModel().getColumn(i).setCellRenderer(derecha);
 		}
+		
+		if(nuevaCotizacion)
+			ventana.irFinalTabla1();
 	}
 	
 	private void ingreso() {
