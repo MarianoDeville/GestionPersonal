@@ -139,7 +139,7 @@ public class DtosEgresos {
 			tabla[egresos.length][4] = formatoResultado.format(sumaColumnas[1]);
 		}
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
-		cantidadElementos = tabla.length;
+		cantidadElementos = egresos.length;
 		return tablaModelo;
 	}
 

@@ -163,10 +163,14 @@ public class CtrlMercadoValores implements ActionListener {
 
 		for(int i = 3; i < ventana.tabla.getColumnCount(); i++) {
 		
-			ventana.tabla.getColumnModel().getColumn(i).setMinWidth(50);
+			ventana.tabla.getColumnModel().getColumn(i).setMinWidth(30);
 			ventana.tabla.getColumnModel().getColumn(i).setMaxWidth(120);
-			ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(100);
 			ventana.tabla.getColumnModel().getColumn(i).setCellRenderer(derecha);
+			
+			if(nuevaCotizacion && i < ventana.tabla.getColumnCount() -2)	
+				ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(30);
+			else
+				ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(100);
 		}
 		ventana.txtSuma.setText(dtosInversiones.getSuma());
 		ventana.txtCant.setText(dtosInversiones.getCantValores());

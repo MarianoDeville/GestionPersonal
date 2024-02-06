@@ -3,10 +3,10 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import modelo.Fiat;
+import modelo.Cripto;
 
-public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
-
+public class MercadoCriptoMySQL extends ConexiónMySQL implements MercadoCriptoDAO {
+	
 	@Override
 	public String [] getAñosCargados() {
 		
@@ -16,7 +16,7 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery("SELECT YEAR(fecha) FROM gpiygdb.operaciones WHERE idFiat IS NOT NULL "
+			ResultSet rs = stm.executeQuery("SELECT YEAR(fecha) FROM gpiygdb.operaciones WHERE idCripto IS NOT NULL "
 											+ "GROUP BY YEAR(fecha) ORDER BY fecha DESC LIMIT 20");
 			rs.last();	
 			respuesta = new String[rs.getRow()];
@@ -31,19 +31,19 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 		} catch (Exception e) {
 			
 			System.err.println(e.getMessage());
-			System.err.println("MercadoFiatMySQL, getAñosCargados");
+			System.err.println("MercadoCriptoMySQL, getAñosCargados");
 		} finally {
 			
 			this.cerrar();
 		}
 		return respuesta;
 	}
-
+	
 	@Override
-	public boolean update(Fiat fiat) {
-
+	public boolean update(Cripto cripto) {
+		
 		boolean bandera = true;
-		String cmdStm = "SELECT id FROM gpiygdb.fiat WHERE idCustodia = ? AND idMoneda = ?";
+		String cmdStm = "SELECT id FROM gpiygdb.cripto WHERE idCustodia = ? AND idCriptoMoneda = ?";
 
 		try {
 			
@@ -51,42 +51,42 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 			PreparedStatement stm = conexion.prepareStatement(cmdStm);
 			ResultSet rs;
 			
-			if(fiat.getId() == 0) {
+			if(cripto.getId() == 0) {
 				
-				stm.setInt(1, fiat.getCustodia().getId());
-				stm.setInt(2, fiat.getMoneda().getId());
+				stm.setInt(1, cripto.getCustodia().getId());
+				stm.setInt(2, cripto.getMoneda().getId());
 				rs = stm.executeQuery();
 				
 				if(rs.next())
-					fiat.setId(rs.getInt("id"));
+					cripto.setId(rs.getInt("id"));
 			}
-			if(fiat.getId() == 0)
-				cmdStm = "INSERT INTO gpiygdb.fiat (idMoneda, cant, idCustodia) VALUES (?, ?, ?)";
+			if(cripto.getId() == 0)
+				cmdStm = "INSERT INTO gpiygdb.cripto (idCriptoMoneda, cant, idCustodia) VALUES (?, ?, ?)";
 			else
-				cmdStm = "UPDATE gpiygdb.fiat SET idMoneda = ?, cant = cant + ?, idCustodia = ? WHERE id = ?";
+				cmdStm = "UPDATE gpiygdb.cripto SET idCriptoMoneda = ?, cant = cant + ?, idCustodia = ? WHERE id = ?";
 			stm = conexion.prepareStatement(cmdStm);
-			stm.setInt(1, fiat.getMoneda().getId());
-			stm.setDouble(2, fiat.getCant());
-			stm.setInt(3, fiat.getCustodia().getId());
+			stm.setInt(1, cripto.getMoneda().getId());
+			stm.setDouble(2, cripto.getCant());
+			stm.setInt(3, cripto.getCustodia().getId());
 			
-			if(fiat.getId() != 0)
-				stm.setInt(4, fiat.getId());
+			if(cripto.getId() != 0)
+				stm.setInt(4, cripto.getId());
 			stm.executeUpdate();
 			
-			if(fiat.getId() == 0) {
+			if(cripto.getId() == 0) {
 				
-				cmdStm = "SELECT id FROM gpiygdb.fiat ORDER BY id DESC LIMIT 1";
+				cmdStm = "SELECT id FROM gpiygdb.cripto ORDER BY id DESC LIMIT 1";
 				rs = stm.executeQuery(cmdStm);
 				
 				if(rs.next())
-					fiat.setId(rs.getInt("id"));
+					cripto.setId(rs.getInt("id"));
 			}
 		} catch (Exception e) {
 		
 			bandera = false;
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("MercadoFiatMySQL, update");
+			System.err.println("MercadoCriptoMySQL, update");
 		} finally {
 		
 			this.cerrar();
@@ -95,17 +95,17 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 	}
 	
 	@Override
-	public double getSaldo(Fiat moneda) {
+	public double getSaldo(Cripto cripto) {
 
 		double disponible = 0;
-		String cmdStm = "SELECT cant FROM gpiygdb.fiat WHERE idCustodia = ? AND moneda = ?";
+		String cmdStm = "SELECT cant FROM gpiygdb.cripto WHERE idCustodia = ? AND idCriptoMoneda = ?";
 		
 		try {
 			
 			this.conectar();
 			PreparedStatement stm = conexion.prepareStatement(cmdStm);
-			stm.setInt(1, moneda.getCustodia().getId());
-			stm.setString(2, moneda.getMoneda().getNombre());
+			stm.setInt(1, cripto.getCustodia().getId());
+			stm.setInt(2, cripto.getMoneda().getId());
 			ResultSet rs = stm.executeQuery();
 			
 			if(rs.next())

@@ -3,6 +3,7 @@ package modelo;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import dao.CotizacionesMySQL;
@@ -11,10 +12,8 @@ import dao.EgresosDAO;
 import dao.EgresosMySQL;
 import dao.IngresosDAO;
 import dao.IngresosMySQL;
-import dao.MercadoFiatDAO;
-import dao.MercadoFiatMySQL;
-import dao.MercadoValoresDAO;
-import dao.MercadoValoresMySQL;
+import dao.MercadoCriptoDAO;
+import dao.MercadoCriptoMySQL;
 import dao.OperacionesDAO;
 import dao.OperacionesMySQL;
 import dao.ProveedorDAO;
@@ -22,30 +21,32 @@ import dao.ProveedorMySQL;
 import dao.TransaccionDAO;
 import dao.TransaccionMySQL;
 
-public class DtosMercadoFiat {
+public class DtosMercadoCripto {
 
-	private MercadoFiatDAO mercadoFiatDAO = new MercadoFiatMySQL();
+	private MercadoCriptoDAO mercadoCriptoDAO = new MercadoCriptoMySQL();
 	private OperacionesDAO operacionesDAO = new OperacionesMySQL();
 	private CotizacioonesDAO cotizacionesDAO = new CotizacionesMySQL();
-	private DecimalFormat formatoResultado = new DecimalFormat("###,###,##0.00");
+	private DecimalFormat formatoReducido = new DecimalFormat("###,###,##0.0000");
+	private DecimalFormat formatoAmpliado = new DecimalFormat("###,###,##0.00######");
 	private Calendar calendario;
-	private Fiat monedas[];
-	private Fiat monedasAgrupadas[];
-	private static Fiat moneda;
+	private Cripto monedas[];
+	private Cripto monedasAgrupadas[];
+	private static Cripto moneda;
+	private MonedaCripto listaMonedas[];
+	private Transaccion metodosPago[];
+	private Proveedor localizaciones[];
 	private Operacion operacion;
 	private Egreso egreso;
 	private Ingreso ingreso;
-	private Proveedor localizaciones[];
-	private Transaccion metodosPago[];
-	private Instrumento instrumentos[];
-	private Moneda listaMonedas[];
 	private String msgError;
 	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////Página principal de mercado cripto //////////////////////////////////////////////////////////////
 	public String [] getListaAños() {
 		
 		String respuesta[] = null;
 		calendario = new GregorianCalendar();
-		respuesta = mercadoFiatDAO.getAñosCargados();
+		respuesta = mercadoCriptoDAO.getAñosCargados();
 		
 		if(respuesta.length == 0)
 			return new String[] {calendario.get(Calendar.YEAR) + ""};
@@ -60,7 +61,7 @@ public class DtosMercadoFiat {
 
 	public DefaultTableModel getListadoOperaciones(String año, int mes) {
 
-		monedas = operacionesDAO.getListadoFiat(año, mes);
+		monedas = operacionesDAO.getListadoCripto(año, mes);
 		int tamaño = 0;
 		
 		try {
@@ -75,13 +76,13 @@ public class DtosMercadoFiat {
 		
 		for(int i = 0; i < monedas.length; i++) {
 
-			tabla[i][0] = monedas[i].getMoneda().getNombre();
-			tabla[i][1] = formatoResultado.format(monedas[i].getCant());
+			tabla[i][0] = monedas[i].getMoneda().getNombre() + " " + monedas[i].getMoneda().getSimbolo();
+			tabla[i][1] = formatoReducido.format(monedas[i].getCant());
 			tabla[i][2] = monedas[i].getCustodia().getNombre();
 			
 			for(int e = 0; e < tamaño; e++) {
 
-				tabla[i][e + 3] = formatoResultado.format(monedas[i].getOperaciones()[e].getCant());
+				tabla[i][e + 3] = formatoReducido.format(monedas[i].getOperaciones()[e].getCant());
 				titulo[e + 3] = monedas[i].getOperaciones()[e].getFecha();
 			}
 		}
@@ -91,7 +92,7 @@ public class DtosMercadoFiat {
 	
 	public DefaultTableModel getTablaCotizaciones(String año, int mes, boolean agregar) {
 		
-		monedasAgrupadas = cotizacionesDAO.getCotizacionesFiat(año, mes);
+		monedasAgrupadas = cotizacionesDAO.getCotizacionesCripto(año, mes);
 		int tamaño = 0;
 
 		try {
@@ -108,18 +109,18 @@ public class DtosMercadoFiat {
 		for(int i = 0; i < monedasAgrupadas.length; i++) {
 			
 			tabla[i][0] = monedasAgrupadas[i].getMoneda().getNombre();
-			tabla[i][1] = formatoResultado.format(monedasAgrupadas[i].getCant());
+			tabla[i][1] = formatoReducido.format(monedasAgrupadas[i].getCant());
 			
 			for(int e = 0; e < tamaño; e++) {
 			
 				if(monedasAgrupadas[i].getCotizaciones()[e].getValor() > 0)
-					tabla[i][e + 2] = formatoResultado.format(monedasAgrupadas[i].getCotizaciones()[e].getValor());
+					tabla[i][e + 2] = formatoReducido.format(monedasAgrupadas[i].getCotizaciones()[e].getValor());
 				else
 					tabla[i][e + 2] = "-";
 				calculoDia[e] += monedasAgrupadas[i].getCotizaciones()[e].getValor() * monedasAgrupadas[i].getCant();
 				
 				if( i == monedasAgrupadas.length -1)
-					tabla[monedasAgrupadas.length][e + 2] = formatoResultado.format(calculoDia[e]);;
+					tabla[monedasAgrupadas.length][e + 2] = formatoReducido.format(calculoDia[e]);;
 				titulo[e + 2] = monedasAgrupadas[i].getCotizaciones()[e].getFecha();
 			}
 		}
@@ -161,23 +162,10 @@ public class DtosMercadoFiat {
 		}
 		return cotizacionesDAO.update(monedasAgrupadas);
 	}
-
-	public DefaultTableModel getListadoLocalizaciones(String filtro) {
-		
-		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
-		localizaciones = proveedoresDAO.getListado(filtro, "M");
-		String tabla[][] = new String [localizaciones.length][2];
-		int i = 0;
-		
-		for(Proveedor loc: localizaciones) {
-			
-			tabla[i][0] = loc.getNombre();
-			i++;
-		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, new String [] {"Nombre"});
-		return tablaModelo;
-	}
-
+////////////////////////////////////////////////////////////////////////////////////Fin página principal de mercado cripto //////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////Inicio Compra de cripto /////////////////////////////////////////////////////////////////////////
 	public String [] getListadoMetPago(boolean ingreso) {
 		
 		TransaccionDAO transaccionDAO = new TransaccionMySQL();
@@ -196,13 +184,13 @@ public class DtosMercadoFiat {
 	
 	public String [] getListaMonedas() {
 		
-		listaMonedas = cotizacionesDAO.getMonedas();
-		String respuesta[] = new String[listaMonedas.length];
+		listaMonedas = cotizacionesDAO.getMonedasCripto();
+		String respuesta[] = new String[listaMonedas.length + 1];
 		respuesta[0] = "Seleccione una opción";
 		
-		for(int i = 1; i < listaMonedas.length; i++) {
+		for(int i = 0; i < listaMonedas.length; i++) {
 
-			respuesta[i] = listaMonedas[i].getNombre();
+			respuesta[i + 1] = listaMonedas[i].getNombre();
 		}
 		return respuesta;
 	}
@@ -210,13 +198,24 @@ public class DtosMercadoFiat {
 	public void setLocalizacion(int pos) {
 		
 		if(moneda == null)
-			moneda = new Fiat();
+			moneda = new Cripto();
 		moneda.setCustodia(localizaciones[pos]);
 	}
-	
-	public void resetMoneda() {
+
+	public DefaultTableModel getListadoLocalizaciones(String filtro) {
 		
-		moneda = null;
+		ProveedorDAO proveedoresDAO = new ProveedorMySQL();
+		localizaciones = proveedoresDAO.getListado(filtro, "C");
+		String tabla[][] = new String [localizaciones.length][2];
+		int i = 0;
+		
+		for(Proveedor loc: localizaciones) {
+			
+			tabla[i][0] = loc.getNombre();
+			i++;
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, new String [] {"Nombre"});
+		return tablaModelo;
 	}
 	
 	public void setMonedaPago(String mon) {	
@@ -230,7 +229,7 @@ public class DtosMercadoFiat {
 	
 		if(operacion == null)
 			operacion = new Operacion();
-		operacion.setOperacion("Pago dividendos de " + concepto);
+		operacion.setOperacion("Acreditación de " + concepto);
 	}
 	
 	public void setComentario(String comentario) {
@@ -238,11 +237,6 @@ public class DtosMercadoFiat {
 		if(operacion == null)
 			operacion = new Operacion();
 		operacion.setComentario(comentario);
-	}
-
-	public String getMsgError() {
-		
-		return msgError;
 	}
 	
 	public boolean setFecha(String fecha) {
@@ -349,20 +343,6 @@ public class DtosMercadoFiat {
 		return true;		
 	}
 	
-	public String [] getListaConceptos() {
-		
-		MercadoValoresDAO mercadoValoresDAO = new MercadoValoresMySQL();
-		instrumentos = mercadoValoresDAO.getIntrumentos();
-		String respuesta[] = new String [instrumentos.length + 1];
-		respuesta[0] = "Seleccione uno";
-		
-		for(int i = 0; i < instrumentos.length; i++) {
-			
-			respuesta[i + 1] = instrumentos[i].getNombre();
-		}
-		return respuesta;
-	}
-	
 	public boolean guardarCompra(boolean acreditacion) {
 
 		if(acreditacion && operacion.getOperacion().contains("Seleccione")) {
@@ -386,26 +366,11 @@ public class DtosMercadoFiat {
 		egreso.setFecha(operacion.getFecha());
 		egreso.setProveedor(moneda.getCustodia());
 		egreso.setComentario(operacion.getComentario());
-		ingreso = new Ingreso();
-		ingreso.setFecha(operacion.getFecha());
-		ingreso.setMonto(operacion.getCant());
-		ingreso.setMoneda(moneda.getMoneda().getNombre());
-		ingreso.setComentario(operacion.getComentario());
-		
-		if(acreditacion)
-			ingreso.setConcepto("Acreditación Dividendos / Cupones / Intereses");
-		else
-			ingreso.setConcepto("Compra / Venta moneda extrangera");
-		ingreso.setFuente(new Proveedor());
-		ingreso.getFuente().setId(moneda.getCustodia().getId());
-		ingreso.setFormaCobro(new Transaccion());
-		ingreso.setFormaCobro(egreso.getFormaPago());
 		moneda.setCant(operacion.getCant());
 
-		if(mercadoFiatDAO.update(moneda)) {
+		if(mercadoCriptoDAO.update(moneda)) {
 
-			operacion.setIdFiat(moneda.getId());
-			IngresosDAO ingresosDAO = new IngresosMySQL();
+			operacion.setIdCripto(moneda.getId());
 			EgresosDAO egresosDAO = new EgresosMySQL();
 
 			if(acreditacion) {
@@ -414,7 +379,6 @@ public class DtosMercadoFiat {
 				egreso.setTipoConsumo("Comisiones");
 				egreso.setCotizacion(1);
 				egreso.setMonto(operacion.getComision());
-				ingreso.setCotizacion(operacion.getPrecio());
 				operacion.setPrecio(0);
 			} else {
 
@@ -422,12 +386,10 @@ public class DtosMercadoFiat {
 				egreso.setTipoConsumo("Ahorro / Inversión");
 				egreso.setCotizacion(cotizacionesDAO.getUltima(moneda.getMoneda().getNombre()));
 				egreso.setMonto((operacion.getPrecio() * operacion.getCant()) + operacion.getComision());
-				ingreso.setCotizacion(operacion.getPrecio());
+
 			}
-			ingresosDAO.nuevo(ingreso);
 			egresosDAO.nuevo(egreso);
 			operacion.setIdEgreso(egreso.getId());
-			operacion.setIdIngreso(ingreso.getId());
 			
 			if(operacionesDAO.update(operacion)) {
 				
@@ -443,6 +405,24 @@ public class DtosMercadoFiat {
 		return false;
 	}
 
+	public String getMsgError() {
+		
+		return msgError;
+	}
+	
+	public void resetMoneda() {
+		
+		moneda = null;
+	}
+	
+	public String [] getListaConceptos() {
+
+		return new String [] {"Interes", "Reintegro compra"};
+	}
+////////////////////////////////////////////////////////////////////////////////////Fin Compra de cripto ////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////Inicio venta de cripto //////////////////////////////////////////////////////////////////////////
 	public void setMonedaCobro(String mon) {
 		
 		if(ingreso == null)
@@ -475,16 +455,16 @@ public class DtosMercadoFiat {
 			msgError = "Debe elegir el lugar donde se depositará la compra.";
 			return false;
 		}
-		double saldo = mercadoFiatDAO.getSaldo(moneda);
+		double saldo = mercadoCriptoDAO.getSaldo(moneda);
 
 		if(saldo < operacion.getCant()) {
 			
-			msgError = "El saldo disponible es de: " + formatoResultado.format(saldo);
+			msgError = "El saldo disponible es de: " + formatoAmpliado.format(saldo);
 			return false;
 		}
 		moneda.setCant(- operacion.getCant());
 
-		if(mercadoFiatDAO.update(moneda)) {
+		if(mercadoCriptoDAO.update(moneda)) {
 		
 			IngresosDAO ingresosDAO = new IngresosMySQL();
 			EgresosDAO egresosDAO = new EgresosMySQL();
@@ -529,7 +509,10 @@ public class DtosMercadoFiat {
 		msgError = "Error al intentar guardar la venta.";
 		return false;
 	}
-
+////////////////////////////////////////////////////////////////////////////////////Fin venta de cripto /////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////Inicio detalle de cripto ////////////////////////////////////////////////////////////////////////	
 	public void getDetalle(int pos) {
 		
 		moneda = monedas[pos];
@@ -542,26 +525,6 @@ public class DtosMercadoFiat {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-///////////////////////////////////////////// Fin detalle operaciones //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////Fin venta de cripto /////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 }

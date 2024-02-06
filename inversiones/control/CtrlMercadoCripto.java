@@ -11,28 +11,26 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import modelo.DtosComunes;
-import modelo.DtosMercadoFiat;
+import modelo.DtosMercadoCripto;
 import vista.Cargar;
 import vista.Listado;
 
-public class CtrlMercadoFiat implements ActionListener {
+public class CtrlMercadoCripto  implements ActionListener {
 	
 	private Listado ventana;
-	private DtosMercadoFiat dtosMercadoFiat;
+	private DtosMercadoCripto dtosMercadoCripto;
 	private Cargar ventanaComprar;
 	private Cargar ventanaVender;
 	private Cargar ventanaHistorial;
 	private int elemento = -1;
 	private boolean nuevaCotizacion = false;
 
-	public CtrlMercadoFiat(Listado vista) {
+	public CtrlMercadoCripto(Listado vista) {
 		
 		this.ventana = vista;
-		this.dtosMercadoFiat = new DtosMercadoFiat();
+		this.dtosMercadoCripto = new DtosMercadoCripto();
 		this.ventana.comboBoxAño.addActionListener(this);
 		this.ventana.comboBoxMes.addActionListener(this);
-		this.ventana.chkBxDolares.addActionListener(this);
-		this.ventana.chkBxEuros.addActionListener(this);
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnCargar.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
@@ -55,8 +53,10 @@ public class CtrlMercadoFiat implements ActionListener {
 		ventana.comboBoxPago.setVisible(false);
 		ventana.comboBoxTipo.setVisible(false);
 		ventana.chkBxPesos.setVisible(false);
+		ventana.chkBxDolares.setVisible(false);
+		ventana.chkBxEuros.setVisible(false);
 		ventana.txtBusqueda.setVisible(false);
-		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListaAños()));
+		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<>(dtosMercadoCripto.getListaAños()));
 		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<>(DtosComunes.getListaMeses("Seleccione uno")));
 		ventana.comboBoxMes.setSelectedIndex(DtosComunes.getMesActual());
 		ventana.btnNuevo.setText("Ingreso");
@@ -150,7 +150,7 @@ public class CtrlMercadoFiat implements ActionListener {
 		centro.setHorizontalAlignment(JLabel.CENTER);
 		ventana.tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		ventana.tabla.doLayout();
-		ventana.tabla.setModel(dtosMercadoFiat.getListadoOperaciones((String)ventana.comboBoxAño.getSelectedItem(), 
+		ventana.tabla.setModel(dtosMercadoCripto.getListadoOperaciones((String)ventana.comboBoxAño.getSelectedItem(), 
 																	ventana.comboBoxMes.getSelectedIndex()));
 		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(80);
@@ -173,7 +173,7 @@ public class CtrlMercadoFiat implements ActionListener {
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		ventana.tabla1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		ventana.tabla1.doLayout();
-		ventana.tabla1.setModel(dtosMercadoFiat.getTablaCotizaciones((String)ventana.comboBoxAño.getSelectedItem(), 
+		ventana.tabla1.setModel(dtosMercadoCripto.getTablaCotizaciones((String)ventana.comboBoxAño.getSelectedItem(), 
 																ventana.comboBoxMes.getSelectedIndex(), 
 																nuevaCotizacion));
 		ventana.tabla1.getColumnModel().getColumn(0).setMinWidth(50);
@@ -200,20 +200,20 @@ public class CtrlMercadoFiat implements ActionListener {
 		
 		if(ventanaComprar !=null)
 			ventanaComprar.dispose();
-		ventanaComprar = new Cargar("Carga de compra de dólares y euros", ventana.getX(), ventana.getY());
+		ventanaComprar = new Cargar("Carga de compra de cripto monedas", ventana.getX(), ventana.getY());
 		ventanaComprar.btnVolver.addActionListener(this);
-		CtrlCompraFiat ctrlCompraFiat = new CtrlCompraFiat(ventanaComprar);
-		ctrlCompraFiat.iniciar();
+		CtrlCompraCripto ctrlCompraCripto = new CtrlCompraCripto(ventanaComprar);
+		ctrlCompraCripto.iniciar();
 	}
 	
 	private void egreso() {
 
 		if(ventanaVender != null)
 			ventanaVender.dispose();
-		ventanaVender = new Cargar("Carga de venta de dólares y euros", ventana.getX(), ventana.getY());
+		ventanaVender = new Cargar("Carga de venta de cripto monedas", ventana.getX(), ventana.getY());
 		ventanaVender.btnVolver.addActionListener(this);
-		CtrlVentaFiat ctrlVentaFiat = new CtrlVentaFiat(ventanaVender);
-		ctrlVentaFiat.iniciar();
+		CtrlVentaCripto ctrlVentaCripto = new CtrlVentaCripto(ventanaVender);
+		ctrlVentaCripto.iniciar();
 	}
 
 	private void detalle() {
@@ -223,10 +223,10 @@ public class CtrlMercadoFiat implements ActionListener {
 		
 		if(ventanaHistorial != null)
 			ventanaHistorial.dispose();
-		dtosMercadoFiat.getDetalle(elemento);
+		dtosMercadoCripto.getDetalle(elemento);
 		elemento = -1;
 		ventanaHistorial = new Cargar("Detalle operiones", ventana.getX(), ventana.getY());
-		CtrlDetalleFiat ctrlDetalleFiat = new CtrlDetalleFiat(ventanaHistorial);
+		CtrlDetalleCripto ctrlDetalleFiat = new CtrlDetalleCripto(ventanaHistorial);
 		ctrlDetalleFiat.iniciar();
 	}
 	
@@ -240,13 +240,13 @@ public class CtrlMercadoFiat implements ActionListener {
 
 	private void guardar() {
 		
-		if(dtosMercadoFiat.guardarCotizacion(ventana.tabla1)) {
+		if(dtosMercadoCripto.guardarCotizacion(ventana.tabla1)) {
 			
 			ventana.btnGuardar.setEnabled(false);
 			nuevaCotizacion = false;
 			actualizar();
 			return;
 		}
-		JOptionPane.showMessageDialog(ventana, dtosMercadoFiat.getMsgError());
+		JOptionPane.showMessageDialog(ventana, dtosMercadoCripto.getMsgError());
 	}
 }

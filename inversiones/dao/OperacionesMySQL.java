@@ -2,6 +2,7 @@ package dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import modelo.Cripto;
 import modelo.Fiat;
 import modelo.Instrumento;
 import modelo.Operacion;
@@ -76,7 +77,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 			bandera = false;
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("OperacionesMySQL, create");
+			System.err.println("OperacionesMySQL, update");
 		} finally {
 		
 			this.cerrar();
@@ -223,6 +224,109 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
 			System.err.println("OperacionesMySQL, getListadoFiat()");
+		} finally {
+		
+			this.cerrar();
+		}
+		return monedas;	
+	}
+	
+	@Override
+	public Cripto [] getListadoCripto(String año, int mes) {
+	
+		Cripto monedas[] = null;
+		String fechas[] = null;
+		String cmdStm = "SELECT idCripto, criptoMoneda.nombre, simbolo, estable, SUM(operaciones.cant), proveedores.nombre, idCustodia "
+						+ "FROM gpiygdb.operaciones "
+						+ "JOIN gpiygdb.cripto ON idCripto = cripto.id "
+						+ "JOIN gpiygdb.proveedores ON idCustodia = proveedores.id "
+						+ "JOIN  gpiygdb.criptoMoneda ON idCriptoMoneda = criptoMoneda.id "
+						+ "WHERE YEAR(fecha) <= ? " + (mes != 0? "AND MONTH(fecha) <= ? ":"")
+						+ "GROUP BY idCustodia, idCriptoMoneda "
+						+ "HAVING SUM(operaciones.cant) > 0";
+		
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setString(1, año);
+			
+			if(mes != 0)
+				stm.setInt(2, mes);
+			ResultSet rs = stm.executeQuery();
+			rs.last();
+			monedas = new Cripto[rs.getRow()];
+			rs.beforeFirst();
+			int i = 0;
+			
+			while(rs.next()) {
+				
+				monedas[i] = new Cripto();
+				monedas[i].setId(rs.getInt("idCripto"));
+				monedas[i].getMoneda().setNombre(rs.getString("criptoMoneda.nombre"));
+				monedas[i].getMoneda().setSimbolo("simbolo");
+				monedas[i].getMoneda().setEstable(rs.getInt("estable"));
+				monedas[i].setCant(rs.getDouble("SUM(operaciones.cant)"));
+				monedas[i].setCustodia(new Proveedor());
+				monedas[i].getCustodia().setNombre(rs.getString("proveedores.nombre"));
+				monedas[i].getCustodia().setId(rs.getInt("idCustodia"));
+				i++;
+			}
+			cmdStm = "SELECT DATE_FORMAT(fecha, '%d/%m/%Y') "
+					+ "FROM gpiygdb.operaciones "
+					+ "WHERE idCripto IS NOT NULL AND YEAR(fecha) = ? " + (mes != 0? "AND MONTH(fecha) = ? ":"")
+					+ "GROUP BY fecha ORDER BY fecha";
+			stm = conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setString(1, año);
+			
+			if(mes != 0)
+				stm.setInt(2, mes);
+			rs = stm.executeQuery();
+			rs.last();
+			fechas = new String[rs.getRow()];
+			rs.beforeFirst();
+			i = 0;
+			
+			while(rs.next()) {
+				
+				fechas[i] = rs.getString(1);
+				i++;
+			}
+
+			for(i = 0; i < monedas.length; i++) {
+
+				monedas[i].setOperaciones(new Operacion[fechas.length]);
+				
+				for(int e = 0; e < fechas.length; e++) {
+					
+					monedas[i].getOperaciones()[e] = new Operacion();
+					cmdStm = "SELECT operaciones.id, operacion, SUM(operaciones.cant), precio, comision, comentario "
+							+ "FROM gpiygdb.operaciones "
+							+ "JOIN gpiygdb.cripto ON idCripto = cripto.id "
+							+ "WHERE (idCripto = ? AND DATE_FORMAT(fecha, '%d/%m/%Y') = ?)";
+					stm = conexion.prepareStatement(cmdStm);
+					stm.setInt(1, monedas[i].getId());
+					stm.setString(2, fechas[e]);
+					rs = stm.executeQuery();
+		
+					if(rs.next()) {
+						
+						monedas[i].getOperaciones()[e] = new Operacion();
+						monedas[i].getOperaciones()[e].setId(rs.getInt(1));
+						monedas[i].getOperaciones()[e].setOperacion(rs.getString(2));
+						monedas[i].getOperaciones()[e].setCant(rs.getDouble(3));
+						monedas[i].getOperaciones()[e].setPrecio(rs.getDouble(4));
+						monedas[i].getOperaciones()[e].setComision(rs.getDouble(5));
+						monedas[i].getOperaciones()[e].setComentario(rs.getString(6));
+					}
+					monedas[i].getOperaciones()[e].setFecha(fechas[e]);
+				}
+			}
+		} catch (Exception e) {
+		
+			System.err.println(cmdStm);
+			System.err.println(e.getMessage());
+			System.err.println("OperacionesMySQL, getListadoCripto()");
 		} finally {
 		
 			this.cerrar();

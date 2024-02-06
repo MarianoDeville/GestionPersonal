@@ -53,26 +53,31 @@ public class CtrlInversiones implements ActionListener {
 		if(e.getSource() == ventana.btn1A) {
 
 			fiat();
+			return;
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
 			mercadoValores();
+			return;
 		}	
 
 		if(e.getSource() == ventana.btn1C) {
 			
 			cripto();
+			return;
 		}
 		
 		if(e.getSource() == ventana.btn2A) {
 			
 			inmobiliario();
+			return;
 		}
 		
 		if(e.getSource() == ventana.btn2B) {
 			
 			resumen();
+			return;
 		}
 		
 		if(e.getSource() == ventana.btnSalir) {
@@ -92,6 +97,7 @@ public class CtrlInversiones implements ActionListener {
 			if(ventanaResumen != null)
 				ventanaResumen.dispose();
 			ventana.dispose();
+			return;
 		}
 	}
 	
@@ -115,16 +121,24 @@ public class CtrlInversiones implements ActionListener {
 
 	private void cripto() {
 		
-
+		if(ventanaCripto != null)
+			ventanaCripto.dispose();
+		ventanaCripto = new Listado("Gestión de cripto monedas", ventana.getX(), ventana.getY());
+		CtrlMercadoCripto ctrlMercadoCripto = new CtrlMercadoCripto(ventanaCripto);
+		ctrlMercadoCripto.iniciar();
 	}
 
 	private void inmobiliario() {
 		
-	
+		if(ventanaPropiedades != null)
+			ventanaPropiedades.dispose();
+		ventanaPropiedades = new Listado("Gestión de inversiones inmobiliarias", ventana.getX(), ventana.getY());
 	}
 
 	private void resumen() {
 		
-		
+		if(ventanaResumen != null)
+			ventanaResumen.dispose();
+		ventanaResumen = new Listado("Resumen de inversiones", ventana.getX(), ventana.getY());
 	}
 }

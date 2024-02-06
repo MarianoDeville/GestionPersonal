@@ -49,12 +49,13 @@ public class DtosIngresos {
 			"Sueldo mensual",
 			"Guardias",
 			"Alquiler",
-			"Acreditación Dividendos / Cupones / Intereses",
+			"Acreditación Dividendos / Cupones",
 			"Viáticos",
 			"Venta Activos / Pasivos",
 			"Compra / Venta moneda extrangera",
 			"Bonos / Retroactivos sueldo", 
-			"Préstamo"
+			"Préstamo", 
+			"Interés"
 		};
 		String respuesta[] = new String[conceptos.length + 1];
 		respuesta[0] = cabecera;
@@ -122,7 +123,7 @@ public class DtosIngresos {
 		tabla[ingresos.length][4] = formatoResultado.format(sumaColumnas[0]);
 		tabla[ingresos.length][5] = formatoResultado.format(sumaColumnas[1]);
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
-		cantidadElementos = tabla.length;
+		cantidadElementos = ingresos.length;
 		return tablaModelo;
 	}
 	

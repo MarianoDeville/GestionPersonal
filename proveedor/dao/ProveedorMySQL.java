@@ -13,10 +13,12 @@ public class ProveedorMySQL extends ConexiónMySQL implements ProveedorDAO {
 		String cmdStm = "SELECT id, nombre, direccion, cuit, comentario, mercado FROM gpiygdb.proveedores WHERE (nombre LIKE ? AND ";
 
 		if(egresoIngreso.equals("M"))
-			cmdStm += "(egresoIngreso = ?)) ";
+			cmdStm += "(egresoIngreso = ? ";
+		else if(egresoIngreso.equals("C"))
+			cmdStm += "(egresoIngreso = ? ";
 		else
-			cmdStm += "(egresoIngreso = ? OR egresoIngreso = 'A'  OR egresoIngreso = 'M')) ";
-		cmdStm += "ORDER BY nombre";
+			cmdStm += "(egresoIngreso = ? OR egresoIngreso = 'A' OR egresoIngreso = 'M' ";
+		cmdStm += "OR egresoIngreso = 'T')) ORDER BY nombre";
 		
 		try {
 			
