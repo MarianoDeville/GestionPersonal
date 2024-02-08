@@ -138,7 +138,7 @@ public class CtrlCompraCripto  implements ActionListener {
 		ventana.txtMonto.setText("");
 		ventana.txtProv.setText("");
 		ventana.txtCotizacion.setText("");
-		ventana.txtComentario.setText("");
+		ventana.txtComentario.setText(ventana.chkBoxAcreditacion.isSelected()? "0": "");
 		ventana.txtAux1.setText("");
 		ventana.msgError.setText("");
 		dtosMercadoCripto.resetMoneda();

@@ -133,6 +133,8 @@ public class CtrlInversiones implements ActionListener {
 		if(ventanaPropiedades != null)
 			ventanaPropiedades.dispose();
 		ventanaPropiedades = new Listado("Gestión de inversiones inmobiliarias", ventana.getX(), ventana.getY());
+		CtrlMercadoInmobiliario ctrlMercadoInmobiliario = new CtrlMercadoInmobiliario(ventanaPropiedades);
+		ctrlMercadoInmobiliario.iniciar();
 	}
 
 	private void resumen() {

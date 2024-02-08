@@ -3,7 +3,6 @@ package modelo;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import dao.CotizacionesMySQL;
@@ -26,8 +25,9 @@ public class DtosMercadoCripto {
 	private MercadoCriptoDAO mercadoCriptoDAO = new MercadoCriptoMySQL();
 	private OperacionesDAO operacionesDAO = new OperacionesMySQL();
 	private CotizacioonesDAO cotizacionesDAO = new CotizacionesMySQL();
-	private DecimalFormat formatoReducido = new DecimalFormat("###,###,##0.0000");
-	private DecimalFormat formatoAmpliado = new DecimalFormat("###,###,##0.00######");
+	private DecimalFormat formato4Decimales = new DecimalFormat("###,###,##0.0000");
+	private DecimalFormat formatoHasta8Decimales = new DecimalFormat("###,###,##0.00######");
+	private DecimalFormat formato2Decimales = new DecimalFormat("###,###,##0.0000");
 	private Calendar calendario;
 	private Cripto monedas[];
 	private Cripto monedasAgrupadas[];
@@ -77,12 +77,12 @@ public class DtosMercadoCripto {
 		for(int i = 0; i < monedas.length; i++) {
 
 			tabla[i][0] = monedas[i].getMoneda().getNombre() + " " + monedas[i].getMoneda().getSimbolo();
-			tabla[i][1] = formatoReducido.format(monedas[i].getCant());
+			tabla[i][1] = formato4Decimales.format(monedas[i].getCant());
 			tabla[i][2] = monedas[i].getCustodia().getNombre();
 			
 			for(int e = 0; e < tamaño; e++) {
 
-				tabla[i][e + 3] = formatoReducido.format(monedas[i].getOperaciones()[e].getCant());
+				tabla[i][e + 3] = formato4Decimales.format(monedas[i].getOperaciones()[e].getCant());
 				titulo[e + 3] = monedas[i].getOperaciones()[e].getFecha();
 			}
 		}
@@ -109,18 +109,18 @@ public class DtosMercadoCripto {
 		for(int i = 0; i < monedasAgrupadas.length; i++) {
 			
 			tabla[i][0] = monedasAgrupadas[i].getMoneda().getNombre();
-			tabla[i][1] = formatoReducido.format(monedasAgrupadas[i].getCant());
+			tabla[i][1] = formato4Decimales.format(monedasAgrupadas[i].getCant());
 			
 			for(int e = 0; e < tamaño; e++) {
 			
 				if(monedasAgrupadas[i].getCotizaciones()[e].getValor() > 0)
-					tabla[i][e + 2] = formatoReducido.format(monedasAgrupadas[i].getCotizaciones()[e].getValor());
+					tabla[i][e + 2] = formatoHasta8Decimales.format(monedasAgrupadas[i].getCotizaciones()[e].getValor());
 				else
 					tabla[i][e + 2] = "-";
 				calculoDia[e] += monedasAgrupadas[i].getCotizaciones()[e].getValor() * monedasAgrupadas[i].getCant();
 				
 				if( i == monedasAgrupadas.length -1)
-					tabla[monedasAgrupadas.length][e + 2] = formatoReducido.format(calculoDia[e]);;
+					tabla[monedasAgrupadas.length][e + 2] = formato2Decimales.format(calculoDia[e]);;
 				titulo[e + 2] = monedasAgrupadas[i].getCotizaciones()[e].getFecha();
 			}
 		}
@@ -285,7 +285,7 @@ public class DtosMercadoCripto {
 			msgError = "Debe elegir una moneda.";
 			return false;
 		}
-		moneda.setMoneda(listaMonedas[pos]);
+		moneda.setMoneda(listaMonedas[pos - 1]);
 		return true;
 	}
 	
@@ -459,7 +459,7 @@ public class DtosMercadoCripto {
 
 		if(saldo < operacion.getCant()) {
 			
-			msgError = "El saldo disponible es de: " + formatoAmpliado.format(saldo);
+			msgError = "El saldo disponible es de: " + formatoHasta8Decimales.format(saldo);
 			return false;
 		}
 		moneda.setCant(- operacion.getCant());

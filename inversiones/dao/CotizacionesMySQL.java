@@ -222,7 +222,7 @@ public class CotizacionesMySQL extends ConexiónMySQL implements CotizacioonesDAO
 					monedas[i].getCotizaciones()[e] = new Cotizacion();
 					
 					cmdStm = "SELECT cotizaciones.id, valor FROM gpiygdb.cotizaciones "
-							+ "WHERE DATE_FORMAT(fecha, '%d/%m/%Y') = ? AND idFiat = ?";
+							+ "WHERE DATE_FORMAT(fecha, '%d/%m/%Y') = ? AND idCripto = ?";
 					
 					stm = conexion.prepareStatement(cmdStm);
 					stm.setString(1, fechas[e]);

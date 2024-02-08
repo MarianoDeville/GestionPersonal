@@ -139,7 +139,8 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 						+ "JOIN gpiygdb.moneda ON idMoneda = moneda.id "
 						+ "WHERE YEAR(fecha) <= ? " + (mes != 0? "AND MONTH(fecha) <= ? ":"")
 						+ "GROUP BY idCustodia, idMoneda "
-						+ "HAVING SUM(operaciones.cant) > 0";
+						+ "HAVING SUM(operaciones.cant) > 0 "
+						+ "ORDER BY moneda.nombre, proveedores.nombre";
 		
 		try {
 			
@@ -243,7 +244,8 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 						+ "JOIN  gpiygdb.criptoMoneda ON idCriptoMoneda = criptoMoneda.id "
 						+ "WHERE YEAR(fecha) <= ? " + (mes != 0? "AND MONTH(fecha) <= ? ":"")
 						+ "GROUP BY idCustodia, idCriptoMoneda "
-						+ "HAVING SUM(operaciones.cant) > 0";
+						+ "HAVING SUM(operaciones.cant) > 0 "
+						+ "ORDER BY idCriptoMoneda, idCustodia";
 		
 		try {
 			
@@ -264,7 +266,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 				monedas[i] = new Cripto();
 				monedas[i].setId(rs.getInt("idCripto"));
 				monedas[i].getMoneda().setNombre(rs.getString("criptoMoneda.nombre"));
-				monedas[i].getMoneda().setSimbolo("simbolo");
+				monedas[i].getMoneda().setSimbolo(rs.getString("simbolo"));
 				monedas[i].getMoneda().setEstable(rs.getInt("estable"));
 				monedas[i].setCant(rs.getDouble("SUM(operaciones.cant)"));
 				monedas[i].setCustodia(new Proveedor());
@@ -345,7 +347,8 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 						+ "JOIN gpiygdb.instrumento ON idTipo = instrumento.id "
 						+ "WHERE YEAR(fecha) <= ? " + (mes != 0? "AND MONTH(fecha) <= ? ":"")
 						+ "GROUP BY idCustodia, valores.nombre "
-						+ (existente? "HAVING SUM(operaciones.cant) > 0": "");
+						+ (existente? "HAVING SUM(operaciones.cant) > 0 ": "") 
+						+ "ORDER BY proveedores.nombre, valores.nombre";
 		
 		try {
 			

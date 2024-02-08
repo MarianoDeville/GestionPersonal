@@ -152,9 +152,9 @@ public class CtrlMercadoCripto  implements ActionListener {
 		ventana.tabla.doLayout();
 		ventana.tabla.setModel(dtosMercadoCripto.getListadoOperaciones((String)ventana.comboBoxAño.getSelectedItem(), 
 																	ventana.comboBoxMes.getSelectedIndex()));
-		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
-		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(80);
-		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(60);
+		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(40);
+		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);
+		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(80);
 		ventana.tabla.getColumnModel().getColumn(1).setMinWidth(60);
 		ventana.tabla.getColumnModel().getColumn(1).setMaxWidth(100);
 		ventana.tabla.getColumnModel().getColumn(1).setPreferredWidth(70);
