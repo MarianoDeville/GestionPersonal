@@ -6,9 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import modelo.DtosComunes;
@@ -24,19 +22,14 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 	private Cargar ventanaVender;
 	private Cargar ventanaHistorial;
 	private int elemento = -1;
-	private boolean nuevaCotizacion = false;
 
 	public CtrlMercadoInmobiliario(Listado vista) {
 		
 		this.ventana = vista;
 		this.dtosInversiones = new DtosMercadoInmobiliario();
 		this.ventana.comboBoxAño.addActionListener(this);
-		this.ventana.comboBoxMes.addActionListener(this);
-		this.ventana.chkBxPesos.addActionListener(this);
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnCargar.addActionListener(this);
-		this.ventana.btnGuardar.addActionListener(this);
-		this.ventana.btnCotizar.addActionListener(this);
 		this.ventana.btnImprimir.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
 		this.ventana.tabla.addMouseListener(new MouseAdapter() {
@@ -52,20 +45,16 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 	
 	public void iniciar() {
 
-		ventana.lblSuma.setVisible(false);
-		ventana.txtSuma.setVisible(false);
-		ventana.btnNuevo.setText("Compra");
-		ventana.btnCargar.setText("Venta");
-		ventana.btnCargar.setVisible(true);
-		ventana.btnGuardar.setVisible(true);
-		ventana.btnGuardar.setEnabled(false);
-		ventana.btnCotizar.setVisible(true);
+		ventana.comboBoxMes.setVisible(false);
 		ventana.comboBoxPago.setVisible(false);
 		ventana.comboBoxTipo.setVisible(false);
-		ventana.txtBusqueda.setVisible(false);
-		ventana.chkBxPesos.setText("Existentes");
+		ventana.chkBxPesos.setVisible(false);
 		ventana.chkBxDolares.setVisible(false);
 		ventana.chkBxEuros.setVisible(false);
+		ventana.txtBusqueda.setVisible(false);
+		ventana.btnNuevo.setText("Cargar");
+		ventana.btnCargar.setText("Venta");
+		ventana.btnCargar.setVisible(true);
 		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosInversiones.getListaAños()));
 		ventana.comboBoxAño.setSelectedIndex(0);
 		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<String>(DtosComunes.getListaMeses("Elija uno")));
@@ -73,7 +62,6 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 		ventana.chkBxDolares.setSelected(true);
 		ventana.chkBxEuros.setSelected(true);
 		actualizar();
-		ventana.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		ventana.setVisible(true);
 	}
 	
@@ -90,19 +78,7 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 			venta();
 			return;
 		}
-		
-		if(e.getSource() == ventana.btnGuardar) {
-			
-			guardar();
-			return;
-		}
-		
-		if(e.getSource() == ventana.btnCotizar) {
-		
-			cotizar();
-			return;
-		}
-		
+
 		if(e.getSource() == ventana.btnImprimir) {
 			
 			try {
@@ -128,15 +104,12 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 			ventana.dispose();
 			return;
 		}
-		nuevaCotizacion = false;
 		
 		if(ventana.isVisible()) {
 			
 			actualizar();
 			ventana.setVisible(true);
 		}
-		ventana.btnGuardar.setEnabled(false);
-		ventana.btnCotizar.setEnabled(true);
 	}
 	
 	private void actualizar() {
@@ -147,10 +120,8 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 		ventana.tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		ventana.tabla.doLayout();
 		ventana.tabla.setModel(dtosInversiones.getTablaValores((String)ventana.comboBoxAño.getSelectedItem(), 
-																ventana.comboBoxMes.getSelectedIndex(), 
-																nuevaCotizacion,
-																ventana.chkBxPesos.isSelected()));
-		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
+																ventana.comboBoxMes.getSelectedIndex()));
+/*		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(80);
 		ventana.tabla.getColumnModel().getColumn(1).setMinWidth(50);
@@ -174,29 +145,25 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 		}
 		ventana.txtSuma.setText(dtosInversiones.getSuma());
 		ventana.txtCant.setText(dtosInversiones.getCantValores());
-		
-		if(nuevaCotizacion)
-			ventana.irFinalTabla();
+*/		
 	}
 	
 	private void compra() {
 		
 		if(ventanaComprar !=null)
 			ventanaComprar.dispose();
-		ventanaComprar = new Cargar("Carga de compra de acciones, bonos y letras", ventana.getX(), ventana.getY());
+		ventanaComprar = new Cargar("Carga de compra de terrenos / aporte capital", ventana.getX(), ventana.getY());
 		ventanaComprar.btnVolver.addActionListener(this);
-		CtrlCompraValores ctrlCargarInversion = new CtrlCompraValores(ventanaComprar);
-		ctrlCargarInversion.iniciar();
+		CtrlCompraInmobiliario ctrlCompraInmobiliario = new CtrlCompraInmobiliario(ventanaComprar);
+		ctrlCompraInmobiliario.iniciar();
 	}
 	
 	private void venta() {
 
 		if(ventanaVender != null)
 			ventanaVender.dispose();
-		ventanaVender = new Cargar("Carga de venta de acciones, bonos y letras", ventana.getX(), ventana.getY());
+		ventanaVender = new Cargar("Carga de venta de terrenos", ventana.getX(), ventana.getY());
 		ventanaVender.btnVolver.addActionListener(this);
-		CtrlVentaValores ctrlVentaValores = new CtrlVentaValores(ventanaVender);
-		ctrlVentaValores.iniciar();
 	}
 
 	private void detalle() {
@@ -206,31 +173,8 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 		
 		if(ventanaHistorial != null)
 			ventanaHistorial.dispose();
-		dtosInversiones.setValor(elemento);
+		dtosInversiones.setPropiedad(elemento);
 		elemento = -1;
 		ventanaHistorial = new Cargar("Detalle de movimientos", ventana.getX(), ventana.getY());
-		CtrlDetalleValores ctrlDetalleValores = new CtrlDetalleValores(ventanaHistorial);
-		ctrlDetalleValores.iniciar();
-	}
-	
-	private void cotizar() {
-		
-		ventana.btnGuardar.setEnabled(true);
-		ventana.btnCotizar.setEnabled(false);
-		nuevaCotizacion = true;
-		actualizar();
-	}	
-
-	private void guardar() {
-		
-		nuevaCotizacion = false;
-		
-		if(!dtosInversiones.guardarCotizaciones(ventana.tabla)) {
-			
-			JOptionPane.showMessageDialog(ventana, dtosInversiones.getMsgError());
-			return;
-		}
-		ventana.btnGuardar.setEnabled(false);
-		actualizar();
 	}
 }

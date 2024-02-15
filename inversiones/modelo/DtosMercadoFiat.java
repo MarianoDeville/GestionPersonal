@@ -460,8 +460,8 @@ public class DtosMercadoFiat {
 		ingreso.setFormaCobro(metodosPago[pos - 1]);
 		return true;
 	}
-	
-	public boolean guardarVenta() {
+
+	public boolean guardarVenta(boolean debito) {
 		
 		try {
 
@@ -486,31 +486,48 @@ public class DtosMercadoFiat {
 
 		if(mercadoFiatDAO.update(moneda)) {
 		
-			IngresosDAO ingresosDAO = new IngresosMySQL();
 			EgresosDAO egresosDAO = new EgresosMySQL();
-			ingreso.setFecha(operacion.getFecha());
-			ingreso.setMonto(operacion.getPrecio() * operacion.getCant());
-			ingreso.setCotizacion(ingreso.getMoneda().equals("Pesos")? 1: operacion.getPrecio());
-			ingreso.setComentario(operacion.getComentario());
-			ingreso.setConcepto("Compra / Venta moneda extrangera");
-			ingreso.setFuente(moneda.getCustodia());
 			egreso = new Egreso();
-			egreso.setFecha(operacion.getFecha());
-			egreso.setMonto(operacion.getComision());
-			egreso.setMoneda("Pesos");
-			egreso.setCotizacion(1);
-			egreso.setTipoConsumo("Comision");
-			egreso.setComentario(operacion.getComentario());
-			egreso.setProveedor(moneda.getCustodia());
-			egreso.setFormaPago(ingreso.getFormaCobro());
-			ingresosDAO.nuevo(ingreso);
-			egresosDAO.nuevo(egreso);
-			egreso.setMonto(operacion.getCant());
-			egreso.setMoneda(moneda.getMoneda().getNombre());
-			egreso.setCotizacion(operacion.getPrecio());
-			egreso.setTipoConsumo("Ahorro / Inversión");
-			egresosDAO.nuevo(egreso);
-			operacion.setOperacion("Venta");
+			
+			if(!debito) {
+
+				IngresosDAO ingresosDAO = new IngresosMySQL();
+				ingreso.setFecha(operacion.getFecha());
+				ingreso.setMonto(operacion.getPrecio() * operacion.getCant());
+				ingreso.setCotizacion(ingreso.getMoneda().equals("Pesos")? 1: operacion.getPrecio());
+				ingreso.setComentario(operacion.getComentario());
+				ingreso.setConcepto("Compra / Venta moneda extrangera");
+				ingreso.setFuente(moneda.getCustodia());
+				ingresosDAO.nuevo(ingreso);
+				egreso.setFecha(operacion.getFecha());
+				egreso.setMonto(operacion.getComision());
+				egreso.setMoneda("Pesos");
+				egreso.setCotizacion(1);
+				egreso.setTipoConsumo("Comision");
+				egreso.setComentario(operacion.getComentario());
+				egreso.setProveedor(moneda.getCustodia());
+				egreso.setFormaPago(ingreso.getFormaCobro());
+				egresosDAO.nuevo(egreso);
+				egreso.setMonto(operacion.getCant());
+				egreso.setMoneda(moneda.getMoneda().getNombre());
+				egreso.setCotizacion(operacion.getPrecio());
+				egreso.setTipoConsumo("Ahorro / Inversión");
+				egresosDAO.nuevo(egreso);
+				operacion.setOperacion("Venta");
+			} else {
+				
+				egreso.setFecha(operacion.getFecha());
+				egreso.setMonto(operacion.getCant());
+				egreso.setMoneda(moneda.getMoneda().getNombre());
+				egreso.setCotizacion(operacion.getPrecio());
+				egreso.setComentario(operacion.getComentario());
+				egreso.setTipoConsumo("Comisiones / Mantenimiento");
+				egreso.setGastoFijo(1);
+				egreso.setProveedor(moneda.getCustodia());
+				egreso.setFormaPago(ingreso.getFormaCobro());
+				egresosDAO.nuevo(egreso);
+				operacion.setOperacion(egreso.getTipoConsumo());
+			}
 			operacion.setIdFiat(moneda.getId());
 			operacion.setIdEgreso(egreso.getId());
 			operacion.setIdIngreso(ingreso.getId());
@@ -535,33 +552,7 @@ public class DtosMercadoFiat {
 		moneda = monedas[pos];
 
 	}
+
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-///////////////////////////////////////////// Fin detalle operaciones //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 }

@@ -22,6 +22,7 @@ public class CtrlVentaFiat implements ActionListener {
 		
 		this.ventana = vista;
 		this.dtosMercadoFiat = new DtosMercadoFiat();
+		this.ventana.chkBoxAcreditacion.addActionListener(this);
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
@@ -59,12 +60,19 @@ public class CtrlVentaFiat implements ActionListener {
 		ventana.lblAux1.setVisible(true);
 		ventana.lblAux1.setText("Comentario:");
 		ventana.txtAux1.setVisible(true);
+		ventana.chkBoxAcreditacion.setText("Débito");
+		ventana.chkBoxAcreditacion.setVisible(true);
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
 		ventana.setVisible(true);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		
+		if(e.getSource() == ventana.chkBoxAcreditacion) {
+		
+			configurar();
+		}
 		
 		if(e.getSource() == ventana.btnNuevo) {
 			
@@ -105,7 +113,7 @@ public class CtrlVentaFiat implements ActionListener {
 				dtosMercadoFiat.setPrecio(ventana.txtMonto.getText()) && 
 				dtosMercadoFiat.setCantidad(ventana.txtCotizacion.getText()) && 
 				dtosMercadoFiat.setComision(ventana.txtComentario.getText()) && 
-				dtosMercadoFiat.guardarVenta()) {
+				dtosMercadoFiat.guardarVenta(ventana.chkBoxAcreditacion.isSelected())) {
 			
 			ventana.msgError.setForeground(Color.BLUE);
 			ventana.msgError.setText(dtosMercadoFiat.getMsgError());
@@ -132,5 +140,29 @@ public class CtrlVentaFiat implements ActionListener {
 		ventana.msgError.setText("");
 		dtosMercadoFiat.resetMoneda();
 		actualizar();
+	}
+	
+	private void configurar() {
+		
+		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<>(dtosMercadoFiat.getListadoMetPago(!ventana.chkBoxAcreditacion.isSelected())));
+		
+		if(ventana.chkBoxAcreditacion.isSelected()) {
+			
+			ventana.lblComentario.setVisible(false);
+			ventana.txtComentario.setVisible(false);
+			ventana.txtComentario.setText("0");
+			ventana.cmbBxMoneda.setVisible(false);
+			ventana.cmbBxPago.setEnabled(false);
+			ventana.cmbBxPago.setSelectedItem("Débito en cuenta");
+			ventana.lblMonto.setText("Cotización:");
+			
+			return;
+		}
+		ventana.lblComentario.setVisible(true);
+		ventana.txtComentario.setVisible(true);
+		ventana.txtComentario.setText("");
+		ventana.cmbBxMoneda.setVisible(true);
+		ventana.cmbBxPago.setEnabled(true);
+		ventana.lblMonto.setText("Precio:");
 	}
 }

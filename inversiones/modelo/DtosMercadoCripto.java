@@ -108,7 +108,7 @@ public class DtosMercadoCripto {
 
 		for(int i = 0; i < monedasAgrupadas.length; i++) {
 			
-			tabla[i][0] = monedasAgrupadas[i].getMoneda().getNombre();
+			tabla[i][0] = monedasAgrupadas[i].getMoneda().getSimbolo();
 			tabla[i][1] = formato4Decimales.format(monedasAgrupadas[i].getCant());
 			
 			for(int e = 0; e < tamaño; e++) {

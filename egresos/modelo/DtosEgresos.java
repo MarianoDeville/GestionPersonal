@@ -60,7 +60,7 @@ public class DtosEgresos {
 				"Varios",
 				"Pichos",
 				"Tarjetas",
-				"Comisiones", 
+				"Comisiones / Mantenimiento", 
 				"Préstamo"
 		};
 		String respuesta[] = new String[destinos.length + 1]; 

@@ -12,7 +12,7 @@
 /*		Estado:					BETA.											*/
 /*		Autor:					Mariano Ariel Deville							*/
 /*		Fecha creación:			15/12/2023										*/
-/*		Última modificación:	08/02/2024										*/
+/*		Última modificación:	15/02/2024										*/
 /********************************************************************************/
 
 import control.CtrlPrincipal;

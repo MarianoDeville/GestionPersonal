@@ -6,7 +6,15 @@ public class Inmobiliario {
 	private String descripcion;
 	private String lugar;
 	private Proveedor operador;
+	private Operacion operaciones[];
 
+	public Inmobiliario() {
+		
+		id = 0;
+		descripcion = "";
+		lugar = "";
+	}
+	
 	public int getId() {
 		
 		return id;
@@ -45,5 +53,15 @@ public class Inmobiliario {
 	public void setOperador(Proveedor operador) {
 		
 		this.operador = operador;
+	}
+
+	public Operacion[] getOperaciones() {
+		
+		return operaciones;
+	}
+
+	public void setOperaciones(Operacion[] operaciones) {
+		
+		this.operaciones = operaciones;
 	}
 }

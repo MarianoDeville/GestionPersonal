@@ -186,6 +186,7 @@ public class CotizacionesMySQL extends ConexiónMySQL implements CotizacioonesDAO
 				monedas[i] = new Cripto();
 				monedas[i].getMoneda().setId(rs.getInt("cripto.id"));
 				monedas[i].getMoneda().setNombre(rs.getString("criptoMoneda.nombre"));
+				monedas[i].getMoneda().setSimbolo(rs.getString("simbolo"));
 				monedas[i].setCant(rs.getDouble("SUM(cant)"));
 				monedas[i].setCustodia(new Proveedor());
 				monedas[i].getCustodia().setId(rs.getInt("idCustodia"));
@@ -317,7 +318,8 @@ public class CotizacionesMySQL extends ConexiónMySQL implements CotizacioonesDAO
 		double valor = 1;
 		String cmdStm = "SELECT valor FROM gpiygdb.cotizaciones "
 						+ "JOIN gpiygdb.fiat ON fiat.id = idFiat "
-						+ "WHERE moneda = ? ORDER BY fecha DESC LIMIT 1";
+						+ "JOIN gpiygdb.moneda ON moneda.id = idMoneda "
+						+ "WHERE nombre = ? ORDER BY fecha DESC LIMIT 1";
 		
 		try {
 			

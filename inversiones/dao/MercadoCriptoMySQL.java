@@ -64,7 +64,7 @@ public class MercadoCriptoMySQL extends ConexiónMySQL implements MercadoCriptoDA
 			if(cripto.getId() == 0)
 				cmdStm = "INSERT INTO gpiygdb.cripto (idCriptoMoneda, cant, idCustodia) VALUES (?, ?, ?)";
 			else
-				cmdStm = "UPDATE gpiygdb.cripto SET idCriptoMoneda = ?, cant = cant + ?, idCustodia = ? WHERE id = ?";
+				cmdStm = "UPDATE gpiygdb.cripto SET idCriptoMoneda = ?, cant = ROUND(cant + ?, 8), idCustodia = ? WHERE id = ?";
 			stm = conexion.prepareStatement(cmdStm);
 			stm.setInt(1, cripto.getMoneda().getId());
 			stm.setDouble(2, cripto.getCant());

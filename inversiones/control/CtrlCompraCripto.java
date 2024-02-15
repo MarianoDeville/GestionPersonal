@@ -135,7 +135,7 @@ public class CtrlCompraCripto  implements ActionListener {
 		ventana.txtProv.setEditable(true);
 		ventana.cmbBxTipo.setSelectedIndex(0);
 		ventana.txtFecha.setText(DtosComunes.getFechaActual());
-		ventana.txtMonto.setText("");
+		ventana.txtMonto.setText(ventana.chkBoxAcreditacion.isSelected()? "0": "");
 		ventana.txtProv.setText("");
 		ventana.txtCotizacion.setText("");
 		ventana.txtComentario.setText(ventana.chkBoxAcreditacion.isSelected()? "0": "");
@@ -157,6 +157,10 @@ public class CtrlCompraCripto  implements ActionListener {
 			ventana.lblComentario.setVisible(false);
 			ventana.txtComentario.setText("0");
 			ventana.txtComentario.setVisible(false);
+			ventana.lblMonto.setText("Concepto:");
+			ventana.txtMonto.setColumns(0);
+			ventana.txtMonto.setText("0");
+			ventana.txtMonto.setVisible(false);
 		} else {
 			
 			ventana.lblMonto.setText("Precio:");
@@ -165,6 +169,10 @@ public class CtrlCompraCripto  implements ActionListener {
 			ventana.lblComentario.setVisible(true);
 			ventana.txtComentario.setText("");
 			ventana.txtComentario.setVisible(true);
+			ventana.lblMonto.setText("Precio:");
+			ventana.txtMonto.setColumns(5);
+			ventana.txtMonto.setText("");
+			ventana.txtMonto.setVisible(true);
 		}
 	}
 }

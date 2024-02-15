@@ -98,14 +98,14 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 	public double getSaldo(Fiat moneda) {
 
 		double disponible = 0;
-		String cmdStm = "SELECT cant FROM gpiygdb.fiat WHERE idCustodia = ? AND moneda = ?";
+		String cmdStm = "SELECT cant FROM gpiygdb.fiat WHERE idCustodia = ? AND idMoneda = ?";
 		
 		try {
 			
 			this.conectar();
 			PreparedStatement stm = conexion.prepareStatement(cmdStm);
 			stm.setInt(1, moneda.getCustodia().getId());
-			stm.setString(2, moneda.getMoneda().getNombre());
+			stm.setInt(2, moneda.getMoneda().getId());
 			ResultSet rs = stm.executeQuery();
 			
 			if(rs.next())
@@ -114,7 +114,7 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 		
 			System.err.println(cmdStm);
 			System.err.println(e.getMessage());
-			System.err.println("MercadoFiatMySQL, newMovimiento");
+			System.err.println("MercadoFiatMySQL, getSaldo");
 		} finally {
 		
 			this.cerrar();

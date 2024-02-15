@@ -188,8 +188,12 @@ public class CtrlMercadoCripto  implements ActionListener {
 		
 			ventana.tabla1.getColumnModel().getColumn(i).setMinWidth(50);
 			ventana.tabla1.getColumnModel().getColumn(i).setMaxWidth(120);
-			ventana.tabla1.getColumnModel().getColumn(i).setPreferredWidth(90);
 			ventana.tabla1.getColumnModel().getColumn(i).setCellRenderer(derecha);
+			
+			if(nuevaCotizacion && i < ventana.tabla1.getColumnCount() -2)	
+				ventana.tabla1.getColumnModel().getColumn(i).setPreferredWidth(30);
+			else
+				ventana.tabla1.getColumnModel().getColumn(i).setPreferredWidth(100);
 		}
 		
 		if(nuevaCotizacion)
