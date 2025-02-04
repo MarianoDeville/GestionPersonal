@@ -19,7 +19,7 @@ public class EgresosMySQL extends ConexiónMySQL implements EgresosDAO {
 			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery("SELECT YEAR(fecha) FROM gpiygdb.egresos GROUP BY YEAR(fecha) ORDER BY fecha DESC LIMIT 10");
+			ResultSet rs = stm.executeQuery("SELECT YEAR(fecha) FROM gpiygdb.egresos GROUP BY YEAR(fecha) ORDER BY YEAR(fecha) DESC LIMIT 10");
 			rs.last();	
 			respuesta = new String[rs.getRow()];
 			rs.beforeFirst();

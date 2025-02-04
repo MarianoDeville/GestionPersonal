@@ -1,5 +1,6 @@
 package dao;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -18,7 +19,7 @@ public class MercadoInmobiliarioMySQL extends ConexiónMySQL implements MercadoIn
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = stm.executeQuery("SELECT YEAR(fecha) FROM gpiygdb.operaciones WHERE idInmobiliario IS NOT NULL "
-											+ "GROUP BY YEAR(fecha) ORDER BY fecha DESC LIMIT 20");
+											+ "GROUP BY YEAR(fecha) ORDER BY YEAR(fecha) DESC LIMIT 20");
 			rs.last();	
 			respuesta = new String[rs.getRow()];
 			rs.beforeFirst();
@@ -41,17 +42,21 @@ public class MercadoInmobiliarioMySQL extends ConexiónMySQL implements MercadoIn
 	}
 	
 	@Override
-	public Inmobiliario [] getListado() {
+	public Inmobiliario [] getListado(String filtro) {
 		
 		Inmobiliario respuesta[] = null;
 		String cmdStm = "SELECT inmobiliario.id, descripcion, lugar, idOperador, nombre, direccion, cuit, comentario, mercado "
-						+ "FROM gpiygdb.inmobiliario JOIN gpiygdb.proveedores ON proveedores.id = idOperador";
+						+ "FROM gpiygdb.inmobiliario JOIN gpiygdb.proveedores ON proveedores.id = idOperador "
+						+ "WHERE nombre LIKE ? OR descripcion LIKE ? OR lugar LIKE ?";
 		
 		try {
 			
 			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setString(1, "%" + filtro + "%");
+			stm.setString(2, "%" + filtro + "%");
+			stm.setString(3, "%" + filtro + "%");
+			ResultSet rs = stm.executeQuery();
 			rs.last();	
 			respuesta = new Inmobiliario[rs.getRow()];
 			rs.beforeFirst();

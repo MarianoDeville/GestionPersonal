@@ -119,9 +119,8 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 		derecha.setHorizontalAlignment(JLabel.RIGHT);
 		ventana.tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		ventana.tabla.doLayout();
-		ventana.tabla.setModel(dtosInversiones.getTablaValores((String)ventana.comboBoxAño.getSelectedItem(), 
-																ventana.comboBoxMes.getSelectedIndex()));
-/*		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
+		ventana.tabla.setModel(dtosInversiones.getTablaValores((String)ventana.comboBoxAño.getSelectedItem()));
+		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(80);
 		ventana.tabla.getColumnModel().getColumn(1).setMinWidth(50);
@@ -137,15 +136,11 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 			ventana.tabla.getColumnModel().getColumn(i).setMinWidth(30);
 			ventana.tabla.getColumnModel().getColumn(i).setMaxWidth(120);
 			ventana.tabla.getColumnModel().getColumn(i).setCellRenderer(derecha);
-			
-			if(nuevaCotizacion && i < ventana.tabla.getColumnCount() -2)	
-				ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(30);
-			else
-				ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(100);
+			ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(100);
 		}
 		ventana.txtSuma.setText(dtosInversiones.getSuma());
 		ventana.txtCant.setText(dtosInversiones.getCantValores());
-*/		
+		ventana.tabla.setDefaultEditor(Object.class, null);
 	}
 	
 	private void compra() {
@@ -164,6 +159,8 @@ public class CtrlMercadoInmobiliario implements ActionListener {
 			ventanaVender.dispose();
 		ventanaVender = new Cargar("Carga de venta de terrenos", ventana.getX(), ventana.getY());
 		ventanaVender.btnVolver.addActionListener(this);
+		CtrlVentaInmobiliario ctrlVentaInmobiliario = new CtrlVentaInmobiliario(ventanaVender);
+		ctrlVentaInmobiliario.iniciar();
 	}
 
 	private void detalle() {

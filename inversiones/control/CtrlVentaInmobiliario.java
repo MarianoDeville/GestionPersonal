@@ -12,13 +12,13 @@ import modelo.DtosComunes;
 import modelo.DtosMercadoInmobiliario;
 import vista.Cargar;
 
-public class CtrlCompraInmobiliario implements ActionListener {
+public class CtrlVentaInmobiliario  implements ActionListener {
 	
 	private Cargar ventana;
 	private DtosMercadoInmobiliario dtosMercadoInmobiliario;
 	private int elemento = -1;
 
-	public CtrlCompraInmobiliario(Cargar vista) {
+	public CtrlVentaInmobiliario(Cargar vista) {
 		
 		this.ventana = vista;
 		this.dtosMercadoInmobiliario = new DtosMercadoInmobiliario();
@@ -47,7 +47,9 @@ public class CtrlCompraInmobiliario implements ActionListener {
 	public void iniciar() {
 
 		ventana.txtFecha.setText(DtosComunes.getFechaActual());
-		ventana.lblProv.setText("Operador:");
+		ventana.lblFormPago.setText("Cobro:");
+		
+		ventana.lblProv.setText("Propiedad:");
 		ventana.lblTipo.setText("Movimiento:");
 		ventana.cmbBxPago.setModel(new DefaultComboBoxModel<>(dtosMercadoInmobiliario.getListadoMetPago(false)));		
 		ventana.cmbBxTipo.setModel(new DefaultComboBoxModel<>(dtosMercadoInmobiliario.getListaOperaciones()));

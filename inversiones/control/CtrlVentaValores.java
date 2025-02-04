@@ -58,6 +58,7 @@ public class CtrlVentaValores implements ActionListener {
 		ventana.txtComentario.setColumns(6);
 		ventana.lblAux1.setText("Comentario");
 		ventana.txtAux1.setVisible(true);
+		ventana.btnNuevo.setText("Limpiar");
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
 		ventana.setVisible(true);
@@ -116,7 +117,6 @@ public class CtrlVentaValores implements ActionListener {
 			
 			ventana.msgError.setForeground(Color.BLUE);
 			ventana.msgError.setText(dtosMercadoValores.getMsgError());
-			ventana.btnNuevo.setEnabled(true);
 			ventana.btnGuardar.setEnabled(false);
 			return;
 		}
@@ -126,7 +126,6 @@ public class CtrlVentaValores implements ActionListener {
 	
 	private void limpiarCampos() {
 		
-		ventana.btnNuevo.setEnabled(false);
 		ventana.btnGuardar.setEnabled(true);
 		ventana.txtProv.setEditable(true);
 		ventana.cmbBxPago.setEnabled(true);

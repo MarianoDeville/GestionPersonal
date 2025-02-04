@@ -229,13 +229,23 @@ public class DtosMercadoValores {
 			msgError = "No ha definido el nombre de la especie.";
 			return false;
 		}
-		
-		if(valor == null)
-			valor = new Valores();
+
 		valor.setNombre(nombre);
 		return true;
 	}
+	
+	public void setPlazo(boolean plazo) {
+		
+		if(valor == null)
+			valor = new Valores();
+		valor.setPlazo(plazo? 1:0);
+	}
 
+	public boolean getPlazo() {
+	
+		return valor.getPlazo()==1? true: false;
+	}
+	
 	public boolean setFecha(String fecha) {
 
 		msgError = "El formato de la fecha es incorrecto, debe ser DD/MM/AAAA";

@@ -18,7 +18,7 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery("SELECT YEAR(fecha) FROM gpiygdb.ingresos GROUP BY YEAR(fecha) ORDER BY fecha DESC LIMIT 10");
+			ResultSet rs = stm.executeQuery("SELECT YEAR(fecha) FROM gpiygdb.ingresos GROUP BY YEAR(fecha) ORDER BY YEAR(fecha) DESC LIMIT 10");
 			rs.last();	
 			respuesta = new String[rs.getRow()];
 			rs.beforeFirst();
@@ -113,7 +113,7 @@ public class IngresosMySQL extends ConexiónMySQL implements IngresosDAO {
 				respuesta[i].setMoneda(rs.getNString("moneda"));
 				respuesta[i].setCotizacion(rs.getFloat("cotizacion"));
 				respuesta[i].setComentario(rs.getString("ingresos.comentario"));
-				respuesta[i].setConcepto("concepto");
+				respuesta[i].setConcepto(rs.getString("concepto"));
 				respuesta[i].setFuente(new Proveedor());
 				respuesta[i].getFuente().setNombre(rs.getString("proveedores.nombre"));
 				respuesta[i].getFuente().setId(rs.getInt("proveedores.id"));

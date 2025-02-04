@@ -80,7 +80,7 @@ public class CotizacionesMySQL extends ConexiónMySQL implements CotizacioonesDAO
 						+ "FROM gpiygdb.fiat "
 						+ "JOIN gpiygdb.proveedores ON proveedores.id = idCustodia "
 						+ "JOIN gpiygdb.moneda ON moneda.id = idMoneda "
-						+ "WHERE cant > 0 GROUP BY idMoneda ORDER BY idCustodia";
+						+ "WHERE cant > 0 GROUP BY moneda.id, idCustodia ORDER BY idCustodia";
 		
 		try {
 			
@@ -169,7 +169,7 @@ public class CotizacionesMySQL extends ConexiónMySQL implements CotizacioonesDAO
 						+ "FROM gpiygdb.cripto "
 						+ "JOIN  gpiygdb.criptoMoneda ON idCriptoMoneda = criptoMoneda.id "
 						+ "JOIN gpiygdb.proveedores ON proveedores.id = idCustodia "
-						+ "WHERE cant > 0 GROUP BY criptoMoneda.id ORDER BY idCustodia";
+						+ "WHERE cant > 0 GROUP BY cripto.id ORDER BY idCustodia";
 		
 		try {
 			

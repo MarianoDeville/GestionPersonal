@@ -5,5 +5,5 @@ import modelo.Inmobiliario;
 public interface MercadoInmobiliarioDAO {
 
 	public String [] getAñosCargados();
-	public Inmobiliario [] getListado(); 
+	public Inmobiliario [] getListado(String filtro); 
 }

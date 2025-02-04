@@ -25,6 +25,7 @@ public class CtrlCompraValores implements ActionListener {
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
+		this.ventana.chkBoxAcreditacion.addActionListener(this);
 		this.ventana.txtProv.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -58,6 +59,9 @@ public class CtrlCompraValores implements ActionListener {
 		ventana.txtComentario.setColumns(6);
 		ventana.lblAux1.setText("Comentario");
 		ventana.txtAux1.setVisible(true);
+		ventana.chkBoxAcreditacion.setVisible(true);
+		ventana.chkBoxAcreditacion.setSelected(false);
+		ventana.btnNuevo.setText("Limpiar");
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
 		ventana.setVisible(true);
@@ -68,6 +72,11 @@ public class CtrlCompraValores implements ActionListener {
 		if(e.getSource() == ventana.btnNuevo) {
 			
 			limpiarCampos();
+		}
+		
+		if(e.getSource() == ventana.chkBoxAcreditacion) {
+			
+			actualizar();
 		}
 		
 		if(e.getSource() == ventana.btnGuardar) {
@@ -94,6 +103,11 @@ public class CtrlCompraValores implements ActionListener {
 			ventana.cmbBxTipo.setEnabled(false);
 			elemento = -1;
 		}
+		
+		if(ventana.chkBoxAcreditacion.isSelected())
+			ventana.chkBoxAcreditacion.setText("Largo plazo");
+		else
+			ventana.chkBoxAcreditacion.setText("Corto plazo");
 		ventana.tabla.setModel(dtosMercadoValores.getListadoValores(ventana.txtProv.getText()));
 	}
 	
@@ -102,7 +116,8 @@ public class CtrlCompraValores implements ActionListener {
 		dtosMercadoValores.setMonedaCompra((String)ventana.cmbBxMoneda.getSelectedItem());
 		dtosMercadoValores.setComentario(ventana.txtAux1.getText());
 		dtosMercadoValores.setTipoOperacion("Compra");
-
+		dtosMercadoValores.setPlazo(ventana.chkBoxAcreditacion.isSelected());
+		
 		if(dtosMercadoValores.setNombre(ventana.txtProv.getText()) && 
 				dtosMercadoValores.setFecha(ventana.txtFecha.getText()) && 
 				dtosMercadoValores.setCustodia(ventana.cmbBxPago.getSelectedIndex()) && 
@@ -114,7 +129,6 @@ public class CtrlCompraValores implements ActionListener {
 			
 			ventana.msgError.setForeground(Color.BLUE);
 			ventana.msgError.setText(dtosMercadoValores.getMsgError());
-			ventana.btnNuevo.setEnabled(true);
 			ventana.btnGuardar.setEnabled(false);
 			return;
 		}
@@ -124,11 +138,11 @@ public class CtrlCompraValores implements ActionListener {
 	
 	private void limpiarCampos() {
 		
-		ventana.btnNuevo.setEnabled(false);
 		ventana.btnGuardar.setEnabled(true);
 		ventana.txtProv.setEditable(true);
 		ventana.cmbBxPago.setEnabled(true);
 		ventana.cmbBxTipo.setEnabled(true);
+		ventana.chkBoxAcreditacion.setSelected(false);
 		ventana.cmbBxTipo.setSelectedIndex(0);
 		ventana.txtFecha.setText(DtosComunes.getFechaActual());
 		ventana.txtMonto.setText("");

@@ -17,7 +17,7 @@ public class MercadoFiatMySQL extends ConexiónMySQL implements MercadoFiatDAO {
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = stm.executeQuery("SELECT YEAR(fecha) FROM gpiygdb.operaciones WHERE idFiat IS NOT NULL "
-											+ "GROUP BY YEAR(fecha) ORDER BY fecha DESC LIMIT 20");
+											+ "GROUP BY YEAR(fecha) ORDER BY YEAR(fecha) DESC LIMIT 20");
 			rs.last();	
 			respuesta = new String[rs.getRow()];
 			rs.beforeFirst();

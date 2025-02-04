@@ -9,6 +9,7 @@ public class Valores {
 	private Operacion operaciones[];
 	private Cotizacion cotizaciones[];
 	private Instrumento instrumento;
+	private int plazo;
 
 	public Valores() {
 		
@@ -85,5 +86,15 @@ public class Valores {
 	public void setInstrumento(Instrumento instrumento) {
 		
 		this.instrumento = instrumento;
+	}
+	
+	public int getPlazo() {
+		
+		return plazo;
+	}
+
+	public void setPlazo(int plazo) {
+		
+		this.plazo = id;
 	}
 }

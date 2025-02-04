@@ -4,6 +4,8 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.swing.table.DefaultTableModel;
+import dao.EgresosDAO;
+import dao.EgresosMySQL;
 import dao.MercadoInmobiliarioDAO;
 import dao.MercadoInmobiliarioMySQL;
 import dao.OperacionesDAO;
@@ -45,12 +47,33 @@ public class DtosMercadoInmobiliario {
 		return temp;
 	}
 	
-	public DefaultTableModel getTablaValores(String año, int mes) {
+	public DefaultTableModel getTablaValores(String año) {
 		
-		String tabla[][] = null;
-		String titulo[] = new String[] {"Nombre", "Localización"};
+		propiedades = operacionDAO.getListadoPropiedades(año, true);
+		int tamaño = 0;
+		
+		try {
+			
+			tamaño = propiedades[0].getOperaciones().length;
+		} catch (Exception e) {
 
-		
+		}
+		String tabla[][] = new String[propiedades.length][tamaño + 3];
+		String titulo[] = new String[tamaño + 3];
+		System.arraycopy(new String[]{"Nombre", "Localización", "Empresa"}, 0, titulo, 0, 3);
+
+		for(int i = 0; i < propiedades.length; i++) {
+
+			tabla[i][0] = propiedades[i].getDescripcion();
+			tabla[i][1] = propiedades[i].getLugar();
+			tabla[i][2] = propiedades[i].getOperador().getNombre();
+			
+			for(int e = 0; e < tamaño; e++) {
+
+				tabla[i][e + 3] = formatoResultado.format(propiedades[i].getOperaciones()[e].getPrecio());
+				titulo[e + 3] = propiedades[i].getOperaciones()[e].getFecha();
+			}
+		}		
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
 		return tablaModelo;
 	}
@@ -105,7 +128,7 @@ public class DtosMercadoInmobiliario {
 
 	public DefaultTableModel getListadoLocalizaciones(String filtro) {
 		
-		propiedades = mercadoInmobiliarioDAO.getListado();
+		propiedades = mercadoInmobiliarioDAO.getListado(filtro);
 		String tabla[][] = new String [propiedades.length][3];
 		int i = 0;
 		
@@ -119,21 +142,15 @@ public class DtosMercadoInmobiliario {
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, new String [] {"", "", ""});
 		return tablaModelo;
 	}
-	
-	public void setLocalizacion(int pos) {
-		
-		propiedad = propiedades[pos];
-	}
-	
+
 	public void setComentario(String comentario) {
 		
-		operacion = new Operacion();
-		operacion.setComentario(comentario);
+		egreso = new Egreso();
+		egreso.setComentario(comentario);
 	}
 	
 	public void setMonedaPago(String moneda) {
 		
-		egreso = new Egreso();
 		egreso.setMoneda(moneda);
 	}
 	
@@ -156,7 +173,7 @@ public class DtosMercadoInmobiliario {
 				msgError = "El valor del mes está comprendido entre 1 y 12";
 				return false;
 			}
-			operacion.setFecha(partes[2] + "/" + partes[1] + "/" + partes[0]);
+			egreso.setFecha(partes[2] + "/" + partes[1] + "/" + partes[0]);
 		} catch(Exception e) {
 			
 			return false;
@@ -185,8 +202,7 @@ public class DtosMercadoInmobiliario {
 				monto = monto.replace(".", "");
 				monto = monto.replace(",", ".");
 			}
-			operacion.setPrecio(Double.parseDouble(monto));
-			operacion.setCant(1);
+			egreso.setMonto(Double.parseDouble(monto));
 		} catch (Exception e) {
 
 			msgError = "El precio debe ser un valor numérico.";
@@ -195,23 +211,54 @@ public class DtosMercadoInmobiliario {
 		return true;	
 	}
 	
+	public boolean setCotizacion(String cot) {
+		
+		try {
+			
+			if(cot.contains(",")) {
+				
+				cot = cot.replace(".", "");
+				cot = cot.replace(",", ".");
+			}
+			egreso.setCotizacion(Double.parseDouble(cot));
+		} catch (Exception e) {
+
+			msgError = "La cotización debe ser un valor numérico.";
+			return false;
+		}
+		return true;	
+	}
+	
+	public void setOperacion(String op) {
+			
+		operacion = new Operacion();
+		operacion.setOperacion(op);
+	}
+	
 	public boolean guardarOperacion() {
-		// Guardo la operacion y el egreso
+
+		msgError = "Error al intentar guardar la información en la base de datos.";
+		egreso.setTipoConsumo("Ahorro / Inversión");
+		egreso.setGastoFijo(0);
+		egreso.setProveedor(propiedad.getOperador());
+		EgresosDAO egresoDAO = new EgresosMySQL();
+	
+		if(!egresoDAO.nuevo(egreso))
+			return false;
+		operacion.setFecha(egreso.getFecha());
+		operacion.setCant(1);
+		operacion.setPrecio(egreso.getMonto());
+		operacion.setComision(0);
+		operacion.setComentario(egreso.getComentario());
+		operacion.setIdInmobiliario(propiedad.getId());
+		operacion.setIdEgreso(egreso.getId());
 		
-		
-		
-		
+		if(!operacionDAO.update(operacion))
+			return false;
 		msgError = "Operación guardada.";
 		return true;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	public String getMsgError() {
 		
 		return msgError;

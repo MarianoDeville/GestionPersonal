@@ -20,7 +20,7 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = stm.executeQuery("SELECT YEAR(fecha) FROM gpiygdb.operaciones WHERE idInversion IS NOT NULL "
-											+ "GROUP BY YEAR(fecha) ORDER BY fecha DESC LIMIT 20");
+											+ "GROUP BY YEAR(fecha) ORDER BY YEAR(fecha) DESC LIMIT 20");
 			rs.last();	
 			respuesta = new String[rs.getRow()];
 			rs.beforeFirst();
@@ -147,17 +147,18 @@ public class MercadoValoresMySQL extends ConexiónMySQL implements MercadoValores
 			}
 			
 			if(valor.getId() == 0)
-				cmdStm = "INSERT INTO gpiygdb.valores (nombre, cant, idTipo, idCustodia) VALUES (?, ?, ?, ?)";
+				cmdStm = "INSERT INTO gpiygdb.valores (nombre, cant, idTipo, idCustodia, plazo) VALUES (?, ?, ?, ?, ?)";
 			else
-				cmdStm = "UPDATE gpiygdb.valores SET nombre = ?, cant = cant + ?, idTipo = ?, idCustodia = ? WHERE id = ?";
+				cmdStm = "UPDATE gpiygdb.valores SET nombre = ?, cant = cant + ?, idTipo = ?, idCustodia = ?, plazo=? WHERE id = ?";
 			stm = conexion.prepareStatement(cmdStm);
 			stm.setString(1, valor.getNombre());
 			stm.setDouble(2, valor.getCant());
 			stm.setInt(3, valor.getInstrumento().getId());
 			stm.setInt(4, valor.getCustodia().getId());
+			stm.setInt(5, valor.getPlazo());
 			
 			if(valor.getId() != 0)
-				stm.setInt(5, valor.getId());
+				stm.setInt(6, valor.getId());
 			stm.executeUpdate();
 			
 			if(valor.getId() == 0) {
