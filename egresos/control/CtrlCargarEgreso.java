@@ -22,7 +22,6 @@ public class CtrlCargarEgreso implements ActionListener {
 		
 		this.ventana = vista;
 		this.dtosEgreso = new DtosEgresos();
-		this.ventana.cmbBxTipo.addActionListener(this);
 		this.ventana.cmbBxPago.addActionListener(this);
 		this.ventana.cmbBxMoneda.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
@@ -55,6 +54,9 @@ public class CtrlCargarEgreso implements ActionListener {
 		ventana.cmbBxPago.setSelectedIndex(0);
 		ventana.cmbBxTipo.setModel(new DefaultComboBoxModel<String>(dtosEgreso.getListaDestinos("Seleccione una opción.")));
 		ventana.cmbBxTipo.setSelectedIndex(0);
+		ventana.lblAux1.setText("Cuotas:");
+		ventana.txtAux1.setColumns(2);
+		ventana.txtAux1.setVisible(true);
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
 		ventana.setVisible(true);
@@ -64,6 +66,11 @@ public class CtrlCargarEgreso implements ActionListener {
 		
 		if(e.getSource() == ventana.txtProv) {
 			
+			actualizar();
+		}
+		
+		if(e.getSource() == ventana.cmbBxPago) {
+
 			actualizar();
 		}
 		
@@ -98,6 +105,8 @@ public class CtrlCargarEgreso implements ActionListener {
 			elemento = -1;
 		}
 		ventana.tabla.setModel(dtosEgreso.getListaProveedores(ventana.txtProv.getText()));
+		ventana.txtAux1.setEnabled(dtosEgreso.isFinanciado(ventana.cmbBxPago.getSelectedIndex()));
+		ventana.txtAux1.setText("1");
 	}
 	
 	private void moneda() {
@@ -119,6 +128,7 @@ public class CtrlCargarEgreso implements ActionListener {
 				dtosEgreso.setFormaPago(ventana.cmbBxPago.getSelectedIndex()) && 
 				dtosEgreso.setMonto(ventana.txtMonto.getText()) &&
 				dtosEgreso.setCotizacion(ventana.txtCotizacion.getText()) && 
+				dtosEgreso.setCuotas(ventana.txtAux1.getText()) &&
 				dtosEgreso.guardarEgreso()) {
 			
 			ventana.msgError.setForeground(Color.BLUE);

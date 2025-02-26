@@ -10,6 +10,7 @@ public class Egreso {
 	private String comentario;
 	private String tipoConsumo;
 	private int gastoFijo;
+	private int cuotas;
 	private Proveedor proveedor;
 	private Transaccion formaPago;
 	
@@ -103,6 +104,16 @@ public class Egreso {
 	public void setGastoFijo(int gastoFijo) {
 		
 		this.gastoFijo = gastoFijo;
+	}
+	
+	public int getCuotas() {
+		
+		return cuotas;
+	}
+
+	public void setCuotas(int cuotas) {
+		
+		this.cuotas = cuotas;
 	}
 
 	public Proveedor getProveedor() {

@@ -338,7 +338,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 	}
 	
 	@Override
-	public Valores [] getListadoValores(String año, int mes, boolean existente) {
+	public Valores [] getListadoValores(String año, int mes, boolean existente, boolean trading) {
 	
 		Valores valores[] = null;
 		String cmdStm = "SELECT idInversion, valores.nombre, valores.cant, idTipo, instrumento.nombre, descripcion, idCustodia, proveedores.nombre, mercado "
@@ -346,7 +346,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 						+ "JOIN gpiygdb.valores ON idInversion = valores.id "
 						+ "JOIN gpiygdb.proveedores ON idCustodia = proveedores.id "
 						+ "JOIN gpiygdb.instrumento ON idTipo = instrumento.id "
-						+ "WHERE " + (mes == 0? "YEAR(fecha) <= ? ":"DATE_FORMAT(fecha, '%Y/%m') <= ? ")
+						+ "WHERE " + (mes == 0? "YEAR(fecha) <= ? ":"DATE_FORMAT(fecha, '%Y/%m') <= ? ") + (trading? "AND plazo = 0 ":"")
 						+ "GROUP BY idCustodia, valores.nombre, idInversion "
 						+ (existente? "HAVING valores.cant > 0 ": "") 
 						+ "ORDER BY proveedores.nombre, valores.nombre";

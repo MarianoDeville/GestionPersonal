@@ -37,7 +37,7 @@ public class CtrlEgresos implements ActionListener {
 		this.ventana.chkBxPesos.addActionListener(this);
 		this.ventana.chkBxDolares.addActionListener(this);
 		this.ventana.chkBxEuros.addActionListener(this);
-		this.ventana.chkBxFinanciado.addActionListener(this);
+		this.ventana.chkBxDiferido.addActionListener(this);
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnCargar.addActionListener(this);
 		this.ventana.btnImprimir.addActionListener(this);
@@ -74,8 +74,8 @@ public class CtrlEgresos implements ActionListener {
 		ventana.comboBoxPago.setSelectedIndex(0);
 		ventana.chkBxDolares.setSelected(true);
 		ventana.chkBxEuros.setSelected(true);
-		ventana.chkBxFinanciado.setVisible(true);
-		ventana.chkBxFinanciado.setSelected(true);
+		ventana.chkBxDiferido.setVisible(true);
+		ventana.chkBxDiferido.setSelected(false);
 		actualizar();
 		ventana.setVisible(true);
 	}
@@ -153,7 +153,7 @@ public class CtrlEgresos implements ActionListener {
 														  ventana.comboBoxPago.getSelectedIndex(), 
 														  monedas ,
 														  ventana.txtBusqueda.getText(), 
-														  ventana.chkBxFinanciado.isSelected(), 
+														  ventana.chkBxDiferido.isSelected(), 
 														  ventana.chkBxFijo.isSelected()));
 		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(70);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);

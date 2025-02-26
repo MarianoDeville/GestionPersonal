@@ -91,7 +91,17 @@ public class DtosEgresos {
 		return respuesta;
 	}
 	
-	public DefaultTableModel getTablaEgresos(String año, int mes, String tipo, int pago, String monedas, String filtro, boolean financiado, boolean fijo) {
+	public boolean isFinanciado(int seleccion) {
+		
+		if(seleccion == 0)
+			return false;
+		
+		if(formasPago[seleccion-1].getFinanciado() == 0)
+			return false;
+		return true;
+	}
+	
+	public DefaultTableModel getTablaEgresos(String año, int mes, String tipo, int pago, String monedas, String filtro, boolean diferido, boolean fijo) {
 		
 		int idFormaPago = pago == 0 ? 0: formasPago[pago - 1].getId();
 		suma = 0;
@@ -115,7 +125,7 @@ public class DtosEgresos {
 					
 					tabla[i][5] = formatoResultado.format(egresos[i].getMonto());
 					
-					if(financiado || egresos[i].getFormaPago().getFinanciado() == 0)
+					if(diferido || egresos[i].getFormaPago().getFinanciado() == 0)
 						suma += egresos[i].getMonto();
 				} else if(egresos[i].getMoneda().equals("Dólares")) {
 					
@@ -123,7 +133,7 @@ public class DtosEgresos {
 					tabla[i][5] = formatoResultado.format(egresos[i].getMonto() * egresos[i].getCotizacion());
 					sumaColumnas[0] += egresos[i].getMonto();
 					
-					if(financiado || egresos[i].getFormaPago().getFinanciado() == 0)
+					if(diferido || egresos[i].getFormaPago().getFinanciado() == 0)
 						suma += egresos[i].getMonto() * egresos[i].getCotizacion();
 				}else if(egresos[i].getMoneda().equals("Euros")) {
 					
@@ -131,7 +141,7 @@ public class DtosEgresos {
 					tabla[i][5] = formatoResultado.format(egresos[i].getMonto() * egresos[i].getCotizacion());
 					sumaColumnas[1] += egresos[i].getMonto();
 					
-					if(financiado || egresos[i].getFormaPago().getFinanciado() == 0)
+					if(diferido || egresos[i].getFormaPago().getFinanciado() == 0)
 						suma += egresos[i].getMonto() * egresos[i].getCotizacion();
 				}
 			}
@@ -361,6 +371,11 @@ public class DtosEgresos {
 		return egreso.getComentario();
 	}
 	
+	public String getCuotas() {
+		
+		return egreso.getCuotas() + "";
+	}
+	
 	public void setComentario(String comentario) {
 		
 		egreso.setComentario(comentario);
@@ -387,6 +402,20 @@ public class DtosEgresos {
 			msgError = "La cotización debe ser numérica.";
 			return false;
 		}
+		return true;
+	}
+	
+	public boolean setCuotas(String cuotas) {
+		
+		try {
+			
+			egreso.setCuotas(Integer.parseInt(cuotas));
+		} catch (Exception e) {
+
+			msgError = "La cantidad de cuotas debe ser un número entero.";
+			return false;
+		}
+		
 		return true;
 	}
 	

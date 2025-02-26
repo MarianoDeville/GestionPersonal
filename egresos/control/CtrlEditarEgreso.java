@@ -62,6 +62,10 @@ public class CtrlEditarEgreso implements ActionListener {
 		ventana.txtMonto.setText(dtosEgreso.getMonto());
 		ventana.cmbBxMoneda.setSelectedItem(dtosEgreso.getMoneda());
 		ventana.txtComentario.setText(dtosEgreso.getComentario());
+		ventana.lblAux1.setText("Cuotas:");
+		ventana.txtAux1.setVisible(true);
+		ventana.txtAux1.setColumns(2);
+		ventana.txtAux1.setText(dtosEgreso.getCuotas());
 		
 		if(!dtosEgreso.getMoneda().equals("Pesos"))
 			ventana.txtCotizacion.setText(dtosEgreso.getCotizacion());
@@ -129,6 +133,7 @@ public class CtrlEditarEgreso implements ActionListener {
 				dtosEgreso.setFormaPago(ventana.cmbBxPago.getSelectedIndex()) && 
 				dtosEgreso.setMonto(ventana.txtMonto.getText()) && 
 				dtosEgreso.setCotizacion(ventana.txtCotizacion.getText()) && 
+				dtosEgreso.setCuotas(ventana.txtAux1.getText()) &&
 				dtosEgreso.actualizarEgreso()) {
 			
 			ventana.msgError.setForeground(Color.BLUE);

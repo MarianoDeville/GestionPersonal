@@ -33,6 +33,7 @@ public class CtrlMercadoValores implements ActionListener {
 		this.ventana.comboBoxAño.addActionListener(this);
 		this.ventana.comboBoxMes.addActionListener(this);
 		this.ventana.chkBxPesos.addActionListener(this);
+		this.ventana.chkBxDolares.addActionListener(this);
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnCargar.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
@@ -64,14 +65,14 @@ public class CtrlMercadoValores implements ActionListener {
 		ventana.comboBoxTipo.setVisible(false);
 		ventana.txtBusqueda.setVisible(false);
 		ventana.chkBxPesos.setText("Existentes");
-		ventana.chkBxDolares.setVisible(false);
+		ventana.chkBxDolares.setVisible(true);
+		ventana.chkBxDolares.setText("Trading");
+		ventana.chkBxDolares.setSelected(false);
 		ventana.chkBxEuros.setVisible(false);
 		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosInversiones.getListaAños()));
 		ventana.comboBoxAño.setSelectedIndex(0);
 		ventana.comboBoxMes.setModel(new DefaultComboBoxModel<String>(DtosComunes.getListaMeses("Elija uno")));
 		ventana.comboBoxMes.setSelectedIndex(DtosComunes.getMesActual());
-		ventana.chkBxDolares.setSelected(true);
-		ventana.chkBxEuros.setSelected(true);
 		actualizar();
 		ventana.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		ventana.setVisible(true);
@@ -148,8 +149,9 @@ public class CtrlMercadoValores implements ActionListener {
 		ventana.tabla.doLayout();
 		ventana.tabla.setModel(dtosInversiones.getTablaValores((String)ventana.comboBoxAño.getSelectedItem(), 
 																ventana.comboBoxMes.getSelectedIndex(), 
-																nuevaCotizacion,
-																ventana.chkBxPesos.isSelected()));
+																nuevaCotizacion, 
+																ventana.chkBxPesos.isSelected(), 
+																ventana.chkBxDolares.isSelected()));
 		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(100);
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(80);

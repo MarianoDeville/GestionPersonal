@@ -41,7 +41,7 @@ public class Listado extends VentanaModelo {
 	public JCheckBox chkBxPesos;
 	public JCheckBox chkBxDolares;
 	public JCheckBox chkBxEuros;
-	public JCheckBox chkBxFinanciado;
+	public JCheckBox chkBxDiferido;
 	public JButton btnNuevo;
 	public JButton btnCargar;
 	public JButton btnCotizar;
@@ -224,21 +224,21 @@ public class Listado extends VentanaModelo {
 		contenedor.putConstraint(SpringLayout.WEST, chkBxEuros, 0, SpringLayout.WEST, btnNuevo);
 		panel.add(chkBxEuros);
 		
-		chkBxFinanciado = new JCheckBox("Financiado");
-		contenedor.putConstraint(SpringLayout.NORTH, chkBxFinanciado, 15, SpringLayout.SOUTH, chkBxEuros);
-		contenedor.putConstraint(SpringLayout.EAST, chkBxFinanciado, 0, SpringLayout.EAST, btnNuevo);
-		contenedor.putConstraint(SpringLayout.WEST, chkBxFinanciado, 0, SpringLayout.WEST, btnNuevo);
-		panel.add(chkBxFinanciado);
-		chkBxFinanciado.setVisible(false);
+		chkBxDiferido = new JCheckBox("Diferido");
+		contenedor.putConstraint(SpringLayout.NORTH, chkBxDiferido, 15, SpringLayout.SOUTH, chkBxEuros);
+		contenedor.putConstraint(SpringLayout.EAST, chkBxDiferido, 0, SpringLayout.EAST, btnNuevo);
+		contenedor.putConstraint(SpringLayout.WEST, chkBxDiferido, 0, SpringLayout.WEST, btnNuevo);
+		panel.add(chkBxDiferido);
+		chkBxDiferido.setVisible(false);
 		
 		txtBusqueda = new JTextField();
-		contenedor.putConstraint(SpringLayout.NORTH, txtBusqueda, 15, SpringLayout.SOUTH, chkBxFinanciado);
-		contenedor.putConstraint(SpringLayout.WEST, txtBusqueda, 0, SpringLayout.WEST, chkBxFinanciado);
+		contenedor.putConstraint(SpringLayout.NORTH, txtBusqueda, 15, SpringLayout.SOUTH, chkBxDiferido);
+		contenedor.putConstraint(SpringLayout.WEST, txtBusqueda, 0, SpringLayout.WEST, chkBxDiferido);
 		txtBusqueda.setColumns(7);
 		panel.add(txtBusqueda);
 	
 		btnCotizar = new JButton("Cargar");
-		contenedor.putConstraint(SpringLayout.NORTH, btnCotizar, 15, SpringLayout.SOUTH, chkBxFinanciado);
+		contenedor.putConstraint(SpringLayout.NORTH, btnCotizar, 15, SpringLayout.SOUTH, chkBxDiferido);
 		contenedor.putConstraint(SpringLayout.EAST, btnCotizar, 0, SpringLayout.EAST, btnNuevo);
 		contenedor.putConstraint(SpringLayout.WEST, btnCotizar, 0, SpringLayout.WEST, btnNuevo);
 		panel.add(btnCotizar);	

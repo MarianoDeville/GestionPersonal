@@ -12,6 +12,6 @@ public interface OperacionesDAO {
 	public Operacion [] getListado(Valores valor);
 	public Fiat [] getListadoFiat(String año, int mes);
 	public Cripto [] getListadoCripto(String año, int mes);
-	public Valores [] getListadoValores(String año, int mes, boolean existente);
+	public Valores [] getListadoValores(String año, int mes, boolean existente, boolean trading);
 	public Inmobiliario [] getListadoPropiedades(String año, boolean activo);
 }

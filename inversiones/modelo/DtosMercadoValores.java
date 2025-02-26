@@ -54,10 +54,10 @@ public class DtosMercadoValores {
 		return temp;
 	}
 	
-	public DefaultTableModel getTablaValores(String año, int mes, boolean agregar, boolean existente) {
+	public DefaultTableModel getTablaValores(String año, int mes, boolean agregar, boolean existente, boolean trading) {
 		
 		CotizacioonesDAO cotizacionesDAO = new CotizacionesMySQL();
-		valores = operacionDAO.getListadoValores(año, mes, existente);
+		valores = operacionDAO.getListadoValores(año, mes, existente, trading);
 		int tamaño = cotizacionesDAO.getCotizaciones(año, mes, valores);
 		String tabla[][] = new String[valores.length + 1][tamaño + (agregar? 4: 3)];
 		String titulo[] = new String[tamaño + (agregar? 4: 3)];
