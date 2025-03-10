@@ -46,16 +46,16 @@ public class DtosIngresos {
 		
 		conceptos = new String[]{
 				
-			"Sueldo mensual",
-			"Guardias",
-			"Alquiler",
-			"Acreditación Dividendos / Cupones",
-			"Viáticos",
-			"Venta Activos / Pasivos",
+			"Acreditación Dividendos / Cupones",	
+			"Alquiler",	
+			"Bonos / Retroactivos sueldo",
 			"Compra / Venta moneda extrangera",
-			"Bonos / Retroactivos sueldo", 
-			"Préstamo", 
-			"Interés"
+			"Guardias",
+			"Interés",
+			"Préstamo",
+			"Sueldo mensual",
+			"Venta Activos / Pasivos",
+			"Viáticos"
 		};
 		String respuesta[] = new String[conceptos.length + 1];
 		respuesta[0] = cabecera;

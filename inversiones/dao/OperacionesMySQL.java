@@ -341,7 +341,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 	public Valores [] getListadoValores(String año, int mes, boolean existente, boolean trading) {
 	
 		Valores valores[] = null;
-		String cmdStm = "SELECT idInversion, valores.nombre, valores.cant, idTipo, instrumento.nombre, descripcion, idCustodia, proveedores.nombre, mercado "
+		String cmdStm = "SELECT idInversion, valores.nombre, valores.cant, idTipo, instrumento.nombre, descripcion, idCustodia, proveedores.nombre, mercado, plazo "
 						+ "FROM gpiygdb.operaciones "
 						+ "JOIN gpiygdb.valores ON idInversion = valores.id "
 						+ "JOIN gpiygdb.proveedores ON idCustodia = proveedores.id "
@@ -368,6 +368,7 @@ public class OperacionesMySQL extends ConexiónMySQL implements OperacionesDAO {
 				valores[i].setId(rs.getInt("idInversion"));
 				valores[i].setNombre(rs.getString("valores.nombre"));
 				valores[i].setCant(rs.getDouble("valores.cant"));
+				valores[i].setPlazo(rs.getInt("plazo"));
 				valores[i].setInstrumento(new Instrumento());
 				valores[i].getInstrumento().setId(rs.getInt("idTipo"));
 				valores[i].getInstrumento().setNombre(rs.getString("instrumento.nombre"));

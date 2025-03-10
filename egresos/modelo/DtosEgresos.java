@@ -47,21 +47,21 @@ public class DtosEgresos {
 	public String [] getListaDestinos(String cabecera) {
 		
 		destinos = new String[] {
-				"Canasta básica",
-				"Vestimenta",
-				"Impuestos",
-				"Servicios",
-				"Salud",
 				"Ahorro / Inversión",
-				"Viajes",
+				"Canasta básica",
+				"Comisiones / Mantenimiento", 
+				"Estudio / Capacitación",
+				"Impuestos",
 				"Lujo / Superfluo",
 				"Ocio / Esparcimiento",
-				"Estudio / Capacitación",
-				"Varios",
 				"Pichos",
+				"Préstamo",
+				"Servicios",
+				"Salud",
 				"Tarjetas",
-				"Comisiones / Mantenimiento", 
-				"Préstamo"
+				"Varios",
+				"Vestimenta",
+				"Viajes"
 		};
 		String respuesta[] = new String[destinos.length + 1]; 
 		respuesta[0] = cabecera;

@@ -10,7 +10,7 @@ public class TransaccionMySQL extends ConexiónMySQL implements TransaccionDAO {
 	public Transaccion [] getMetodos(String egresoIngreso) {
 		
 		Transaccion respuesta[] = null;
-		String cmdStm = "SELECT id, descripcion, financiado FROM gpiygdb.transaccion WHERE (egresoIngreso = ? OR egresoIngreso = 'A')";
+		String cmdStm = "SELECT id, descripcion, financiado FROM gpiygdb.transaccion WHERE (egresoIngreso = ? OR egresoIngreso = 'A') ORDER BY descripcion";
 		
 		try {
 			

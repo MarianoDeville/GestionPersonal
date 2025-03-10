@@ -25,7 +25,6 @@ public class CtrlCompraValores implements ActionListener {
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
-		this.ventana.chkBoxAcreditacion.addActionListener(this);
 		this.ventana.txtProv.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -61,6 +60,7 @@ public class CtrlCompraValores implements ActionListener {
 		ventana.txtAux1.setVisible(true);
 		ventana.chkBoxAcreditacion.setVisible(true);
 		ventana.chkBoxAcreditacion.setSelected(false);
+		ventana.chkBoxAcreditacion.setText("Sin plazo");
 		ventana.btnNuevo.setText("Limpiar");
 		ventana.tabla.setDefaultEditor(Object.class, null);
 		actualizar();
@@ -72,11 +72,6 @@ public class CtrlCompraValores implements ActionListener {
 		if(e.getSource() == ventana.btnNuevo) {
 			
 			limpiarCampos();
-		}
-		
-		if(e.getSource() == ventana.chkBoxAcreditacion) {
-			
-			actualizar();
 		}
 		
 		if(e.getSource() == ventana.btnGuardar) {
@@ -103,11 +98,6 @@ public class CtrlCompraValores implements ActionListener {
 			ventana.cmbBxTipo.setEnabled(false);
 			elemento = -1;
 		}
-		
-		if(ventana.chkBoxAcreditacion.isSelected())
-			ventana.chkBoxAcreditacion.setText("Largo plazo");
-		else
-			ventana.chkBoxAcreditacion.setText("Corto plazo");
 		ventana.tabla.setModel(dtosMercadoValores.getListadoValores(ventana.txtProv.getText()));
 	}
 	
